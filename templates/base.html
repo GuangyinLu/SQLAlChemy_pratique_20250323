@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CRM Insurance{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <p>
+        <span >Bienvenue, {{ current_user.username }}！</span>
+        <span id="clock"></span>
+    </p>
+
+    {% if current_user.is_authenticated %}                
+        <div class="menu">
+            <div class="menu-item">
+                <a href="{{ url_for('auth.login') }}">Login</a>
+            </div>
+            <div class="menu-item">
+                <a href="{{ url_for('dashboard') }}">Dashboard</a>
+            </div>
+            <div class="menu-item">
+                <a href="{{ url_for('gestion_client') }}">Gestion de Clients</a>
+            </div>
+            <div class="menu-item">
+                <a href="{{ url_for('gestion_product') }}">Gestion de Product</a>
+            </div>
+            <div class="menu-item">
+                <a href="{{ url_for('gestion_vente') }}">Gestion de Vente</a>
+            </div>
+            <div class="menu-item">
+                <a href="{{ url_for('gestion_agent') }}">Gestion de Agent</a>
+            </div>
+            <div class="menu-item">
+                <a href="{{ url_for('gestion_facturation') }}">Gestion de Facturation</a>
+            </div>
+
+            {% if current_user.role == "Admin" %}
+                <div class="menu-item">
+                    <a href="{{ url_for('auth.register') }}">Gestion de users</a>
+                </div>
+            {% endif %}
+
+            <div class="menu-item">
+                <a href="{{ url_for('auth.logout') }}">Logout</a>
+            </div>   
+        </div>        
+    {% endif %} 
+
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+
+    <script src="{{ url_for('static', filename='scripts.js') }}"></script>
+
+</body>
+</html>

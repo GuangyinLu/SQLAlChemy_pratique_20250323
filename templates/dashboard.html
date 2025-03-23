@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}DashBoard{% endblock %}
+
+{% block content %}
+<!--
+<h2>Bienvenu，{{ current_user.username }}！</h2>
+<p>Role：{{ current_user.role }}</p> -->
+
+<h1>Hai!  Des travaux à faire!</h1>
+
+{% if current_user.role == "admin" %}
+    <a href="{{ url_for('customer.get_customers') }}">Gestion de Clients</a>
+    <a href="{{ url_for('policy.get_policies') }}">Gestion de Policies</a>
+{% elif current_user.role == "agent" %}
+    <a href="{{ url_for('customer.get_customers') }}">View clients</a>
+    <a href="{{ url_for('policy.get_policies') }}">View Policies</a>
+{% endif %}
+{% endblock %}

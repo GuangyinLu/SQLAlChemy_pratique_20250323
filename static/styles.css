@@ -1,0 +1,90 @@
+* {
+    margin: 5;
+    padding: 5;
+    box-sizing: border-box;    
+}
+
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    width: 90%;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh;
+    background-color: #d3c5c5d5;
+    margin: 0 auto;
+}
+
+.menu {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 3px 0;
+    background-color: #2ca70de1; 
+    border-radius: 20px;
+    border-bottom: 5px solid #f10c0ce8; 
+    position: relative; 
+}
+
+.menu a {
+    color: #3912e4e5;
+    font-weight: bold;
+    /*font-size: 16px; */
+}
+
+/* 每个菜单项 */
+.menu-item {
+    width: 10%;
+    flex: 1; /* 每个菜单项平分空间 */
+    text-align: center; /* 文字居中 */
+    padding: 10px 10px;
+    border-radius: 0;
+    font-weight: bold;    
+    border-right: 3px solid #6988ee; /* 菜单项间隔线 */
+}
+
+.menu-item:last-child {
+    border-right: none; /* 最后一个菜单项去掉右边的间隔线 */
+}
+
+/* 菜单项 hover 效果 */
+.menu-item:hover {
+    background-color: #e0e0e0; /* 鼠标悬停时的背景色 */
+}
+
+
+.button-container {
+    width: 100%;  
+    display: flex;
+    justify-content: space-between;  /* 左右对齐 */
+    padding: 10px 20px;  /* 增加间距 */
+    background-color: #f8f8f8;
+    border-bottom: 2px solid #ddd;  /* 添加底部边框 */
+}
+
+.button-container button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.left-btn {
+    background-color: #007BFF;
+    color: white;
+}
+
+.right-btn {
+    background-color: #28a745;
+    color: white;
+}
+
+.left-btn:hover {
+    background-color: #0056b3;
+}
+
+.right-btn:hover {
+    background-color: #218838;
+}
