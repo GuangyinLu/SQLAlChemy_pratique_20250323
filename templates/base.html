@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}CRM Insurance{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    {% block scripts %}{% endblock %}
 </head>
 <body>
     <p>
@@ -18,7 +19,7 @@
                 <a href="{{ url_for('auth.login') }}">Login</a>
             </div>
             <div class="menu-item">
-                <a href="{{ url_for('dashboard') }}">Dashboard</a>
+                <a href="{{ url_for('dashboard.get_policy') }}">Dashboard</a>
             </div>
             <div class="menu-item">
                 <a href="{{ url_for('gestion_client') }}">Gestion de Clients</a>
