@@ -8,8 +8,13 @@ from math import ceil
 
 dashboard_bp = Blueprint('dashboard', __name__)
 
+@dashboard_bp.route("/get_policy_html", methods=["GET", "POST"])
+def get_policy_html():
+    return render_template("dashboard.html")
+
+
 # AJAX 获取分页数据
-@dashboard_bp.route("/get_policy", methods=["GET"])
+@dashboard_bp.route("/get_policy", methods=["GET","POST"])
 def get_policy():
 
     db = SessionLocal()
@@ -30,10 +35,10 @@ def get_policy():
 
     results = query.offset((page - 1) * per_page).limit(per_page).all()
 
-    return render_template("dashboard.html", results=results, page=page, total_pages=total_pages)
+    #return render_template("dashboard.html", results=results, page=page, total_pages=total_pages)
 
     # JSON 数据
-    '''
+    
     data = []
     for policy, customer, insurance_product, agentCustomersRelation, agent in results:
         data.append({
@@ -57,4 +62,4 @@ def get_policy():
         "total_pages": total_pages,
         "current_page": page
     })
-    '''
+    

@@ -137,6 +137,9 @@ class Policy(Base):
     created_at = Column(DateTime, default=datetime.now(timezone.utc))
     updated_at = Column(DateTime, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
 
+    customer = relationship("Customer", backref="policies")
+    product = relationship("InsuranceProduct", backref="policies")
+    discount = relationship("Discount", backref="policies")
 
 class Claim(Base):
     __tablename__ = 'claims'
@@ -150,6 +153,8 @@ class Claim(Base):
     created_at = Column(DateTime, default=datetime.now(timezone.utc))
     updated_at = Column(DateTime, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
 
+    policy = relationship("Policy", backref="claims")
+
 # ------------------ 6. 支付表 Payments ------------------
 class Payment(Base):
     __tablename__ = 'payments'
@@ -162,6 +167,8 @@ class Payment(Base):
     status = Column(SQLAEnum(PaymentStatusEnum), default=PaymentStatusEnum.Processing, nullable=False)
     created_at = Column(DateTime, default=datetime.now(timezone.utc))
     updated_at = Column(DateTime, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
+
+    policy = relationship("Policy", backref="payments")
 
 # ------------------ 7. 保险代理人表 Agents ------------------
 class Agent(Base):

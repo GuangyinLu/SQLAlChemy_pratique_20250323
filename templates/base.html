@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}CRM Insurance{% endblock %}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    {% block css %}{% endblock %}
     {% block scripts %}{% endblock %}
 </head>
 <body>
@@ -19,7 +20,7 @@
                 <a href="{{ url_for('auth.login') }}">Login</a>
             </div>
             <div class="menu-item">
-                <a href="{{ url_for('dashboard.get_policy') }}">Dashboard</a>
+                <a href="{{ url_for('dashboard.get_policy_html') }}">Dashboard</a>
             </div>
             <div class="menu-item">
                 <a href="{{ url_for('gestion_client') }}">Gestion de Clients</a>
@@ -53,7 +54,7 @@
         {% block content %}{% endblock %}
     </div>
 
-    <script src="{{ url_for('static', filename='scripts.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
 
 </body>
 </html>
