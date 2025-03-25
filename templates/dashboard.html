@@ -2,22 +2,12 @@
 
 {% block title %}DashBoard{% endblock %}
 
+{% block css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+{% endblock %}
+
 {% block content %}
-<!--
-<h2>Bienvenu，{{ current_user.username }}！</h2>
-<p>Role：{{ current_user.role }}</p> -->
 
-<h1>Hai!  Des travaux à faire!</h1>
-
-<!--
-{% if current_user.role == "admin" %}
-    <a href="{{ url_for('customer.get_customers') }}">Gestion de Clients</a>
-    <a href="{{ url_for('policy.get_policies') }}">Gestion de Policies</a>
-{% elif current_user.role == "agent" %}
-    <a href="{{ url_for('customer.get_customers') }}">View clients</a>
-    <a href="{{ url_for('policy.get_policies') }}">View Policies</a>
-{% endif %}
--->
 
 <div class="container mt-4">
     <h2>Gestion des Policies</h2>
@@ -40,7 +30,7 @@
                 <th>Agent Phone</th>
             </tr>
         </thead>
-        <tbody id="customer-table">
+        <tbody id="policies-table">
             <!-- AJAX 动态填充 -->
         </tbody>
     </table>
@@ -55,28 +45,29 @@
 
 </div>
 
-<!---->
+
 {% endblock %}
 
 
 {% block scripts %}
-
+<!--
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+-->
+<script src="{{ url_for('static', filename='js/axios.min.js') }}"></script>
 
 <script>
-$(document).ready(function () {
+
+document.addEventListener("DOMContentLoaded", function () {
     let currentPage = 1;
     
-    function loadCustomers(page) {
-        $.ajax({
-            url: "get_policy",
-            type: "GET",
-            data: { page: page },
-            dataType: "json",
-            success: function (response) {
+    function loadPolicies(page) {
+       
+        axios.get("get_policy", { params: { page: page } })
+            .then(response => {         
                 let rows = "";
                 
-                response.data.forEach(function (item) {
+                response.data.data.forEach(item => {                  
                     rows += `
                         <tr>
                             <td>${item.policy_id}</td>
@@ -95,42 +86,48 @@ $(document).ready(function () {
                         </tr>
                     `;
                 });                
-                $("#customer-table").html(rows);
+                document.getElementById("policies-table").innerHTML = rows;
                 
                 // 分页按钮
                 let pagination = "";
                 pagination += `<table class = "affiche_page"> <tr>`;
-                if (response.current_page > 1) {
-                    pagination += `<td><li class="page-item"><a class="page-link" href="#" data-page="${response.current_page - 1}">Previous</a></li> </td>`;
+                if (response.data.current_page > 1) {
+                    pagination += `<td><li class="page-item"><a class="page-link" href="#" data-page="${response.data.current_page - 1}"><</a></li> </td>`;
                 }
-                for (let i = 1; i <= response.total_pages; i++) {
-                    pagination += `<td><li class="page-item ${response.current_page == i ? 'active' : ''}">
+                for (let i = 1; i <= response.data.total_pages; i++) {
+                    pagination += `<td><li class="page-item ${response.data.current_page == i ? 'active' : ''}">
                         <a class="page-link" href="#" data-page="${i}">${i}</a>
                     </li> </td>`;
                 }
-                if (response.current_page < response.total_pages) {
-                    pagination += `<td><li class="page-item"><a class="page-link" href="#" data-page="${response.current_page + 1}">Next</a></li> </td>`;
+                if (response.data.current_page < response.data.total_pages) {
+                    pagination += `<td><li class="page-item"><a class="page-link" href="#" data-page="${response.data.current_page + 1}">></a></li> </td>`;
                 }
                 pagination += `</tr> </table>`;
-                $("#pagination").html(pagination);
-
-            }
-        });
+                document.getElementById("pagination").innerHTML = pagination;
+                
+            });
+        
     }
 
     // 初始加载第一页
-    loadCustomers(currentPage);
+    loadPolicies(currentPage);
+    
 
     // 点击分页按钮
-    $(document).on("click", ".page-link", function (e) {
-        e.preventDefault();
-        let page = $(this).data("page");
-        if (page) {
-            currentPage = page;
-            loadCustomers(currentPage);
+    document.getElementById("pagination").addEventListener("click", function (e) {
+        if (e.target.tagName === "A") {
+            e.preventDefault();
+            let page = e.target.getAttribute("data-page");
+            if (page) {
+                currentPage = page;
+                loadPolicies(currentPage);
+                
+            }
         }
     });
+
 });
+
 
 </script>
 

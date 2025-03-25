@@ -1,7 +1,5 @@
-#from datetime import datetime, timezone
+from datetime import datetime, timezone, date
 from flask import Blueprint, Flask, request, render_template, redirect, url_for, flash, jsonify
-#from flask_login import login_user, logout_user, login_required, current_user
-#from werkzeug.security import generate_password_hash, check_password_hash
 from database import SessionLocal
 from models import *
 from math import ceil
@@ -16,10 +14,11 @@ def get_policy_html():
 # AJAX 获取分页数据
 @dashboard_bp.route("/get_policy", methods=["GET","POST"])
 def get_policy():
-
+    
     db = SessionLocal()
 
     page = request.args.get("page", 1, type=int)
+
     per_page = 3  # 每页 3 条
 
     # 多表联合查询
@@ -45,8 +44,8 @@ def get_policy():
             "policy_id" : policy.policy_id,
             "policy_number": policy.policy_number,
             "insuranceProduct_name" : insurance_product.product_name,
-            "start_date" : policy.start_date,
-            "end_date" : policy.end_date,
+            "start_date" : policy.start_date.strftime("%Y-%m-%d") if policy.start_date else None,
+            "end_date" : policy.end_date.strftime("%Y-%m-%d") if policy.end_date else None,
             "customer_name_last": customer.name_last,
             "customer_name_first": customer.name_first,
             "phone" : customer.phone,

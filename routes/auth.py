@@ -41,8 +41,8 @@ def login():
         if user and user.check_password(data["password"]):
             login_user(user)
             #return jsonify({"message": "登录成功"}), 200
-            #return redirect(url_for('index'))
-            return render_template('dashboard.html')
+            return redirect(url_for('dashboard.get_policy_html'))
+            #return render_template('dashboard.html')
         flash('Invalid username or password')
     #return jsonify({"error": "用户名或密码错误"}), 401
     return render_template('login.html')
