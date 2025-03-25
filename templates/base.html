@@ -4,37 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}CRM Insurance{% endblock %}</title>
+
     <script src="{{ url_for('static', filename='js/jquery-3.7.1.min.js') }}"></script>
+
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
     {% block css %}{% endblock %}
-    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
-    {% block scripts %}{% endblock %}
+
+
 </head>
 <body>
     <div class="content">
-        <h3>
-            <span >Bienvenue: {{ current_user.username }}！</span>
+        <h5>
+            <span >Bienvenue: {{ current_user.username }} !</span>
             <span id="clock"></span>
-        </h3>
+        </h5>
 
     </div>
 
     <!--  Navigateur -->
-    <nav class="navbar">
-        <ul class="menu" id="nav-menu">
+    <nav class="navbar navbar-expand-sm">
+        <ul class="navbar-nav" id="nav-menu">
             
             {% if current_user.is_authenticated %}
-                <li><a href="{{ url_for('auth.login') }}">Login</a></li>
-                <li><a href="{{ url_for('dashboard.get_policy_html') }}">Dashboard</a></li>
-                <li><a href="{{ url_for('gestion_client') }}">Gestion de Clients</a></li>
-                <li><a href="{{ url_for('gestion_product') }}">Gestion de Product</a></li>
-                <li><a href="{{ url_for('gestion_vente') }}">Gestion de Vente</a></li>
-                <li><a href="{{ url_for('gestion_agent') }}">Gestion de Agent</a></li>
-                <li><a href="{{ url_for('gestion_facturation') }}">Gestion de Facturation</a></li>
-                {% if current_user.role == "Admin" %}
-                    <li><a href="{{ url_for('auth.register') }}">Gestion de users</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.login') }}">Login</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('dashboard.get_policy_html') }}">Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('gestion_client') }}">Gestion de Clients</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('gestion_product') }}">Gestion de Product</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('gestion_vente') }}">Gestion de Vente</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('gestion_agent') }}">Gestion de Agent</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('gestion_facturation') }}">Gestion de Facturation</a></li>
+                {% if current_user.role_str == "Admin" %}
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.register') }}">Gestion de users</a></li>
                 {% endif %}
-                    <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>    
+                
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a></li>    
             {% endif %}
             
         </ul>
@@ -82,8 +86,12 @@
         {% block content %}{% endblock %}
     </div>
 
-    
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+
     <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+
+    {% block scripts %}{% endblock %}
+
     
 
 </body>

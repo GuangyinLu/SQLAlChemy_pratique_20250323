@@ -1,3 +1,7 @@
+.container {
+    width: 90%;
+}
+
 /* 确保分页部分在页面上有足够的空间 */
 #pagination {
     text-align: center;

@@ -69,6 +69,10 @@ class User(Base, UserMixin):
     role = Column(SQLAEnum(RoleEnum,  name="role_enum"), nullable=False)
     last_active_time = Column(DateTime, default=datetime.now(timezone.utc))
     
+    @property
+    def role_str(self):
+        return self.role.value
+    
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
     
