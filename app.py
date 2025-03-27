@@ -6,6 +6,7 @@ from routes.customers import customer_bp
 from routes.policies import policy_bp
 from routes.dashboard import dashboard_bp
 from routes.profilClient import profilClient_bp
+from routes.gestionClient import gestionClient_bp
 from models import User, init_db
 from database import SessionLocal
 
@@ -23,6 +24,7 @@ app.register_blueprint(customer_bp, url_prefix="/customers")
 app.register_blueprint(policy_bp, url_prefix="/policies")
 app.register_blueprint(dashboard_bp, url_prefix="/dashboard")
 app.register_blueprint(profilClient_bp, url_prefix="/profilClient")
+app.register_blueprint(gestionClient_bp, url_prefix="/gestionClient")
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -43,7 +45,7 @@ def dashboard():
 @app.route('/gestion_client')
 @login_required
 def gestion_client():
-    return render_template('gestion_client.html')
+    return render_template('gestionClient.html')
 
 @app.route('/gestion_product')
 @login_required
