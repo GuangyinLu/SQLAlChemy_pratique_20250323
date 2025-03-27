@@ -130,6 +130,7 @@ class Policy(Base):
     __tablename__ = 'policies'
     policy_id = Column(Integer, primary_key=True, autoincrement=True)
     customer_id = Column(Integer, ForeignKey('customers.customer_id'), nullable=False)
+    agent_id = Column(Integer, ForeignKey('agents.agent_id'))
     product_id = Column(Integer, ForeignKey('insurance_products.product_id'), nullable=False)
     policy_number = Column(String(50), unique=True, nullable=False)
     start_date = Column(DateTime, nullable=False)
@@ -144,6 +145,7 @@ class Policy(Base):
     customer = relationship("Customer", backref="policies")
     product = relationship("InsuranceProduct", backref="policies")
     discount = relationship("Discount", backref="policies")
+    agent = relationship("Agent", backref="agents")
 
 class Claim(Base):
     __tablename__ = 'claims'

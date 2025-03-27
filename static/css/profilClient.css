@@ -1,0 +1,72 @@
+.container-fluid {
+    margin: 0;
+    padding: 0;
+    
+}
+
+.col-md-3 {
+    background-color: rgba(232, 242, 232, 0);
+    box-shadow:inset 1px -1px 1px #444, inset -1px 1px 1px #444;
+    justify-items: center;
+    height: 700px;
+    overflow: auto;
+}
+
+.col-md-4 {
+    background-color: rgba(232, 242, 232, 0);
+    box-shadow:inset 1px -1px 1px #444, inset -1px 1px 1px #444;
+    justify-items: center;
+    height: 700px;
+    overflow: auto;
+}
+
+.col-md-5 {
+    background-color: rgba(232, 242, 232, 0);
+    box-shadow:inset 1px -1px 1px #444, inset -1px 1px 1px #444;
+    justify-items: center;
+    height: 700px;
+    overflow: auto;
+}
+
+.col-md-12 {
+    background-color: rgba(232, 242, 232, 0);
+    box-shadow: inset 1px #444;
+    border:black;
+    justify-items: center;
+}
+
+.table {
+    background-color: rgba(232, 242, 232, 0);
+    overflow: auto;
+    display: block;
+}
+
+.table td{
+    background-color: rgba(232, 242, 232, 0);
+    overflow: auto; 
+}
+
+.table th{
+    background-color: rgba(232, 242, 232, 0);
+    overflow: auto;
+}
+
+.table tr:hover {
+    background-color: #bfc1d8;
+    color: #ff0000; /* 字体颜色变为红色 */
+    cursor: pointer;
+}
+
+/* 可选：点击后的样式 */
+.table tr:active {
+    background-color: #e0e0e0;
+}
+
+.client_search-table tr:hover {
+    background-color: #bdc5e7e7;
+    cursor: pointer;
+}
+.client_search-table tr.selected {
+    background-color: #afd7ad;
+    font-weight: bold;
+}

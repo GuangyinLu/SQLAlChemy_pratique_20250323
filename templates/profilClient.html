@@ -1,0 +1,207 @@
+{% extends 'base.html' %}
+
+{% block title %}DashBoard{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/profilClient.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <h2>Profil du Client</h2>
+    
+    <div class="container-fluid">
+
+        <div class="row">
+     
+            <div class="col-md-4">
+                <h4>Recherche......</h4>
+                <input type="text" id="searchBox" onkeyup="searchCustomers()" placeholder="Recherche...">
+                <div id="results"></div>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Customer_ID</th>
+                            <th>Policy_Number</th>
+                            <th>Customer Name</th>
+                            <th>Customer Phone</th>
+                            <th>Customer Email</th>
+                        </tr>
+                    </thead>
+                    <tbody class="client_search-table" id="search_results">
+                        <!-- AJAX 动态填充 -->
+                    </tbody>
+                </table>
+                
+            </div>
+        
+            <div class="col-md-4">                
+
+                <div class="col-md-12">
+                    <h4>Information du Client</h4>
+                    <div id = "information_client"></div>
+
+                </div>        
+                <p>#######################</p>
+
+                <div class="col-md-12">
+                    <h4>Policy du Client</h4>
+                    <div id = "policy_client"></div>
+
+                </div>        
+                <p>#######################</p>
+
+                <div class="col-md-12">
+                    <h4>Relations entre Clients</h4>
+                    <div id = "relation_client"></div>
+                </div>   
+            
+            </div>
+
+            <div class="col-md-4">
+                <h4>Agenda du Client</h4>
+                <div id = "agenda_client"></div>
+            </div>
+     
+        </div>
+     
+     </div>        
+
+</div>
+
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script src="{{ url_for('static', filename='js/axios.min.js') }}"></script>
+
+<script>
+    function searchCustomers() {
+        let query = document.getElementById('searchBox').value;
+        //fetch('/search?query=' + query)
+
+        axios.get("search", {params: {query: query}})
+            .then(response => {
+                let rows = "";                
+                response.data.data.forEach(item => {                  
+                    rows += `
+                        <tr  onclick="handleRowClick(this)" data-id="${item.id}">
+                            <td>${item.id}</td>
+                            <td>${item.policy_id}</td>
+                            <td>${item.name}</td>
+                            <td>${item.phone}</td>
+                            <td>${item.email}</td>
+                        </tr>
+                    `;
+                });                
+                document.getElementById("search_results").innerHTML = rows;
+
+            });
+    }
+
+    // 处理行点击事件的函数
+    function handleRowClick(row) {
+        // 获取行数据
+        const cells = row.cells;
+        const rowData = {
+            customer_id: cells[0].textContent
+        };
+       
+        // 更新选中行样式
+        clearSelectedRows();
+        row.classList.add('selected');
+
+        // 调用其他函数并传递行数据
+        axios.get("customer_info", {params: {query: rowData.customer_id}})
+            .then(response => {
+
+                let customer_info ="";
+                response.data.customer.forEach(item =>{                    
+                    customer_info += `
+                        <p>Customer_ID: ${item.Customer_ID}</p>
+                        <p>Name: ${item.Name}</p>
+                        <p>Gendre: ${item.Gendre}</p>
+                        <p>Birth_Day: ${item.Birth_Day}</p>
+                        <p>Phone: ${item.Phone}</p>
+                        <p>Email: ${item.Email}</p>
+                        <p>Address: ${item.Address}</p>
+                        <p>Number_Card_ID: ${item.Number_Card_ID}</p>
+                        `;
+                        document.getElementById("information_client").innerHTML = customer_info;
+
+                    })    
+                    
+                let customer_policies_info ="";
+                response.data.policies_data.forEach(item =>{                    
+                    customer_policies_info += `
+                        <p>***</p>
+                        <p>Policy_number: ${item.Policy_number}</p>
+                        <p>Product_name: ${item.Product_name}</p>
+                        <p>Discount: ${item.Discount}</p>
+                        <p>Discount_type: ${item.Discount_type}</p>
+                        <p>Discount_niveau: ${item.Discount_niveau}</p>
+                        <p>Status: ${item.Status}</p>
+                        <p>Start_time: ${item.Start_time}</p>
+                        <p>End_time: ${item.End_time}</p>
+                        <p>Premium_amount: ${item.Premium_amount}</p>
+                        <p>Final_premium: ${item.Final_premium}</p>
+                        <p>Agent: ${item.Agent}</p>
+                        `;
+                        document.getElementById("policy_client").innerHTML = customer_policies_info;
+
+                    })   
+
+                let customer_relation_info ="";
+                response.data.relation.forEach(item =>{                    
+                    customer_relation_info += `
+                        <p>***</p>
+                        <p>Customer_ID: ${item.id}</p>
+                        <p>Name: ${item.Name}</p>
+                        <p>Phone: ${item.Phone}</p>
+                        <p>Email: ${item.Email}</p>
+                        <p>Relationship: ${item.Relationship}</p>
+                        `;
+                        document.getElementById("relation_client").innerHTML = customer_relation_info;
+
+                    })   
+
+                let customer_agenda_info ="";   
+                response.data.agenda_data.forEach(item =>{                    
+                    customer_agenda_info += `
+                        <p>***</p>
+                        <p>Date: ${item.Date}</p>
+                        <p>Agent: ${item.Agent}</p>
+                        <p>Description: ${item.Description}</p>
+                        <p>File: ${item.File}</p>
+                        `;
+                        document.getElementById("agenda_client").innerHTML = customer_agenda_info;
+
+                    })   
+
+            });
+        
+        // 可选：添加选中样式
+        clearSelectedRows();
+        row.classList.add('selected');
+    }
+            
+    // 清除之前选中的行
+    function clearSelectedRows() {
+        const rows = document.querySelectorAll('.client_search-table tr');
+        rows.forEach(row => row.classList.remove('selected'));
+    }
+    
+    // 其他处理函数
+    function processRowData(data) {
+        console.log('处理行数据:', data);
+        alert(`你点击了: ${data.name}, 年龄 ${data.age}, 来自 ${data.city}`);
+        // 这里可以添加你的其他处理逻辑
+    }
+
+</script>
+
+
+
+{% endblock %}

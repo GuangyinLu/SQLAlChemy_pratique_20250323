@@ -9,13 +9,13 @@
 {% block content %}
 
 
-<div class="container">
+<div class="container-fluid">
     <h2>Gestion des Policies</h2>
     
     <table class="table table-bordered">
         <thead>
             <tr>
-                <th>Policy_ID</th>
+                <th>Num</th>
                 <th>Policy_Number</th>
                 <th>Insurance_Product</th>
                 <th>Start Date</th>
@@ -30,7 +30,7 @@
                 <th>Agent Phone</th>
             </tr>
         </thead>
-        <tbody id="policies-table">
+        <tbody class="policies-table" id="policies-table">
             <!-- AJAX 动态填充 -->
         </tbody>
     </table>
@@ -67,7 +67,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 response.data.data.forEach(item => {                  
                     rows += `
                         <tr>
-                            <td>${item.policy_id}</td>
+                            <td>${item.Num}</td>
                             <td>${item.policy_number}</td>
                             <td>${item.insuranceProduct_name}</td>
                             <td>${item.start_date}</td>

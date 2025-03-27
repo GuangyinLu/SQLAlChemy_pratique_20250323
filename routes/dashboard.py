@@ -19,7 +19,7 @@ def get_policy():
 
     page = request.args.get("page", 1, type=int)
 
-    per_page = 3  # 每页 3 条
+    per_page = 8  # 每页 8 条
 
     # 多表联合查询
     query = db.query(Policy, Customer, InsuranceProduct, AgentCustomer, Agent) \
@@ -39,9 +39,9 @@ def get_policy():
     # JSON 数据
     
     data = []
-    for policy, customer, insurance_product, agentCustomersRelation, agent in results:
+    for index, (policy, customer, insurance_product, agentCustomersRelation, agent) in enumerate(results, start=1):
         data.append({
-            "policy_id" : policy.policy_id,
+            "Num" : index,
             "policy_number": policy.policy_number,
             "insuranceProduct_name" : insurance_product.product_name,
             "start_date" : policy.start_date.strftime("%Y-%m-%d") if policy.start_date else None,
