@@ -11,22 +11,47 @@
     <h1>Gestion de Clients!</h1>
     <div class="row">
         <div class="col-md-3">
-            <div></div>
-            <div class="button-container">
-                <button class="left-btn">Modifier</button>
-                <button class="right-btn">Ajouter</button>
-            </div>
             <div class="row">
                 <div class="col-md-4">
-
+                    <div class="form-check">
+                        <input type="radio" class="form-check-input" id="radio1" name="optradio" value="option1" checked>Modifier
+                        <label class="form-check-label" for="radio1"></label>
+                    </div>
                 </div>
                 <div class="col-md-4">
-                    
+                    <div class="form-check">
+                        <input type="radio" class="form-check-input" id="radio2" name="optradio" value="option2">Ajouter
+                        <label class="form-check-label" for="radio2"></label>
+                    </div>
                 </div>
                 <div class="col-md-4">
-                    
+                    <div class="form-check">
+                        <input type="radio" class="form-check-input" id="radio3" name="optradio" value="option3">Supprimer
+                        <label class="form-check-label" for="radio3"></label>
+                      </div>
                 </div>
 
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <label>Recherche (Name,Phone,Email) </label>
+                    <input type="text" id="searchBox" onkeyup="searchCustomers()" placeholder="Recherche...">
+                    <div id="results"></div>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Customer ID</th>
+                                <th>Customer Name</th>
+                                <th>Customer Phone</th>
+                                <th>Customer Email</th>
+                            </tr>
+                        </thead>
+                        <tbody class="client_search-table" id="search_results">
+                            <!-- AJAX 动态填充 -->
+                        </tbody>
+                    </table>
+                    
+                </div>
             </div>
         </div>
         <div class="col-md-9">
