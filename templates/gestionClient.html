@@ -2,12 +2,20 @@
 
 {% block title %}Gestion de Clients{% endblock %}
 
-{% block content %}
+{% block css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/gestionClient.css') }}">
+{% endblock %}
 
-<div class="container-fluid">
-    <h1>Gestion de Clients!</h1>
+{% block content %}
     <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-12">
+            <h1>Gestion de Clients!</h1>            
+        </div>
+
+    </div>
+    
+    <div class="row">
+        <div class="col-md-4">
             <div class="row">
                 <div class="col-md-4">
                     <div class="form-check">
@@ -51,15 +59,18 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-9">
-            <div class="button-container">
-                <button class="left-btn">Modifier</button>
-                <button class="right-btn">Ajouter</button>
+        <div class="col-md-8">
+            <div class="row">
+                <div class="col-mt-12">
+                    <button class="left-btn">Modifier</button>
+                    <button class="right-btn">Ajouter</button>
+                </div>
+
             </div>
         </div>
     </div>
 
-</div>
+
 
 {% endblock %}
 

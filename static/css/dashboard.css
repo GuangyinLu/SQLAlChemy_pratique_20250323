@@ -1,3 +1,4 @@
+/*
 .container-fluid {
     width: 100%;
     padding: 0;
@@ -7,18 +8,15 @@
     align-items: center;
     height: 50%;
 }
-
+*/
 .table {
     width: 100%;
     margin: 0;
     padding: 0;
-    height: 700px;
+    height: 60%;
+    font-size: 14px;
     display: block;
     overflow: auto;    
-}
-
-.policies-table tr:nth-child(even) {
-    background-color: #1c8f05f3;
 }
 
 .policies-table tr {

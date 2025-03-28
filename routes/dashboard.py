@@ -46,13 +46,15 @@ def get_policy():
             "insuranceProduct_name" : insurance_product.product_name,
             "start_date" : policy.start_date.strftime("%Y-%m-%d") if policy.start_date else None,
             "end_date" : policy.end_date.strftime("%Y-%m-%d") if policy.end_date else None,
-            "customer_name_last": customer.name_last,
-            "customer_name_first": customer.name_first,
+            #"customer_name_last": customer.name_last,
+            #"customer_name_first": customer.name_first,
+            "customer_name": f"{customer.name_last} {customer.name_first}",
             "phone" : customer.phone,
             "email" : customer.email,
             "address" : customer.address,
-            "agent_name_last": agent.name_last,
-            "agent_name_first": agent.name_first,
+            #"agent_name_last": agent.name_last,
+            #"agent_name_first": agent.name_first,
+            "agent_name_first": f"{agent.name_last} {agent.name_first}",
             "agent_phone": agent.phone
         })
 

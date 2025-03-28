@@ -67,5 +67,7 @@ def gestion_agent():
 def gestion_facturation():
     return render_template('gestion_facturation.html')
 
+
+
 if __name__ == "__main__":
     app.run(debug=True)

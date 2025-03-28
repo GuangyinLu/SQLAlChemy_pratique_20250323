@@ -7,22 +7,20 @@
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-    <h2>Profil du Client</h2>
-    
-    <div class="container-fluid">
+
+        <h2>Profil du Client</h2>
 
         <div class="row">
      
-            <div class="col-md-4">
+            <div class="col-md-4 border p-3 affiche">
                 <h4>Recherche......</h4>
                 <input type="text" id="searchBox" onkeyup="searchCustomers()" placeholder="Recherche...">
                 <div id="results"></div>
-                <table class="table table-bordered">
+                <table class="table table-bordered table-striped">
                     <thead>
                         <tr>
-                            <th>Customer_ID</th>
-                            <th>Policy_Number</th>
+                            <th>Customer ID</th>
+                            <th>Policy Number</th>
                             <th>Customer Name</th>
                             <th>Customer Phone</th>
                             <th>Customer Email</th>
@@ -35,39 +33,28 @@
                 
             </div>
         
-            <div class="col-md-4">                
+            <div class="col-md-4 border p-3 affiche">                
 
-                <div class="col-md-12">
-                    <h4>Information du Client</h4>
-                    <div id = "information_client"></div>
-
-                </div>        
+                <h4>Information du Client</h4>
+                <div id = "information_client"></div>
+       
                 <p>#######################</p>
 
-                <div class="col-md-12">
-                    <h4>Policy du Client</h4>
-                    <div id = "policy_client"></div>
+                <h4>Policy du Client</h4>
+                <div id = "policy_client"></div>
 
-                </div>        
                 <p>#######################</p>
 
-                <div class="col-md-12">
-                    <h4>Relations entre Clients</h4>
-                    <div id = "relation_client"></div>
-                </div>   
-            
+                <h4>Relations entre Clients</h4>
+                <div id = "relation_client"></div>
+
             </div>
 
-            <div class="col-md-4">
+            <div class="col-md-4 border p-3 affiche">
                 <h4>Agenda du Client</h4>
                 <div id = "agenda_client"></div>
             </div>
-     
-        </div>
-     
-     </div>        
-
-</div>
+        </div>       
 
 
 {% endblock %}
