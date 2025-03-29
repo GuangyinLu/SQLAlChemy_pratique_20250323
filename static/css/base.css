@@ -32,14 +32,25 @@ body {
 }
 
 .navbar-nav li {
-    margin: 5 0;
-    padding: 0 0;
+    margin: 5px 0;
+    padding: 5px 5px;
     display: flex;
     align-items: center;
     justify-content: center;
     background-color: rgb(188, 205, 206);
     border-bottom: 5px solid #1a9c09e8; 
     border-radius: 20px;
+}
+
+.dropdown-menu li {
+    margin: 5px 0;
+    padding: 5px 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(188, 205, 206);
+    border-bottom: 5px solid #1a9c09e8; 
+    border-radius: 0;
 }
 
 .navbar-nav li a {

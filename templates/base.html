@@ -33,15 +33,21 @@
                     <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.login') }}">Login</a></li> 
                     <li class="nav-item"><a class="nav-link" href="{{ url_for('dashboard.get_policy_html') }}">Dashboard</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ url_for('profilClient.get_profilClient_html') }}">Profil du Clients</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('gestionClient.get_gestionClient_html') }}">Gestion de Clients</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('gestion_product') }}">Gestion de Product</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('gestion_vente') }}">Gestion de Vente</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('gestion_agent') }}">Gestion de Agent</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('gestion_facturation') }}">Gestion de Facturation</a></li>
-                    {% if current_user.role_str == "Admin" %}
-                        <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.register') }}">Gestion de users</a></li>
-                    {% endif %}
-                    
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Configuration
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="{{ url_for('gestionClient.get_gestionClient_html') }}">Gestion de Clients</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('gestion_product') }}">Gestion de Product</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('gestion_vente') }}">Gestion de Vente</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('gestion_agent') }}">Gestion de Agent</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('gestion_facturation') }}">Gestion de Facturation</a></li>
+                            {% if current_user.role_str == "Admin" %}
+                                <li><a class="dropdown-item" href="{{ url_for('auth.register') }}">Gestion de Users</a></li>
+                            {% endif %}
+                        </ul>
+                    </li>
                     <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a></li>   
                 {% endif %}
                 
@@ -53,10 +59,11 @@
         </div>
 
         <div class="footer">
-            <p>@ Guangyin Lu</p>
+            <p>@ Guangyin Lu  @ AssurSolution</p>
         </div>
 
         <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
 
         <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
 

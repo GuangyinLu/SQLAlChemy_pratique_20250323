@@ -127,9 +127,9 @@ def modifier_user():
 
         db.commit()
 
-        return jsonify({
-            "message": "User est modifie!"
-        })
+        #return jsonify({
+            #"message": "User est ajoute!"
+        #})
     
 @gestionClient_bp.route('/supprimer_user', methods=['GET', 'POST'])
 @login_required
@@ -142,5 +142,22 @@ def supprimer_user():
         db.delete(customer)
         db.commit()
         return jsonify({
-            "message": "User est supprimer!"
+            "message": "User est ajoute!"
         })
+    
+
+db = SessionLocal()
+customer = db.query(Customer).filter(Customer.customer_id== int("1")).first()
+
+if customer:
+    customer.name_first="Jean"
+    customer.name_middle=""
+    customer.name_last="Dupont"
+    customer.gender="Male"
+    customer.date_of_birth="1985-07-16"
+    customer.phone="0612345666"
+    customer.email="jean.dupont@email.com"
+    customer.address="12 Rue de Paris, France"
+    customer.id_card_number="FR123456789"
+
+    db.commit()

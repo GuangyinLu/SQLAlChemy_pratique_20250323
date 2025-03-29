@@ -7,71 +7,127 @@
 {% endblock %}
 
 {% block content %}
-    <div class="row">
-        <div class="col-md-12">
-            <h1>Gestion de Clients!</h1>            
-        </div>
-
-    </div>
+<div class="main">
+    <h2>Gestion de Clients!</h2>            
     
     <div class="row">
-        <div class="col-md-4">
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="form-check">
-                        <input type="radio" class="form-check-input" id="radio1" name="optradio" value="option1" checked>Modifier
-                        <label class="form-check-label" for="radio1"></label>
-                    </div>
+        <div class="col-md-4 border p-3 affiche">
+  
+            <div class="option_action">
+                <div class="form-check">
+                    <input type="radio" class="form-check-input" id="radio1" name="optradio" value="vue" checked>
+                    <label class="form-check-label" for="radio1">Vue</label>
                 </div>
-                <div class="col-md-4">
-                    <div class="form-check">
-                        <input type="radio" class="form-check-input" id="radio2" name="optradio" value="option2">Ajouter
-                        <label class="form-check-label" for="radio2"></label>
-                    </div>
+                <div class="form-check">
+                    <input type="radio" class="form-check-input" id="radio2" name="optradio" value="modifier">
+                    <label class="form-check-label" for="radio2">Modifier</label>
                 </div>
-                <div class="col-md-4">
-                    <div class="form-check">
-                        <input type="radio" class="form-check-input" id="radio3" name="optradio" value="option3">Supprimer
-                        <label class="form-check-label" for="radio3"></label>
-                      </div>
+                <div class="form-check">
+                    <input type="radio" class="form-check-input" id="radio3" name="optradio" value="ajouter">
+                    <label class="form-check-label" for="radio3">Ajouter</label>
                 </div>
+                <div class="form-check">
+                    <input type="radio" class="form-check-input" id="radio4" name="optradio" value="supprimer">
+                    <label class="form-check-label" for="radio4">Supprimer</label>
+                </div>
+            </div>
 
+            <div class="search_user">
+                <label>Recherche (Name,Phone,Email) </label>
+                <input type="text" id="searchBox" onkeyup="searchCustomers()" placeholder="Recherche...">
             </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <label>Recherche (Name,Phone,Email) </label>
-                    <input type="text" id="searchBox" onkeyup="searchCustomers()" placeholder="Recherche...">
-                    <div id="results"></div>
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th> ID</th>
-                                <th> Name</th>
-                                <th> Phone</th>
-                                <th> Email</th>
-                            </tr>
-                        </thead>
-                        <tbody class="client_search-table" id="search_results">
-                            <!-- AJAX 动态填充 -->
-                        </tbody>
-                    </table>
-                    
-                </div>
-            </div>
+                                
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr id="search_results_title"></tr>
+                </thead>
+                <tbody class="client_search-table" id="search_results">
+                    <!-- AJAX 动态填充 -->
+                </tbody>
+            </table>
+
         </div>
-        <div class="col-md-8">
-            <div class="row">
-                <div class="col-mt-12">
-                    <button class="left-btn">Modifier</button>
-                    <button class="right-btn">Ajouter</button>
+
+        <div class="col-md-8 border p-3 affiche">
+
+            <form id="customer-form" class="form-horizontal user_info row">
+                <div class="form-group row">
+                    <label for="Customer_ID" class="col-md-4 control-label">Customer_ID</label>
+                    <div class="col-md-4">
+                        <input type="number" class="form-control" name="Customer_ID" id="Customer_ID" disabled>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="name_first" class="col-md-4 control-label">Name_first</label>
+                    <div class="col-md-4">
+                        <input type="text" class="form-control" name="Name_first" id="name_first">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="name_middle" class="col-md-4 control-label">Name_middle</label>
+                    <div class="col-md-4">
+                        <input type="text" class="form-control" name="name_middle" id="name_middle">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="name_last" class="col-md-4 control-label">Name_last</label>
+                    <div class="col-md-4">
+                        <input type="text" class="form-control" name="name_last" id="name_last">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="gender_select" class="col-md-4 control-label">Gendre</label>
+                    <div class="col-md-4">
+                        <select class="form-control" id="gender_select">
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="date_of_birth" class="col-md-4 control-label">Birth_Day</label>
+                    <div class="col-md-4">
+                        <input type="date" class="form-control" name="date_of_birth" id="date_of_birth">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="phone" class="col-md-4 control-label">Phone</label>
+                    <div class="col-md-4">
+                        <input type="tel" class="form-control" name="phone" id="phone">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="email" class="col-md-4 control-label">Email</label>
+                    <div class="col-md-4">
+                        <input type="email" class="form-control" name="email" id="email">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="address" class="col-md-4 control-label">Address</label>
+                    <div class="col-md-4">
+                        <input type="text" class="form-control" name="address" id="address">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="id_card_number" class="col-md-4 control-label">Number_Card_ID</label>
+                    <div class="col-md-4">
+                        <input type="text" class="form-control" name="id_card_number" id="id_card_number">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10 btn-user">
+                      <button type="submit" class="btn btn-default border btn-user-conf">Confirmation</button>
+                    </div>
                 </div>
 
-            </div>
+            </form>
+
         </div>
     </div>
 
 
-
+</div>
 {% endblock %}
 
 {% block scripts %}
@@ -82,7 +138,7 @@
     function searchCustomers() {
         let query = document.getElementById('searchBox').value;
   
-        axios.get("search", {params: {query: query}})
+        axios.get("user_search", {params: {query: query}})
             .then(response => {
                 let rows = "";                
                 response.data.data.forEach(item => {                  
@@ -97,6 +153,15 @@
                 });                
                 document.getElementById("search_results").innerHTML = rows;
 
+                row_title = `
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Phone</th>
+                            <th>Email</th>
+                        </tr>
+                    `;
+                document.getElementById("search_results_title").innerHTML = row_title;
             });
     }
 
@@ -113,11 +178,22 @@
         row.classList.add('selected');
 
         // 调用其他函数并传递行数据
-        axios.get("customer_info", {params: {query: rowData.customer_id}})
+        axios.get("customer_per_info", {params: {query: rowData.customer_id}})
             .then(response => {
 
-                let customer_info ="";
-                response.data.customer.forEach(item =>{                    
+                //let customer_info ="";
+                response.data.customer.forEach(item =>{ 
+                    document.getElementById("Customer_ID").value = item.Customer_ID;
+                    document.getElementById("name_first").value = String(item.Name_first);
+                    document.getElementById("name_middle").value = String(item.Name_middle);
+                    document.getElementById("name_last").value = String(item.Name_last);
+                    document.getElementById('gender_select').value = String(item.Gendre);
+                    document.getElementById("date_of_birth").value = String(item.Birth_Day);
+                    document.getElementById("phone").value = String(item.Phone);
+                    document.getElementById("email").value = String(item.Email);
+                    document.getElementById("address").value = String(item.Address);
+                    document.getElementById("id_card_number").value = item.Number_Card_ID;
+                    /*
                     customer_info += `
                         <p>Customer_ID: ${item.Customer_ID}</p>
                         <p>Name: ${item.Name}</p>
@@ -129,56 +205,9 @@
                         <p>Number_Card_ID: ${item.Number_Card_ID}</p>
                         `;
                         document.getElementById("information_client").innerHTML = customer_info;
-
+*/
                     })    
-                    
-                let customer_policies_info ="";
-                response.data.policies_data.forEach(item =>{                    
-                    customer_policies_info += `
-                        <p>***</p>
-                        <p>Policy_number: ${item.Policy_number}</p>
-                        <p>Product_name: ${item.Product_name}</p>
-                        <p>Discount: ${item.Discount}</p>
-                        <p>Discount_type: ${item.Discount_type}</p>
-                        <p>Discount_niveau: ${item.Discount_niveau}</p>
-                        <p>Status: ${item.Status}</p>
-                        <p>Start_time: ${item.Start_time}</p>
-                        <p>End_time: ${item.End_time}</p>
-                        <p>Premium_amount: ${item.Premium_amount}</p>
-                        <p>Final_premium: ${item.Final_premium}</p>
-                        <p>Agent: ${item.Agent}</p>
-                        `;
-                        document.getElementById("policy_client").innerHTML = customer_policies_info;
-
-                    })   
-
-                let customer_relation_info ="";
-                response.data.relation.forEach(item =>{                    
-                    customer_relation_info += `
-                        <p>***</p>
-                        <p>Customer_ID: ${item.id}</p>
-                        <p>Name: ${item.Name}</p>
-                        <p>Phone: ${item.Phone}</p>
-                        <p>Email: ${item.Email}</p>
-                        <p>Relationship: ${item.Relationship}</p>
-                        `;
-                        document.getElementById("relation_client").innerHTML = customer_relation_info;
-
-                    })   
-
-                let customer_agenda_info ="";   
-                response.data.agenda_data.forEach(item =>{                    
-                    customer_agenda_info += `
-                        <p>***</p>
-                        <p>Date: ${item.Date}</p>
-                        <p>Agent: ${item.Agent}</p>
-                        <p>Description: ${item.Description}</p>
-                        <p>File: ${item.File}</p>
-                        `;
-                        document.getElementById("agenda_client").innerHTML = customer_agenda_info;
-
-                    })   
-
+                //document.getElementById("Customer_ID").value = String(response.data.customer.Customer_ID);
             });
         
         // 可选：添加选中样式
@@ -198,6 +227,56 @@
         alert(`你点击了: ${data.name}, 年龄 ${data.age}, 来自 ${data.city}`);
         // 这里可以添加你的其他处理逻辑
     }
+
+    //ajouter-modifier-supprimer
+    document.getElementById("customer-form").addEventListener("submit", function (event) {
+            event.preventDefault();
+            
+            let action = document.querySelector("input[name='optradio']:checked").value;
+            let query = document.getElementById("Customer_ID").value;
+            let Name_first = document.getElementById("name_first").value;
+            let Name_middle = document.getElementById("name_middle").value;
+            let Name_last = document.getElementById("name_last").value;
+            let Gendre = document.getElementById("gender_select").value;
+            let Birth_Day = document.getElementById("date_of_birth").value;
+            let Phone = document.getElementById("phone").value;
+            let Email = document.getElementById("email").value;
+            let address = document.getElementById("address").value;
+            let Number_Card_ID = document.getElementById("id_card_number").value;
+
+            let para_json = {
+                query: query,
+                Name_first: Name_first,
+                Name_middle: Name_middle,
+                Name_last: Name_last,
+                Gendre: Gendre,
+                Address: address,
+                Birth_Day: Birth_Day,
+                Phone: Phone,
+                Email: Email,
+                Number_Card_ID: Number_Card_ID
+            };
+            
+            if (action == "modifier") {
+                axios.post("modifier_user", para_json)
+                .then(response => {
+                    alert(response.data.message || response.data.error);
+                })
+                //.catch(error => console.error(error));
+            } else if (action == "ajouter") {
+                axios.post("ajouter_user", para_json)
+                .then(response => {
+                    alert(response.data.message || response.data.error);
+                })
+                //.catch(error => console.error(error));
+            } else if (action == "suprimer") {
+                axios.post("supprimer_user", para_json)
+                .then(response => {
+                    alert(response.data.message || response.data.error);
+                })
+                //.catch(error => console.error(error));
+            }
+        });
 
 </script>
 
