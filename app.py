@@ -7,11 +7,17 @@ from routes.policies import policy_bp
 from routes.dashboard import dashboard_bp
 from routes.profilClient import profilClient_bp
 from routes.gestionClient import gestionClient_bp
+from routes.gestionProduct import gestionProduct_bp
+from routes.gestionDiscount import gestionDiscount_bp
+from routes.gestionAgent import gestionAgent_bp
+from routes.gestionVente import gestionVente_bp
 from models import User, init_db
 from database import SessionLocal
 
 app = Flask(__name__)
 app.secret_key = "your_secret_key"
+app.config['SESSION_PERMANENT'] = False
+app.config['SESSION_COOKIE_DURATION'] = None
 
 init_db()
 
@@ -25,6 +31,10 @@ app.register_blueprint(policy_bp, url_prefix="/policies")
 app.register_blueprint(dashboard_bp, url_prefix="/dashboard")
 app.register_blueprint(profilClient_bp, url_prefix="/profilClient")
 app.register_blueprint(gestionClient_bp, url_prefix="/gestionClient")
+app.register_blueprint(gestionProduct_bp, url_prefix="/gestionProduct")
+app.register_blueprint(gestionDiscount_bp, url_prefix="/gestionDiscount")
+app.register_blueprint(gestionAgent_bp, url_prefix="/gestionAgent")
+app.register_blueprint(gestionVente_bp, url_prefix="/gestionVente")
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -36,6 +46,7 @@ def load_user(user_id):
 @app.route('/')
 def index():
     return render_template('login.html')
+
 
 @app.route('/dashboard')
 @login_required
@@ -50,7 +61,7 @@ def gestion_client():
 @app.route('/gestion_product')
 @login_required
 def gestion_product():
-    return render_template('gestion_product.html')
+    return render_template('gestionProduct.html')
 
 @app.route('/gestion_vente')
 @login_required

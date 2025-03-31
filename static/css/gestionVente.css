@@ -1,0 +1,126 @@
+.main {
+    height: 87%;
+}
+
+.affiche {
+    /*height: 80%;*/
+    height: 80vh;
+    display: block;
+    overflow: auto;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    justify-items: center;
+}
+
+.option_action {
+    display: flex;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+
+}
+
+.form-check {
+    padding: 5px 0px;
+    margin: 5px 20px 30px;
+    font-weight: bold;
+}
+
+.search_menu label {
+    font-weight: bold;
+    color: blue;
+    font-size: 18px;
+}
+
+.search_user, .search_product, .search_discount, .search_agent, .search_policy {
+    display: block;
+    width: 100%;
+    height: 25vh;
+    font-size: 12px;
+    overflow-y: auto;
+}
+
+.search_user_label, .search_product_label, .search_discount_label, .search_agent_label, .search_policy_label {
+    background-color:rgb(235, 207, 207);
+}
+
+.table {
+    background-color: rgba(232, 242, 232, 0);
+    display: block;
+    overflow: auto;
+}
+
+.table td{
+    background-color: rgba(232, 242, 232, 0);
+    overflow: auto; 
+    padding: 5px;
+}
+
+.table th{
+    background-color: rgba(232, 242, 232, 0);
+    overflow: auto;
+    
+}
+
+.table tr:hover {
+    background-color: #bfc1d8;
+    color: #ff0000; /* 字体颜色变为红色 */
+    cursor: pointer;
+}
+
+/* 可选：点击后的样式 */
+.table tr:active {
+    background-color: #e0e0e0;
+}
+
+.client_search-table {
+    height: auto;
+}
+
+.client_search-table tr:hover {
+    background-color: #bdc5e7e7;
+    cursor: pointer;
+}
+
+.client_search-table tr.selected {
+    background-color: #afd7ad;
+    font-weight: bold;
+}
+
+.user_info, .product_info, .agent_info, .discount_info, .policy_info {
+    margin: 5px;
+    padding: 20px 20px;
+    background-color: #afd7ad;
+    border-radius: 30px;
+}
+
+.form-group {
+    padding: 5px;
+   
+}
+
+.form-group label {
+    font-weight: bold;
+    text-align: left;
+    padding: 0 0 0 0;
+    display: flex;
+    align-items: center;
+    color:black;
+}
+
+.form-group input,.form-group select,.form-group textarea {
+    color:blue;
+    font-weight: bold;
+    font-size: 14px;
+
+}
+
+.btn-user {
+    margin: 50px 0;
+}
+
+h4 {
+    font-weight: bold;
+    color: #ff0000;
+}

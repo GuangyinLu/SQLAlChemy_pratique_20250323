@@ -1,14 +1,14 @@
 {% extends 'base.html' %}
 
-{% block title %}Gestion de Clients{% endblock %}
+{% block title %}Gestion de Produit{% endblock %}
 
 {% block css %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/gestionClient.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/gestionDiscount.css') }}">
 {% endblock %}
 
 {% block content %}
 <div class="main">
-    <h2>Gestion de Clients!</h2>            
+    <h2>Gestion de Discount!</h2>            
     
     <div class="row">
         <div class="col-md-4 border p-3 affiche">
@@ -33,7 +33,7 @@
             </div>
 
             <div class="search_user">
-                <label>Recherche (Name,Phone,Email) </label>
+                <label>Recherche (Name,Type,Value...) </label>
                 <input type="text" id="searchBox" onkeyup="searchCustomers()" placeholder="Recherche...">
             </div>
                                 
@@ -50,69 +50,44 @@
 
         <div class="col-md-8 border p-3 affiche">
 
-            <form id="customer-form" class="form-horizontal user_info row">
+            <form id="discount-form" class="form-horizontal user_info row">
                 <div class="form-group row">
-                    <label for="Customer_ID" class="col-md-4 control-label">Customer_ID</label>
+                    <label for="discount_id" class="col-md-4 control-label">Discount_id</label>
                     <div class="col-md-4">
-                        <input type="number" class="form-control" name="Customer_ID" id="Customer_ID" disabled>
+                        <input type="number" class="form-control" name="discount_id" id="discount_id" disabled>
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="name_first" class="col-md-4 control-label">Name_first</label>
+                    <label for="discount_name" class="col-md-4 control-label">Discount_name</label>
                     <div class="col-md-4">
-                        <input type="text" class="form-control" name="Name_first" id="name_first">
+                        <input type="text" class="form-control" name="discount_name" id="discount_name">
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="name_middle" class="col-md-4 control-label">Name_middle</label>
+                    <label for="discount_type" class="col-md-4 control-label">Discount_type</label>
                     <div class="col-md-4">
-                        <input type="text" class="form-control" name="name_middle" id="name_middle">
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="name_last" class="col-md-4 control-label">Name_last</label>
-                    <div class="col-md-4">
-                        <input type="text" class="form-control" name="name_last" id="name_last">
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="gender_select" class="col-md-4 control-label">Gendre</label>
-                    <div class="col-md-4">
-                        <select class="form-control" id="gender_select">
-                            <option value="Male">Male</option>
-                            <option value="Female">Female</option>
-                            <option value="Other">Other</option>>
+                        <select class="form-control" id="discount_type">
+                            <option value="Fixed">Fixed Amount</option>
+                            <option value="Percentage">Percentage</option>
                         </select>
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="date_of_birth" class="col-md-4 control-label">Birth_Day</label>
+                    <label for="discount_value" class="col-md-4 control-label">Discount_value</label>
                     <div class="col-md-4">
-                        <input type="date" class="form-control" name="date_of_birth" id="date_of_birth">
+                        <input type="number" class="form-control" name="discount_value" id="discount_value">
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="phone" class="col-md-4 control-label">Phone</label>
+                    <label for="start_date" class="col-md-4 control-label">Start_date</label>
                     <div class="col-md-4">
-                        <input type="tel" class="form-control" name="phone" id="phone">
+                        <input type="date" class="form-control" name="start_date" id="start_date">
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="email" class="col-md-4 control-label">Email</label>
+                    <label for="end_date" class="col-md-4 control-label">End_date</label>
                     <div class="col-md-4">
-                        <input type="email" class="form-control" name="email" id="email">
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="address" class="col-md-4 control-label">Address</label>
-                    <div class="col-md-4">
-                        <input type="text" class="form-control" name="address" id="address">
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="id_card_number" class="col-md-4 control-label">Number_Card_ID</label>
-                    <div class="col-md-4">
-                        <input type="text" class="form-control" name="id_card_number" id="id_card_number">
+                        <input type="date" class="form-control" name="end_date" id="end_date">
                     </div>
                 </div>
                 <div class="form-group">
@@ -138,16 +113,16 @@
     function searchCustomers() {
         let query = document.getElementById('searchBox').value;
   
-        axios.get("user_search", {params: {query: query}})
+        axios.get("discount_search", {params: {query: query}})
             .then(response => {
                 let rows = "";                
                 response.data.data.forEach(item => {                  
                     rows += `
                         <tr  onclick="handleRowClick(this)" data-id="${item.id}">
-                            <td>${item.id}</td>
-                            <td>${item.name}</td>
-                            <td>${item.phone}</td>
-                            <td>${item.email}</td>
+                            <td>${item.discount_id}</td>
+                            <td>${item.discount_name}</td>
+                            <td>${item.discount_type}</td>
+                            <td>${item.discount_value}</td>
                         </tr>
                     `;
                 });                
@@ -157,8 +132,8 @@
                         <tr>
                             <th>ID</th>
                             <th>Name</th>
-                            <th>Phone</th>
-                            <th>Email</th>
+                            <th>Type</th>
+                            <th>Value</th>
                         </tr>
                     `;
                 document.getElementById("search_results_title").innerHTML = row_title;
@@ -170,7 +145,7 @@
         // 获取行数据
         const cells = row.cells;
         const rowData = {
-            customer_id: cells[0].textContent
+            discount_id: cells[0].textContent
         };
        
         // 更新选中行样式
@@ -178,22 +153,15 @@
         row.classList.add('selected');
 
         // 调用其他函数并传递行数据
-        axios.get("customer_per_info", {params: {query: rowData.customer_id}})
-            .then(response => {
-
-                //let customer_info ="";
-                response.data.customer.forEach(item =>{ 
-                    document.getElementById("Customer_ID").value = item.Customer_ID;
-                    document.getElementById("name_first").value = String(item.Name_first);
-                    document.getElementById("name_middle").value = String(item.Name_middle);
-                    document.getElementById("name_last").value = String(item.Name_last);
-                    document.getElementById('gender_select').value = String(item.Gendre);
-                    document.getElementById("date_of_birth").value = String(item.Birth_Day);
-                    document.getElementById("phone").value = String(item.Phone);
-                    document.getElementById("email").value = String(item.Email);
-                    document.getElementById("address").value = String(item.Address);
-                    document.getElementById("id_card_number").value = item.Number_Card_ID;
-
+        axios.get("discount_per_info", {params: {query: rowData.discount_id}})
+            .then(response => {                
+                response.data.discount.forEach(item =>{ 
+                    document.getElementById("discount_id").value = item.discount_id;
+                    document.getElementById("discount_name").value = String(item.discount_name);
+                    document.getElementById("discount_type").value = item.discount_type;
+                    document.getElementById("discount_value").value = item.discount_value;
+                    document.getElementById('start_date').value = String(item.start_date);
+                    document.getElementById("end_date").value = String(item.end_date);
                     })    
                 
             });
@@ -217,57 +185,56 @@
     }
 
     //ajouter-modifier-supprimer
-    document.getElementById("customer-form").addEventListener("submit", function (event) {
+    document.getElementById("discount-form").addEventListener("submit", function (event) {
             event.preventDefault();
             
             let action = document.querySelector("input[name='optradio']:checked").value;
-            let query = document.getElementById("Customer_ID").value;
-            let Name_first = document.getElementById("name_first").value;
-            let Name_middle = document.getElementById("name_middle").value;
-            let Name_last = document.getElementById("name_last").value;
-            let Gendre = document.getElementById("gender_select").value;
-            let Birth_Day = document.getElementById("date_of_birth").value;
-            let Phone = document.getElementById("phone").value;
-            let Email = document.getElementById("email").value;
-            let address = document.getElementById("address").value;
-            let Number_Card_ID = document.getElementById("id_card_number").value;
+            let query = document.getElementById("discount_id").value;
+            let discount_name = document.getElementById("discount_name").value;
+            let discount_type = document.getElementById("discount_type").value;
+            let discount_value = document.getElementById("discount_value").value;
+            let start_date = document.getElementById("start_date").value;
+            let end_date = document.getElementById("end_date").value;
 
             let para_json = {
                 query: query,
-                Name_first: Name_first,
-                Name_middle: Name_middle,
-                Name_last: Name_last,
-                Gendre: Gendre,
-                Address: address,
-                Birth_Day: Birth_Day,
-                Phone: Phone,
-                Email: Email,
-                Number_Card_ID: Number_Card_ID
+                discount_name: discount_name,
+                discount_type: discount_type,
+                discount_value: discount_value,
+                start_date: start_date,
+                end_date: end_date
             };
             
             if (action == "modifier") {
-                axios.post("modifier_user", para_json)
+                axios.post("modifier_discount", para_json)
                 .then(response => {
                     alert(response.data.message || response.data.error);
                 })
                 .catch(error => console.error(error));
             } else if (action == "ajouter") {
-                axios.post("ajouter_user", para_json)
+                axios.post("ajouter_discount", para_json)
                 .then(response => {
                     alert(response.data.message || response.data.error);
                 })
                 .catch(error => console.error(error));
             } else if (action == "supprimer") {
-                axios.post("supprimer_user", para_json)
+                axios.post("supprimer_discount", para_json)
                 .then(response => {
                     alert(response.data.message || response.data.error);
                 })
                 .catch(error => console.error(error));
             }
 
-            document.querySelector(`input[name="optradio"][value="vue"]`).checked = true
-        });
+            document.querySelector(`input[name="optradio"][value="vue"]`).checked = true;
 
+        });
+    
+    // ratio option change
+    document.querySelectorAll('input[name="optradio"]').forEach((radio) => {
+        radio.addEventListener("change", function () {
+            searchCustomers();
+        });
+});
 </script>
 
 

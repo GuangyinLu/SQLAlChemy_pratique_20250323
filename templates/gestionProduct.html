@@ -1,14 +1,14 @@
 {% extends 'base.html' %}
 
-{% block title %}Gestion de Clients{% endblock %}
+{% block title %}Gestion de Produit{% endblock %}
 
 {% block css %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/gestionClient.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/gestionProduct.css') }}">
 {% endblock %}
 
 {% block content %}
 <div class="main">
-    <h2>Gestion de Clients!</h2>            
+    <h2>Gestion de Produits!</h2>            
     
     <div class="row">
         <div class="col-md-4 border p-3 affiche">
@@ -33,7 +33,7 @@
             </div>
 
             <div class="search_user">
-                <label>Recherche (Name,Phone,Email) </label>
+                <label>Recherche (Product,Category,Desc...) </label>
                 <input type="text" id="searchBox" onkeyup="searchCustomers()" placeholder="Recherche...">
             </div>
                                 
@@ -50,69 +50,41 @@
 
         <div class="col-md-8 border p-3 affiche">
 
-            <form id="customer-form" class="form-horizontal user_info row">
+            <form id="product-form" class="form-horizontal user_info row">
                 <div class="form-group row">
-                    <label for="Customer_ID" class="col-md-4 control-label">Customer_ID</label>
+                    <label for="product_id" class="col-md-4 control-label">Product_id</label>
                     <div class="col-md-4">
-                        <input type="number" class="form-control" name="Customer_ID" id="Customer_ID" disabled>
+                        <input type="number" class="form-control" name="product_id" id="product_id" disabled>
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="name_first" class="col-md-4 control-label">Name_first</label>
+                    <label for="product_name" class="col-md-4 control-label">Product_name</label>
                     <div class="col-md-4">
-                        <input type="text" class="form-control" name="Name_first" id="name_first">
+                        <input type="text" class="form-control" name="product_name" id="product_name">
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="name_middle" class="col-md-4 control-label">Name_middle</label>
+                    <label for="category" class="col-md-4 control-label">Category</label>
                     <div class="col-md-4">
-                        <input type="text" class="form-control" name="name_middle" id="name_middle">
+                        <input type="text" class="form-control" name="category" id="category">
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="name_last" class="col-md-4 control-label">Name_last</label>
+                    <label for="coverage_amount" class="col-md-4 control-label">Coverage_amount</label>
                     <div class="col-md-4">
-                        <input type="text" class="form-control" name="name_last" id="name_last">
+                        <input type="number" class="form-control" name="coverage_amount" id="coverage_amount">
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="gender_select" class="col-md-4 control-label">Gendre</label>
+                    <label for="premium" class="col-md-4 control-label">Premium</label>
                     <div class="col-md-4">
-                        <select class="form-control" id="gender_select">
-                            <option value="Male">Male</option>
-                            <option value="Female">Female</option>
-                            <option value="Other">Other</option>>
-                        </select>
+                        <input type="number" class="form-control" name="premium" id="premium">
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="date_of_birth" class="col-md-4 control-label">Birth_Day</label>
+                    <label for="description" class="col-md-4 control-label">Description</label>
                     <div class="col-md-4">
-                        <input type="date" class="form-control" name="date_of_birth" id="date_of_birth">
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="phone" class="col-md-4 control-label">Phone</label>
-                    <div class="col-md-4">
-                        <input type="tel" class="form-control" name="phone" id="phone">
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="email" class="col-md-4 control-label">Email</label>
-                    <div class="col-md-4">
-                        <input type="email" class="form-control" name="email" id="email">
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="address" class="col-md-4 control-label">Address</label>
-                    <div class="col-md-4">
-                        <input type="text" class="form-control" name="address" id="address">
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="id_card_number" class="col-md-4 control-label">Number_Card_ID</label>
-                    <div class="col-md-4">
-                        <input type="text" class="form-control" name="id_card_number" id="id_card_number">
+                        <input type="text" class="form-control" name="description" id="description">
                     </div>
                 </div>
                 <div class="form-group">
@@ -138,16 +110,16 @@
     function searchCustomers() {
         let query = document.getElementById('searchBox').value;
   
-        axios.get("user_search", {params: {query: query}})
+        axios.get("produit_search", {params: {query: query}})
             .then(response => {
                 let rows = "";                
                 response.data.data.forEach(item => {                  
                     rows += `
                         <tr  onclick="handleRowClick(this)" data-id="${item.id}">
-                            <td>${item.id}</td>
-                            <td>${item.name}</td>
-                            <td>${item.phone}</td>
-                            <td>${item.email}</td>
+                            <td>${item.product_id}</td>
+                            <td>${item.product_name}</td>
+                            <td>${item.category}</td>
+                            <td>${item.description}</td>
                         </tr>
                     `;
                 });                
@@ -157,8 +129,8 @@
                         <tr>
                             <th>ID</th>
                             <th>Name</th>
-                            <th>Phone</th>
-                            <th>Email</th>
+                            <th>Category</th>
+                            <th>Desc</th>
                         </tr>
                     `;
                 document.getElementById("search_results_title").innerHTML = row_title;
@@ -170,7 +142,7 @@
         // 获取行数据
         const cells = row.cells;
         const rowData = {
-            customer_id: cells[0].textContent
+            product_id: cells[0].textContent
         };
        
         // 更新选中行样式
@@ -178,22 +150,15 @@
         row.classList.add('selected');
 
         // 调用其他函数并传递行数据
-        axios.get("customer_per_info", {params: {query: rowData.customer_id}})
-            .then(response => {
-
-                //let customer_info ="";
-                response.data.customer.forEach(item =>{ 
-                    document.getElementById("Customer_ID").value = item.Customer_ID;
-                    document.getElementById("name_first").value = String(item.Name_first);
-                    document.getElementById("name_middle").value = String(item.Name_middle);
-                    document.getElementById("name_last").value = String(item.Name_last);
-                    document.getElementById('gender_select').value = String(item.Gendre);
-                    document.getElementById("date_of_birth").value = String(item.Birth_Day);
-                    document.getElementById("phone").value = String(item.Phone);
-                    document.getElementById("email").value = String(item.Email);
-                    document.getElementById("address").value = String(item.Address);
-                    document.getElementById("id_card_number").value = item.Number_Card_ID;
-
+        axios.get("product_per_info", {params: {query: rowData.product_id}})
+            .then(response => {                
+                response.data.product.forEach(item =>{ 
+                    document.getElementById("product_id").value = item.product_id;
+                    document.getElementById("product_name").value = String(item.product_name);
+                    document.getElementById("category").value = String(item.category);
+                    document.getElementById("coverage_amount").value = item.coverage_amount;
+                    document.getElementById('premium').value = item.premium;
+                    document.getElementById("description").value = String(item.description);
                     })    
                 
             });
@@ -217,57 +182,56 @@
     }
 
     //ajouter-modifier-supprimer
-    document.getElementById("customer-form").addEventListener("submit", function (event) {
+    document.getElementById("product-form").addEventListener("submit", function (event) {
             event.preventDefault();
             
             let action = document.querySelector("input[name='optradio']:checked").value;
-            let query = document.getElementById("Customer_ID").value;
-            let Name_first = document.getElementById("name_first").value;
-            let Name_middle = document.getElementById("name_middle").value;
-            let Name_last = document.getElementById("name_last").value;
-            let Gendre = document.getElementById("gender_select").value;
-            let Birth_Day = document.getElementById("date_of_birth").value;
-            let Phone = document.getElementById("phone").value;
-            let Email = document.getElementById("email").value;
-            let address = document.getElementById("address").value;
-            let Number_Card_ID = document.getElementById("id_card_number").value;
+            let query = document.getElementById("product_id").value;
+            let product_name = document.getElementById("product_name").value;
+            let category = document.getElementById("category").value;
+            let coverage_amount = document.getElementById("coverage_amount").value;
+            let premium = document.getElementById("premium").value;
+            let description = document.getElementById("description").value;
 
             let para_json = {
                 query: query,
-                Name_first: Name_first,
-                Name_middle: Name_middle,
-                Name_last: Name_last,
-                Gendre: Gendre,
-                Address: address,
-                Birth_Day: Birth_Day,
-                Phone: Phone,
-                Email: Email,
-                Number_Card_ID: Number_Card_ID
+                product_name: product_name,
+                category: category,
+                coverage_amount: coverage_amount,
+                premium: premium,
+                description: description
             };
             
             if (action == "modifier") {
-                axios.post("modifier_user", para_json)
+                axios.post("modifier_product", para_json)
                 .then(response => {
                     alert(response.data.message || response.data.error);
                 })
                 .catch(error => console.error(error));
             } else if (action == "ajouter") {
-                axios.post("ajouter_user", para_json)
+                axios.post("ajouter_product", para_json)
                 .then(response => {
                     alert(response.data.message || response.data.error);
                 })
                 .catch(error => console.error(error));
             } else if (action == "supprimer") {
-                axios.post("supprimer_user", para_json)
+                axios.post("supprimer_product", para_json)
                 .then(response => {
                     alert(response.data.message || response.data.error);
                 })
                 .catch(error => console.error(error));
             }
 
-            document.querySelector(`input[name="optradio"][value="vue"]`).checked = true
-        });
+            document.querySelector(`input[name="optradio"][value="vue"]`).checked = true;
 
+        });
+    
+    // ratio option change
+    document.querySelectorAll('input[name="optradio"]').forEach((radio) => {
+        radio.addEventListener("change", function () {
+            searchCustomers();
+        });
+});
 </script>
 
 

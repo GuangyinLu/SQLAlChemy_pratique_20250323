@@ -33,15 +33,19 @@
                     <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.login') }}">Login</a></li> 
                     <li class="nav-item"><a class="nav-link" href="{{ url_for('dashboard.get_policy_html') }}">Dashboard</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ url_for('profilClient.get_profilClient_html') }}">Profil du Clients</a></li>
+                    <li><a class="dropdown-item" href="{{ url_for('gestionVente.get_gestionVente_html') }}">Gestion de Vente</a></li>     
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Configuration
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                             <li><a class="dropdown-item" href="{{ url_for('gestionClient.get_gestionClient_html') }}">Gestion de Clients</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('gestion_product') }}">Gestion de Product</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('gestion_vente') }}">Gestion de Vente</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('gestion_agent') }}">Gestion de Agent</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('gestionProduct.get_gestionProduct_html') }}">Gestion de Product</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('gestionDiscount.get_gestionDiscount_html') }}">Gestion de Discount</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('gestionAgent.get_gestionAgent_html') }}">Gestion de Agent</a></li>                       
+                            <li><a class="dropdown-item" href="{{ url_for('gestionAgent.get_gestionAgent_html') }}">Gestion de Policy</a></li>  
+                            <li><a class="dropdown-item" href="{{ url_for('gestionAgent.get_gestionAgent_html') }}">Gestion de Agenda</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('gestionAgent.get_gestionAgent_html') }}">Gestion de Fichier_PDF</a></li>    
                             <li><a class="dropdown-item" href="{{ url_for('gestion_facturation') }}">Gestion de Facturation</a></li>
                             {% if current_user.role_str == "Admin" %}
                                 <li><a class="dropdown-item" href="{{ url_for('auth.register') }}">Gestion de Users</a></li>
@@ -59,7 +63,7 @@
         </div>
 
         <div class="footer">
-            <p>@ Guangyin Lu  @ AssurSolution</p>
+            <p> @ AssurSolution</p>
         </div>
 
         <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>

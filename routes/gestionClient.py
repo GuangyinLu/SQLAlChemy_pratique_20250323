@@ -115,6 +115,7 @@ def modifier_user():
     customer = db.query(Customer).filter(Customer.customer_id==query_para).first()
 
     if customer:
+
         customer.name_first=query_Name_first
         customer.name_middle=query_Name_middle
         customer.name_last=query_Name_last
@@ -136,7 +137,9 @@ def modifier_user():
 def supprimer_user():
     db = SessionLocal()
     query_para = request.get_json().get('query', '')
-    customer = db.query(Customer).filter_by(Customer_ID=query_para).first()
+
+    print(query_para)
+    customer = db.query(Customer).filter(Customer.customer_id==query_para).first()
 
     if customer:
         db.delete(customer)

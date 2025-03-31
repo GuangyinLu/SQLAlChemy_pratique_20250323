@@ -21,7 +21,7 @@ class GenderEnum(Enum):
     Other = 'Other'
 
 class DiscountTypeEnum(Enum):
-    Fixed = 'Fixed Amount'
+    Fixed = 'Fixed'
     Percentage = 'Percentage'
 
 class PolicyStatusEnum(Enum):
@@ -79,16 +79,7 @@ class User(Base, UserMixin):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
-'''
-class Customer(Base):
-    __tablename__ = 'customers'
-    id = Column(Integer, primary_key=True)
-    customer_id = Column(String(50), unique=True, nullable=False)
-    first_name = Column(String(100), nullable=False)
-    last_name = Column(String(100), nullable=False)
-    phone = Column(String(20), unique=True, nullable=False)
-    email = Column(String(100), unique=True, nullable=False)
-'''
+
 class Customer(Base):
     __tablename__ = 'customers'
     customer_id = Column(Integer, primary_key=True, autoincrement=True)

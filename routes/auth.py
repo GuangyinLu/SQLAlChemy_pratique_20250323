@@ -1,5 +1,5 @@
 from datetime import datetime, timezone
-from flask import Blueprint, request, render_template, redirect, url_for, flash, jsonify
+from flask import Blueprint, request, render_template, redirect, url_for, flash, jsonify,session
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from database import SessionLocal
@@ -40,6 +40,7 @@ def login():
     
         if user and user.check_password(data["password"]):
             login_user(user)
+            session.permanent = False
             #return jsonify({"message": "登录成功"}), 200
             return redirect(url_for('dashboard.get_policy_html'))
             #return render_template('dashboard.html')
@@ -51,6 +52,7 @@ def login():
 @login_required
 def logout():
     logout_user()
+    session.clear()
     #return jsonify({"message": "已登出"}), 200
     return render_template('login.html')
 
