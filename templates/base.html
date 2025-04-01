@@ -43,8 +43,8 @@
                             <li><a class="dropdown-item" href="{{ url_for('gestionProduct.get_gestionProduct_html') }}">Gestion de Product</a></li>
                             <li><a class="dropdown-item" href="{{ url_for('gestionDiscount.get_gestionDiscount_html') }}">Gestion de Discount</a></li>
                             <li><a class="dropdown-item" href="{{ url_for('gestionAgent.get_gestionAgent_html') }}">Gestion de Agent</a></li>                       
-                            <li><a class="dropdown-item" href="{{ url_for('gestionAgent.get_gestionAgent_html') }}">Gestion de Policy</a></li>  
-                            <li><a class="dropdown-item" href="{{ url_for('gestionAgent.get_gestionAgent_html') }}">Gestion de Agenda</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('gestionVente.get_gestionVente_html') }}">Gestion de Policy</a></li>  
+                            <li><a class="dropdown-item" href="{{ url_for('gestionAgenda.get_gestionAgenda_html') }}">Gestion de Agenda</a></li>
                             <li><a class="dropdown-item" href="{{ url_for('gestionAgent.get_gestionAgent_html') }}">Gestion de Fichier_PDF</a></li>    
                             <li><a class="dropdown-item" href="{{ url_for('gestion_facturation') }}">Gestion de Facturation</a></li>
                             {% if current_user.role_str == "Admin" %}

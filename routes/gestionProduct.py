@@ -11,9 +11,9 @@ gestionProduct_bp = Blueprint('gestionProduct', __name__)
 def get_gestionProduct_html():
     return render_template("gestionProduct.html")
 
-@gestionProduct_bp.route('/produit_search', methods=['GET'])
+@gestionProduct_bp.route('/product_search', methods=['GET'])
 @login_required
-def produit_search():
+def product_search():
     db = SessionLocal()
     query_client = request.args.get('query', '')
 

@@ -1,0 +1,291 @@
+{% extends 'base.html' %}
+
+{% block title %}Gestion de Produit{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/gestionAgenda.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="main">
+    <h2>Gestion de Agenda!</h2>            
+    
+    <div class="row">
+        <div class="col-md-4 border p-3 affiche">
+  
+            <div class="option_action">
+                <div class="form-check">
+                    <input type="radio" class="form-check-input" id="radio1" name="optradio" value="vue" checked>
+                    <label class="form-check-label" for="radio1">Vue</label>
+                </div>
+                <div class="form-check">
+                    <input type="radio" class="form-check-input" id="radio2" name="optradio" value="modifier">
+                    <label class="form-check-label" for="radio2">Modifier</label>
+                </div>
+                <div class="form-check">
+                    <input type="radio" class="form-check-input" id="radio3" name="optradio" value="ajouter">
+                    <label class="form-check-label" for="radio3">Ajouter</label>
+                </div>
+                <div class="form-check">
+                    <input type="radio" class="form-check-input" id="radio4" name="optradio" value="supprimer">
+                    <label class="form-check-label" for="radio4">Supprimer</label>
+                </div>
+            </div>
+
+            <div class="search_user search_menu">
+                <label>(Name,Phone,Email...) </label>
+                <input type="text" id="searchBox" onkeyup="searchCustomers()" placeholder="Recherche...">
+            </div>
+                                
+            <table class="table table-bordered table-striped search_menu_sub" id="agenda_user_list" data-type="user_list">
+                <thead>
+                    <tr id="search_results_title"></tr>
+                </thead>
+                <tbody class="client_search-table" id="search_results">
+                    <!-- AJAX 动态填充 -->
+                </tbody>
+            </table>
+
+        </div>
+
+        <div class="col-md-8 border p-3 affiche">
+            
+            <div class="border table-responsive-md agenda_list">
+                <table class="table table-bordered table-striped agenda_list " id="agenda_list" data-type="agenda_list">
+                    <thead>
+                        <tr id="search_agenda_results_title"></tr>
+                    </thead>
+                    <tbody class="client_search-table" id="search_agenda_results">
+                        <!-- AJAX 动态填充 -->
+                    </tbody>
+                </table>
+            </div>
+
+            <form id="agent-form" class="form-horizontal"></form>
+                <div class="form-group-user border agenda_per_info row">
+                    <div class="form-group row">
+                        <label for="log_agenda_id" class="col-md-2 control-label">ID</label>
+                        <div class="col-md-2">
+                            <input type="number" class="form-control" name="log_agenda_id" id="log_agenda_id" disabled>
+                        </div>
+                        <label for="meeting_date" class="col-md-1 offset-md-3 control-label">Date</label>
+                        <div class="col-md-4">
+                            <input type="date" class="form-control" name="meeting_date" id="meeting_date">
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="customer_id" class="col-md-2 control-label">Customer_id</label>
+                        <div class="col-md-2">
+                            <input type="number" class="form-control" name="customer_id" id="customer_id">
+                        </div>
+                        <label for="customer_name" class="col-md-2 offset-md-2 control-label">Customer_name</label>
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" list="suggestion_user" name="customer_name" id="customer_name">
+                            <datalist id="suggestion_user"></datalist>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="agent_id" class="col-md-2 control-label">Agent_id</label>
+                        <div class="col-md-2">
+                            <input type="tel" class="form-control" name="agent_id" id="agent_id">
+                        </div>
+                        <label for="agent_name" class="col-md-2 offset-md-2 control-label">Agent_name</label>
+                        <div class="col-md-4">
+                            <input type="email" class="form-control" list="suggestion_agent" name="agent_name" id="agent_name">
+                            <datalist id="suggestion_agent"></datalist>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="description" class="col-md-2 control-label">description</label>
+                        <div class="col-md-9">
+                            <textarea id="description" rows="15" cols="62" ></textarea>    
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-10 btn-user">
+                            <button type="submit" class="btn btn-default btn-danger border btn-user-conf">Confirmation</button>
+                        </div>
+                    </div>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+
+<script src="{{ url_for('static', filename='js/axios.min.js') }}"></script>
+
+<script>
+    function searchCustomers() {
+        let query = document.getElementById('searchBox').value;
+  
+        axios.get("/gestionClient/user_search", {params: {query: query}})
+            .then(response => {
+                let rows = "";                
+                response.data.data.forEach(item => {                  
+                    rows += `
+                        <tr  onclick="handleRowClick(this)" data-id="${item.id}">
+                            <td>${item.id}</td>
+                            <td>${item.name}</td>
+                            <td>${item.phone}</td>
+                            <td>${item.email}</td>
+                        </tr>
+                    `;
+                });                
+                document.getElementById("search_results").innerHTML = rows;
+
+                row_title = `
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Phone</th>
+                            <th>Email</th>
+                        </tr>
+                    `;
+                document.getElementById("search_results_title").innerHTML = row_title;
+            });
+    }
+
+    // 处理行点击事件的函数
+    function handleRowClick(row) {
+        // 获取行数据
+        const cells = row.cells;
+        const rowData = {
+            id: cells[0].textContent
+        };
+        let tableType = $(row).closest("table").attr("data-type");
+       
+        // 更新选中行样式
+        clearSelectedRows();
+        row.classList.add('selected');
+
+        // 调用其他函数并传递行数据
+        if (tableType === "user_list") {
+            axios.get("user_agenda_search", {params: {query: rowData.id}})
+            .then(response => {
+                let rows = "";                
+                response.data.data.forEach(item => {                  
+                    rows += `
+                        <tr  onclick="handleRowClick(this)" data-id="${item.id}">
+                            <td>${item.log_agenda_id}</td>
+                            <td>${item.customer_name}</td>
+                            <td>${item.agent_name}</td>
+                            <td>${item.meeting_date}</td>
+                            <td>${item.description}</td>
+                        </tr>
+                    `;
+                });                
+                document.getElementById("search_agenda_results").innerHTML = rows;
+
+                row_title = `
+                        <tr>
+                            <th style="width: 8%">ID</th>
+                            <th style="width: 22%">Customer Name</th>
+                            <th style="width: 22%">Agent Name</th>
+                            <th style="width: 18%">Date</th>
+                            <th style="width: 30%">Description</th>
+                        </tr>
+                    `;
+                document.getElementById("search_agenda_results_title").innerHTML = row_title;
+            });
+        } else if (tableType === "agenda_list") {
+      
+            axios.get("agenda_per_info", {params: {query: rowData.id}})
+                .then(response => {                
+                    response.data.agent.forEach(item =>{ 
+                        document.getElementById("log_agenda_id").value = item.log_agenda_id;
+                        document.getElementById("customer_id").value = String(item.customer_id);
+                        document.getElementById("customer_name").value = item.customer_name;
+                        document.getElementById("agent_id").value = item.agent_id;
+                        document.getElementById('agent_name').value = String(item.agent_name);
+                        document.getElementById("meeting_date").value = String(item.meeting_date);
+                        document.getElementById('description').value = String(item.description);
+                    })    
+                    
+                });
+        }
+        // 可选：添加选中样式
+        clearSelectedRows();
+        row.classList.add('selected');
+    }
+            
+    // 清除之前选中的行
+    function clearSelectedRows() {
+        const rows = document.querySelectorAll('.client_search-table tr');
+        rows.forEach(row => row.classList.remove('selected'));
+    }
+    
+    // 其他处理函数
+    function processRowData(data) {
+        console.log('处理行数据:', data);
+        alert(`你点击了: ${data.name}, 年龄 ${data.age}, 来自 ${data.city}`);
+        // 这里可以添加你的其他处理逻辑
+    }
+
+    //ajouter-modifier-supprimer
+    document.getElementById("agent-form").addEventListener("submit", function (event) {
+            event.preventDefault();
+            
+            let action = document.querySelector("input[name='optradio']:checked").value;
+            let query = document.getElementById("agent_id").value;
+            let name_first = document.getElementById("name_first").value;
+            let name_middle = document.getElementById("name_middle").value;
+            let name_last = document.getElementById("name_last").value;
+            let phone = document.getElementById("phone").value;
+            let email = document.getElementById("email").value;
+            let address = document.getElementById("address").value;
+            let commission_rate = document.getElementById("commission_rate").value;
+
+            let para_json = {
+                query: query,
+                name_first: name_first,
+                name_middle: name_middle,
+                name_last: name_last,
+                phone: phone,
+                email: email,
+                address: address,
+                commission_rate: commission_rate
+            };
+            
+            if (action == "modifier") {
+                axios.post("modifier_agent", para_json)
+                .then(response => {
+                    alert(response.data.message || response.data.error);
+                })
+                .catch(error => console.error(error));
+            } else if (action == "ajouter") {
+                axios.post("ajouter_agent", para_json)
+                .then(response => {
+                    alert(response.data.message || response.data.error);
+                })
+                .catch(error => console.error(error));
+            } else if (action == "supprimer") {
+                axios.post("supprimer_agent", para_json)
+                .then(response => {
+                    alert(response.data.message || response.data.error);
+                })
+                .catch(error => console.error(error));
+            }
+
+            document.querySelector(`input[name="optradio"][value="vue"]`).checked = true;
+
+        });
+    
+    // ratio option change
+    document.querySelectorAll('input[name="optradio"]').forEach((radio) => {
+        radio.addEventListener("change", function () {
+            searchCustomers();
+        });
+});
+</script>
+
+
+
+{% endblock %}

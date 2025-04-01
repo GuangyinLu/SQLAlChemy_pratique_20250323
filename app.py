@@ -11,6 +11,7 @@ from routes.gestionProduct import gestionProduct_bp
 from routes.gestionDiscount import gestionDiscount_bp
 from routes.gestionAgent import gestionAgent_bp
 from routes.gestionVente import gestionVente_bp
+from routes.gestionAgenda import gestionAgenda_bp
 from models import User, init_db
 from database import SessionLocal
 
@@ -35,6 +36,7 @@ app.register_blueprint(gestionProduct_bp, url_prefix="/gestionProduct")
 app.register_blueprint(gestionDiscount_bp, url_prefix="/gestionDiscount")
 app.register_blueprint(gestionAgent_bp, url_prefix="/gestionAgent")
 app.register_blueprint(gestionVente_bp, url_prefix="/gestionVente")
+app.register_blueprint(gestionAgenda_bp, url_prefix="/gestionAgenda")
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -47,7 +49,7 @@ def load_user(user_id):
 def index():
     return render_template('login.html')
 
-
+'''
 @app.route('/dashboard')
 @login_required
 def dashboard():
@@ -71,7 +73,7 @@ def gestion_vente():
 @app.route('/gestion_agent')
 @login_required
 def gestion_agent():
-    return render_template('gestion_agent.html')
+    return render_template('gestion_agent.html')'''
 
 @app.route('/gestion_facturation')
 @login_required

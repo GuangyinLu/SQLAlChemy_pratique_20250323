@@ -308,9 +308,9 @@
                         <div class="col-md-3">
                             <input type="text"  class="form-control" name="policy_number" id="policy_number">
                         </div>
-                        <label for="status" class="col-md-1 control-label">status</label>
+                        <label for="policy_status_type" class="col-md-1 control-label">status</label>
                         <div class="col-md-2">
-                            <select class="form-control" id="policy_status_type">
+                            <select class="form-control" id="policy_status_type" name="policy_status_type">
                                 <option value="Active">Active</option>
                                 <option value="Expired">Expired</option>
                                 <option value="Pending" selected="selected">Pending</option>
@@ -426,7 +426,7 @@
     function search_product() {
         let query = document.getElementById('product_searchBox').value;
   
-        axios.get("/gestionProduit/produit_search", {params: {query: query}})
+        axios.get("/gestionProduct/product_search", {params: {query: query}})
             .then(response => {
                 let rows = "";                
                 response.data.data.forEach(item => {                  
