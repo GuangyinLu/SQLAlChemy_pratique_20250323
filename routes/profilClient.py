@@ -9,7 +9,7 @@ profilClient_bp = Blueprint('profilClient', __name__)
 
 @profilClient_bp.route("/get_profilClient_html", methods=["GET", "POST"])
 def get_profilClient_html():
-    return render_template("profilClient.html")
+    return render_template("/partials/profilClient.html")
 
 @profilClient_bp.route('/search', methods=['GET'])
 @login_required
@@ -54,6 +54,7 @@ def customer_info():
         "Name" : f"{item.name_first} {item.name_middle} {item.name_last}",
         "Gendre" : item.gender.value,
         "Birth_Day" : item.date_of_birth.strftime("%Y-%m-%d"),
+        "Age": calculate_age(item.date_of_birth),
         "Phone" : item.phone,
         "Email" : item.email,
         "Address" : item.address,
@@ -123,3 +124,13 @@ def customer_info():
     })
 
 
+def calculate_age(birthday_datetime):
+    today = date.today()
+    birthday = birthday_datetime.date()  # 把 datetime 转成 date，去掉时分秒
+    age = today.year - birthday.year
+
+    # 如果今天的月日还没到生日的月日，要减一岁
+    if (today.month, today.day) < (birthday.month, birthday.day):
+        age -= 1
+
+    return age

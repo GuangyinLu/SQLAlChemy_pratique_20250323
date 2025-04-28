@@ -1,0 +1,96 @@
+    <div class="main profilClient">
+        <h2>Profil du Client</h2>
+
+        <div class="row border p-3 affiche affiche-search">
+            <h4>Recherche......</h4>
+            <label>Saisir (Name,Phone,Email,Policy_ID) </label>
+            <input type="text" id="searchBox" onkeyup="searchCustomers()" placeholder="Recherche...">
+            <div id="results"></div>
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr id="search_results_title"></tr>
+                </thead>
+                <tbody class="client_search-table" id="search_results">
+                    <!-- AJAX 动态填充 -->
+                </tbody>
+            </table>
+            
+        </div>
+
+        <div class="row border info_client d-none">
+            <p>Account</p>
+            <h4 id="nom_client"></h4>
+            <div class="col-md-2">
+                <p>User</p>
+                <p id="user_name"></p>
+            </div>
+            <div class="col-md-2">
+                <p>Age</p>
+                <p id="user_age"></p>
+            </div>
+        </div>
+
+        <div class="row border detail_client d-none">
+            <!-- Tab 导航 -->
+            <div class="navi_client">
+                <ul class="nav nav-tabs" id="formTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="form1-tab" data-bs-toggle="tab" data-bs-target="#form1" type="button" role="tab">
+                        Information
+                    </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="form2-tab" data-bs-toggle="tab" data-bs-target="#form2" type="button" role="tab">
+                        Policy
+                    </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="form3-tab" data-bs-toggle="tab" data-bs-target="#form3" type="button" role="tab">
+                        Relations
+                    </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="form4-tab" data-bs-toggle="tab" data-bs-target="#form4" type="button" role="tab">
+                        Agenda
+                    </button>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- Tab 内容 -->
+            <div class="">
+                <div class="tab-content mt-3" id="formTabsContent">
+                    <div class="tab-pane fade show active" id="form1" role="tabpanel">
+                    <form>
+                        <h4>Information du Client</h4>
+                        <div id = "information_client"></div>
+                    </form>
+                    </div>
+                
+                    <div class="tab-pane fade" id="form2" role="tabpanel">
+                    <form>
+                        <h4>Policy du Client</h4>
+                        <div id = "policy_client"></div>
+                    </form>
+                    </div>
+
+                    <div class="tab-pane fade" id="form3" role="tabpanel">
+                    <form>
+                        <h4>Relations entre Clients</h4>
+                        <div id = "relation_client"></div>
+                    </form>
+                    </div>
+                
+                    <div class="tab-pane fade" id="form4" role="tabpanel">
+                    <form>
+                        <h4>Agenda du Client</h4>
+                        <div id = "agenda_client"></div>
+                    </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+  
+    </div>
+

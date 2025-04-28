@@ -1,6 +1,6 @@
 
 from pymysql import Date
-from sqlalchemy import Column, Integer, LargeBinary, Numeric, String, ForeignKey, DateTime, Enum as SQLAEnum, Text, UniqueConstraint
+from sqlalchemy import Column, Integer, LargeBinary, Numeric, String, ForeignKey, DateTime, Enum as SQLAEnum, Text, UniqueConstraint, Boolean
 from sqlalchemy.orm import relationship
 from flask_login import UserMixin
 from database import Base, engine
@@ -52,12 +52,19 @@ class RelationshipTypeEnum(Enum):
 
 # definition class
 class MenuItem(Base):
-    __tablename__ = "menu_items"
-   
+    __tablename__ = "menu_items"   
     id = Column(Integer, primary_key=True, autoincrement=True)
-    category = Column(String(50), nullable=False)  
-    name = Column(String(50), nullable=False)      
-    link = Column(String(50), nullable=False)   
+    parent_id = Column(Integer, ForeignKey('menu_items.id'))
+    menu_key = Column(String(50), unique=True, nullable=False)
+    menu_name = Column(String(50), nullable=False) 
+    template_name = Column(String(100))
+    css_name = Column(String(100))
+    js_name = Column(String(100))
+    icon_class  = Column(String(50))
+    display_order  = Column(Integer, default=0)
+    is_active  = Column(Boolean, default=True)
+    menu_niveau  = Column(Integer, default=1)
+
 
 
 class User(Base, UserMixin):

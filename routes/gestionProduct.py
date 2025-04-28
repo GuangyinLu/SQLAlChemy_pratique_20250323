@@ -9,7 +9,7 @@ gestionProduct_bp = Blueprint('gestionProduct', __name__)
 
 @gestionProduct_bp.route("/get_gestionProduct_html", methods=["GET", "POST"])
 def get_gestionProduct_html():
-    return render_template("gestionProduct.html")
+    return render_template("/partials/gestionProduct.html")
 
 @gestionProduct_bp.route('/product_search', methods=['GET'])
 @login_required

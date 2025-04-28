@@ -47,3 +47,15 @@
     background-color: #afd7ad;
     font-weight: bold;
 }
+
+.info_client {
+    background-color: #F3F3F3;
+}
+
+#information_client, #policy_client, #relation_client, #agenda_client {
+    height: 55vh;
+    display: block;
+    overflow: auto;
+}
+
+

@@ -1,0 +1,94 @@
+
+<div class="main">
+    <h2>Gestion de Produits!</h2>            
+    
+    <div class="row">
+        <div class="col-md-4 border p-3 affiche">
+  
+            <div class="option_action">
+                <div class="form-check">
+                    <input type="radio" class="form-check-input" id="radio1" name="optradio" value="vue" checked>
+                    <label class="form-check-label" for="radio1">Vue</label>
+                </div>
+                <div class="form-check">
+                    <input type="radio" class="form-check-input" id="radio2" name="optradio" value="modifier">
+                    <label class="form-check-label" for="radio2">Modifier</label>
+                </div>
+                <div class="form-check">
+                    <input type="radio" class="form-check-input" id="radio3" name="optradio" value="ajouter">
+                    <label class="form-check-label" for="radio3">Ajouter</label>
+                </div>
+                <div class="form-check">
+                    <input type="radio" class="form-check-input" id="radio4" name="optradio" value="supprimer">
+                    <label class="form-check-label" for="radio4">Supprimer</label>
+                </div>
+            </div>
+
+            <div class="search_user">
+                <label>Recherche (Product,Category,Desc...) </label>
+                <input type="text" id="searchBox" onkeyup="searchCustomers()" placeholder="Recherche...">
+            </div>
+                                
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr id="search_results_title"></tr>
+                </thead>
+                <tbody class="client_search-table" id="search_results">
+                    <!-- AJAX 动态填充 -->
+                </tbody>
+            </table>
+
+        </div>
+
+        <div class="col-md-8 border p-3 affiche">
+
+            <form id="product-form" class="form-horizontal user_info row">
+                <div class="form-group row">
+                    <label for="product_id" class="col-md-4 control-label">Product_id</label>
+                    <div class="col-md-4">
+                        <input type="number" class="form-control" name="product_id" id="product_id" disabled>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="product_name" class="col-md-4 control-label">Product_name</label>
+                    <div class="col-md-4">
+                        <input type="text" class="form-control" name="product_name" id="product_name">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="category" class="col-md-4 control-label">Category</label>
+                    <div class="col-md-4">
+                        <input type="text" class="form-control" name="category" id="category">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="coverage_amount" class="col-md-4 control-label">Coverage_amount</label>
+                    <div class="col-md-4">
+                        <input type="number" class="form-control" name="coverage_amount" id="coverage_amount">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="premium" class="col-md-4 control-label">Premium</label>
+                    <div class="col-md-4">
+                        <input type="number" class="form-control" name="premium" id="premium">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="description" class="col-md-4 control-label">Description</label>
+                    <div class="col-md-4">
+                        <input type="text" class="form-control" name="description" id="description">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10 btn-user">
+                      <button type="submit" class="btn btn-default btn-danger border btn-user-conf">Confirmation</button>
+                    </div>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+
+</div>

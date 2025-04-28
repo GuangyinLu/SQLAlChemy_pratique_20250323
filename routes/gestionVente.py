@@ -9,7 +9,7 @@ gestionVente_bp = Blueprint('gestionVente', __name__)
 
 @gestionVente_bp.route("/get_gestionVente_html", methods=["GET", "POST"])
 def get_gestionVente_html():
-    return render_template("gestionVente.html")
+    return render_template("/partials/gestionVente.html")
 
 @gestionVente_bp.route('/policy_search', methods=['GET'])
 @login_required

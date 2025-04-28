@@ -29,11 +29,10 @@
 
 .search_menu label {
     font-weight: bold;
-    color: blue;
     font-size: 18px;
 }
 
-.search_user, .search_product, .search_discount, .search_agent, .search_policy {
+.vente_search_user, .search_product, .search_discount, .search_agent, .search_policy {
     display: block;
     width: 100%;
     height: 25vh;
@@ -42,7 +41,7 @@
 }
 
 .search_user_label, .search_product_label, .search_discount_label, .search_agent_label, .search_policy_label {
-    background-color:rgb(235, 207, 207);
+    background-color:#FFFFFF;
 }
 
 .table {
@@ -91,7 +90,7 @@
 .user_info, .product_info, .agent_info, .discount_info, .policy_info {
     margin: 5px;
     padding: 20px 20px;
-    background-color: #afd7ad;
+    background-color: #ffffff;
     border-radius: 30px;
 }
 
@@ -122,5 +121,5 @@
 
 h4 {
     font-weight: bold;
-    color: #ff0000;
+ 
 }

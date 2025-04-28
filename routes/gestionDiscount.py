@@ -9,7 +9,7 @@ gestionDiscount_bp = Blueprint('gestionDiscount', __name__)
 
 @gestionDiscount_bp.route("/get_gestionDiscount_html", methods=["GET", "POST"])
 def get_gestionDiscount_html():
-    return render_template("gestionDiscount.html")
+    return render_template("/partials/gestionDiscount.html")
 
 @gestionDiscount_bp.route('/discount_search', methods=['GET'])
 @login_required

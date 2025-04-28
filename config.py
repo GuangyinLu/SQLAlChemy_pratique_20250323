@@ -6,5 +6,5 @@ DB_CONFIG = {
     "user": "PMAUSER",
     "password": "AssurSolution321!",
     "host": "192.168.88.5",
-    "database": "test_db"
+    "database": "spa_test_db"
 }

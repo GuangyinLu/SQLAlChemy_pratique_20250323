@@ -1,17 +1,25 @@
+body {    
+    margin: 0; 
+    width: 100%;
+    font-size: 12px;
+    font-family:"Times New Roman", Times, serif;
+}
+
 .main {
-    height: 87%;
+    height: 100%;
 }
 
 .affiche {
-    /*height: 60%;*/
+    /*height: 60%;
     height: 80vh;
     display: block;
     overflow: auto;
     justify-content: center;
     align-items: center;
-    text-align: center;
+    text-align: center;  
+    padding: 60px;*/  
     justify-items: center;
-    padding: 60px;
+    font-family:"Times New Roman", Times, serif;
 }
 
 .form-group {
@@ -23,3 +31,8 @@ label {
     font-weight: bold;
     font-size: 18px;
 }
+
+button {
+    width: 100%;
+}
+

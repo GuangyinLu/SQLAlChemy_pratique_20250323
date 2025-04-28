@@ -9,7 +9,7 @@ gestionClient_bp = Blueprint('gestionClient', __name__)
 
 @gestionClient_bp.route("/get_gestionClient_html", methods=["GET", "POST"])
 def get_gestionClient_html():
-    return render_template("gestionClient.html")
+    return render_template("/partials/gestionClient.html")
 
 @gestionClient_bp.route('/user_search', methods=['GET'])
 @login_required

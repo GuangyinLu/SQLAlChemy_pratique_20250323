@@ -9,7 +9,7 @@ gestionAgent_bp = Blueprint('gestionAgent', __name__)
 
 @gestionAgent_bp.route("/get_gestionAgent_html", methods=["GET", "POST"])
 def get_gestionAgent_html():
-    return render_template("gestionAgent.html")
+    return render_template("/partials/gestionAgent.html")
 
 @gestionAgent_bp.route('/agent_search', methods=['GET'])
 @login_required
@@ -57,7 +57,7 @@ def agent_per_info():
     })
 
     return jsonify({
-        "agent": data,
+        "agent": data
 
     })
 

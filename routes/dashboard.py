@@ -8,7 +8,7 @@ dashboard_bp = Blueprint('dashboard', __name__)
 
 @dashboard_bp.route("/get_policy_html", methods=["GET", "POST"])
 def get_policy_html():
-    return render_template("dashboard.html")
+    return render_template("/partials/dashboard.html")
 
 
 # AJAX 获取分页数据

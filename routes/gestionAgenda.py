@@ -9,7 +9,7 @@ gestionAgenda_bp = Blueprint('gestionAgenda', __name__)
 
 @gestionAgenda_bp.route("/get_gestionAgenda_html", methods=["GET", "POST"])
 def get_gestionAgenda_html():
-    return render_template("gestionAgenda.html")
+    return render_template("/partials/gestionAgenda.html")
 
 @gestionAgenda_bp.route('/user_agenda_search', methods=['GET'])
 @login_required
