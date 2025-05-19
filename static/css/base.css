@@ -68,3 +68,23 @@ body {
 .nav-item:hover {
     background-color: #c4d110f3; /* 鼠标悬停时的背景色 */
 }
+
+.title_sky {
+    height: 12vh;
+}
+
+.Bienvenu_1 {
+    color: blue;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.Bienvenu_nom {
+    color: red;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.sub_page {
+    height: 78vh;
+}

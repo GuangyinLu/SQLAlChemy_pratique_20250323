@@ -1,8 +1,9 @@
 .main {
-    height: 87%;
+    height: 92%;
 }
+
 .affiche {
-    height: 80vh;
+    height: 100%;
     display: block;
     overflow: auto;
     justify-content: center;
@@ -53,7 +54,7 @@
 }
 
 #information_client, #policy_client, #relation_client, #agenda_client {
-    height: 55vh;
+    height: 60vh;
     display: block;
     overflow: auto;
 }

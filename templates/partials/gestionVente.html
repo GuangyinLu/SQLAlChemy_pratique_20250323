@@ -1,106 +1,107 @@
 
-<div class="main">
+<div class="main border-bottom">
     <h2>Gestion de Vente!</h2>            
     
-    <div class="row">
+    <div class="row search">
         <div class="col-md-4 border p-3 affiche search_menu">
-  
-            <div class="option_action">
-                <div class="form-check">
-                    <input type="radio" class="form-check-input" id="radio1" name="optradio" value="vue" checked>
-                    <label class="form-check-label" for="radio1">Vue</label>
+                    
+                <div class="option_action">
+                    <div class="form-check">
+                        <input type="radio" class="form-check-input" id="radio1" name="optradio" value="vue" checked>
+                        <label class="form-check-label" for="radio1">Vue</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="radio" class="form-check-input" id="radio2" name="optradio" value="modifier">
+                        <label class="form-check-label" for="radio2">Modifier</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="radio" class="form-check-input" id="radio3" name="optradio" value="ajouter">
+                        <label class="form-check-label" for="radio3">Ajouter</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="radio" class="form-check-input" id="radio4" name="optradio" value="supprimer">
+                        <label class="form-check-label" for="radio4">Supprimer</label>
+                    </div>
                 </div>
-                <div class="form-check">
-                    <input type="radio" class="form-check-input" id="radio2" name="optradio" value="modifier">
-                    <label class="form-check-label" for="radio2">Modifier</label>
-                </div>
-                <div class="form-check">
-                    <input type="radio" class="form-check-input" id="radio3" name="optradio" value="ajouter">
-                    <label class="form-check-label" for="radio3">Ajouter</label>
-                </div>
-                <div class="form-check">
-                    <input type="radio" class="form-check-input" id="radio4" name="optradio" value="supprimer">
-                    <label class="form-check-label" for="radio4">Supprimer</label>
-                </div>
-            </div>
 
-            <div class="search_policy border search_menu_sub" id="search_policy">
-                <div class="search_policy_label row">
-                    <label class="col-md-3 col-md-offset-1">Name,Phone,Email,Policy_ID</label>
-                    <input class="col-md-6 col-md-offset-1" type="text" id="policy_searchBox" onkeyup="search_policy()" placeholder="Recherche...">
+                <div class="search_policy border search_menu_sub" id="search_policy">
+                    <div class="search_policy_label row">
+                        <label class="col-md-3 col-md-offset-1">Name,Phone,Email,Policy_ID</label>
+                        <input class="col-md-6 col-md-offset-1" type="text" id="policy_searchBox" onkeyup="search_policy()" placeholder="Recherche...">
+                    </div>
+                                        
+                    <table class="table table-bordered table-striped table_policy" id="table_policy" data-type="policy">
+                        <thead>
+                            <tr id="search_policy_results_title"></tr>
+                        </thead>
+                        <tbody class="client_search-table" id="search_policy_results">
+                            <!-- AJAX 动态填充 -->
+                        </tbody>
+                    </table>
                 </div>
-                                    
-                <table class="table table-bordered table-striped table_policy" id="table_policy" data-type="policy">
-                    <thead>
-                        <tr id="search_policy_results_title"></tr>
-                    </thead>
-                    <tbody class="client_search-table" id="search_policy_results">
-                        <!-- AJAX 动态填充 -->
-                    </tbody>
-                </table>
-            </div>
 
-            <div class="vente_search_user border search_menu_sub d-none" id="search_user">
-                <div class="search_user_label row">
-                    <label class="col-md-3 col-md-offset-1">User</label>
-                    <input class="col-md-6 col-md-offset-1" type="text" id="user_searchBox" onkeyup="search_user()" placeholder="Recherche...">
+                <div class="vente_search_user border search_menu_sub d-none" id="search_user">
+                    <div class="search_user_label row">
+                        <label class="col-md-3 col-md-offset-1">User</label>
+                        <input class="col-md-6 col-md-offset-1" type="text" id="user_searchBox" onkeyup="search_user()" placeholder="Recherche...">
+                    </div>
+                                        
+                    <table class="table table-bordered table-striped table_user" id="table_user" data-type="user">
+                        <thead>
+                            <tr id="search_user_results_title"></tr>
+                        </thead>
+                        <tbody class="client_search-table" id="search_user_results">
+                            <!-- AJAX 动态填充 -->
+                        </tbody>
+                    </table>
                 </div>
-                                    
-                <table class="table table-bordered table-striped table_user" id="table_user" data-type="user">
-                    <thead>
-                        <tr id="search_user_results_title"></tr>
-                    </thead>
-                    <tbody class="client_search-table" id="search_user_results">
-                        <!-- AJAX 动态填充 -->
-                    </tbody>
-                </table>
-            </div>
 
-            <div class="search_product border search_menu_sub d-none" id="search_product">
-                <div class="search_product_label row">
-                    <label class="col-md-3 col-md-offset-1">Product </label>
-                    <input class="col-md-6 col-md-offset-1" type="text" id="product_searchBox" onkeyup="search_product()" placeholder="Recherche...">
+                <div class="search_product border search_menu_sub d-none" id="search_product">
+                    <div class="search_product_label row">
+                        <label class="col-md-3 col-md-offset-1">Product </label>
+                        <input class="col-md-6 col-md-offset-1" type="text" id="product_searchBox" onkeyup="search_product()" placeholder="Recherche...">
+                    </div>
+                                        
+                    <table class="table table-bordered table-striped table_product" id="table_product" data-type="product">
+                        <thead>
+                            <tr id="search_product_results_title"></tr>
+                        </thead>
+                        <tbody class="client_search-table" id="search_product_results">
+                            <!-- AJAX 动态填充 -->
+                        </tbody>
+                    </table>
                 </div>
-                                    
-                <table class="table table-bordered table-striped table_product" id="table_product" data-type="product">
-                    <thead>
-                        <tr id="search_product_results_title"></tr>
-                    </thead>
-                    <tbody class="client_search-table" id="search_product_results">
-                        <!-- AJAX 动态填充 -->
-                    </tbody>
-                </table>
-            </div>
 
-            <div class="search_discount border search_menu_sub d-none" id="search_discount">
-                <div class="search_discount_label row">
-                    <label class="col-md-3 col-md-offset-1">Discount</label>
-                    <input class="col-md-6 col-md-offset-1" type="text" id="discount_searchBox" onkeyup="search_discount()" placeholder="Recherche...">
-                </div>                                    
-                <table class="table table-bordered table-striped table_discount" id="table_discount" data-type="discount">
-                    <thead>
-                        <tr id="search_discount_results_title"></tr>
-                    </thead>
-                    <tbody class="client_search-table" id="search_discount_results">
-                        <!-- AJAX 动态填充 -->
-                    </tbody>
-                </table>
-            </div>
+                <div class="search_discount border search_menu_sub d-none" id="search_discount">
+                    <div class="search_discount_label row">
+                        <label class="col-md-3 col-md-offset-1">Discount</label>
+                        <input class="col-md-6 col-md-offset-1" type="text" id="discount_searchBox" onkeyup="search_discount()" placeholder="Recherche...">
+                    </div>                                    
+                    <table class="table table-bordered table-striped table_discount" id="table_discount" data-type="discount">
+                        <thead>
+                            <tr id="search_discount_results_title"></tr>
+                        </thead>
+                        <tbody class="client_search-table" id="search_discount_results">
+                            <!-- AJAX 动态填充 -->
+                        </tbody>
+                    </table>
+                </div>
 
-            <div class="search_agent border search_menu_sub d-none" id="search_agent">
-                <div class="search_agent_label row">
-                    <label class="col-md-3 col-md-offset-1">Agent</label>
-                    <input class="col-md-6 col-md-offset-1" type="text" id="agent_searchBox" onkeyup="search_agent()" placeholder="Recherche...">
-                </div>                                    
-                <table class="table table-bordered table-striped table_agent" id="table_agent" data-type="agent">
-                    <thead>
-                        <tr id="search_agent_results_title"></tr>
-                    </thead>
-                    <tbody class="client_search-table" id="search_agent_results">
-                        <!-- AJAX 动态填充 -->
-                    </tbody>
-                </table>
-            </div>
+                <div class="search_agent border search_menu_sub d-none" id="search_agent">
+                    <div class="search_agent_label row">
+                        <label class="col-md-3 col-md-offset-1">Agent</label>
+                        <input class="col-md-6 col-md-offset-1" type="text" id="agent_searchBox" onkeyup="search_agent()" placeholder="Recherche...">
+                    </div>                                    
+                    <table class="table table-bordered table-striped table_agent" id="table_agent" data-type="agent">
+                        <thead>
+                            <tr id="search_agent_results_title"></tr>
+                        </thead>
+                        <tbody class="client_search-table" id="search_agent_results">
+                            <!-- AJAX 动态填充 -->
+                        </tbody>
+                    </table>
+                </div>
+            
 
         </div>
 

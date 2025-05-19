@@ -31,8 +31,19 @@
             </div>
             
             <!-- 主内容区域 -->
-            <div class="col-md-10">
-                <div class="tab-content" id="mainContent">
+            <div class="col-md-10 row">
+                <div class="row border-bottom border-5 pb-2 mb-3 custom-grey-border title_sky d-flex align-items-end">
+                    <div class="content col-md-2 offset-md-1">                    
+                        <div class="Bienvenu_1">Bienvenue: </div>
+                        <div class="Bienvenu_nom">{{ current_user.username }}</div>                    
+                    </div>
+                    <div class="col-md-2 offset-md-1">
+                        <img src="{{ url_for('static', filename='image/logo_version2.png') }}" alt="logo_version2" >
+                        
+                    </div>
+                </div>
+
+                <div class="tab-content sub_page" id="mainContent">
                     <!-- 内容将通过AJAX动态加载 -->
                 </div>
             </div>
@@ -42,7 +53,6 @@
     <div class="container">
         <div class="content">
             <h6>
-                <span >Bienvenue: {{ current_user.username }} !</span>
                 <span id="clock"></span>
             </h6>
 
