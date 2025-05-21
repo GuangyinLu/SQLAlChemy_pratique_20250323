@@ -48,19 +48,24 @@ def customer_info():
     query_para = request.args.get('query', '')
     
     item = db.query(Customer).filter(Customer.customer_id == query_para).first()
-    customer_data=[]    
-    customer_data.append({
-        "Customer_ID" : item.customer_id,
-        "Name" : f"{item.name_first} {item.name_middle} {item.name_last}",
-        "Gendre" : item.gender.value,
-        "Birth_Day" : item.date_of_birth.strftime("%Y-%m-%d"),
-        "Age": calculate_age(item.date_of_birth),
-        "Phone" : item.phone,
-        "Email" : item.email,
-        "Address" : item.address,
-        "Number_Card_ID" : item.id_card_number        
-    })
-
+    if not item:
+        return {"error": "Customer not found"}, 404
+    # 使用模型定义自动获取字段（不包括 _sa_instance_state）
+    customer_data=[]
+    customer_data_temp = {}
+    for column in Customer.__table__.columns:
+        val = getattr(item, column.name)
+        # 日期格式化
+        if isinstance(val, date):
+            val = val.strftime("%Y-%m-%d")
+        # 枚举处理
+        if hasattr(val, "value"):
+            val = val.value
+        customer_data_temp[column.name] = val
+    # 补充自定义字段
+    customer_data_temp['Name'] = f"{item.name_first} {item.name_middle} {item.name_last}"
+    customer_data_temp['Age'] = calculate_age(item.date_of_birth)
+    customer_data.append(customer_data_temp)
 
     policies = db.query(Policy, InsuranceProduct, Discount) \
         .join(InsuranceProduct, InsuranceProduct.product_id == Policy.product_id) \
