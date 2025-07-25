@@ -20,6 +20,11 @@ class GenderEnum(Enum):
     Female = 'Female'
     Other = 'Other'
 
+class PayementFrequencyEnum(Enum):
+    Annual = 'Annual'
+    Monthly = 'Monthly'
+    Other = 'Other'
+
 class DiscountTypeEnum(Enum):
     Fixed = 'Fixed'
     Percentage = 'Percentage'
@@ -35,6 +40,10 @@ class ClaimStatusEnum(Enum):
     Approved = 'Approved'
     Rejected = 'Rejected'
     Paid = 'Paid'
+
+class ClientRequestStatusEnum(Enum):
+    In_Progress = 'In_Progress'
+    Closed = 'Closed'
 
 class PaymentStatusEnum(Enum):
     Success = 'Success'
@@ -52,7 +61,8 @@ class RelationshipTypeEnum(Enum):
 
 # definition class
 class MenuItem(Base):
-    __tablename__ = "menu_items"   
+    __tablename__ = "menu_items"
+    __table_args__ = {'mysql_engine': 'InnoDB'}   
     id = Column(Integer, primary_key=True, autoincrement=True)
     parent_id = Column(Integer, ForeignKey('menu_items.id'))
     menu_key = Column(String(50), unique=True, nullable=False)
@@ -69,6 +79,7 @@ class MenuItem(Base):
 
 class User(Base, UserMixin):
     __tablename__ = 'users'
+    __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(Integer, primary_key=True)
     username = Column(String(80), unique=True, nullable=False)
     password_hash = Column(String(200), nullable=False)
@@ -89,6 +100,7 @@ class User(Base, UserMixin):
 
 class Customer(Base):
     __tablename__ = 'customers'
+    __table_args__ = {'mysql_engine': 'InnoDB'}
     customer_id = Column(Integer, primary_key=True, autoincrement=True)
     name_first = Column(String(30), nullable=False)
     name_middle = Column(String(30))
@@ -127,17 +139,33 @@ class Customer(Base):
 
 class InsuranceProduct(Base):
     __tablename__ = 'insurance_products'
-    product_id = Column(Integer, primary_key=True, autoincrement=True)
-    product_name = Column(String(100), nullable=False)
-    category = Column(String(50), nullable=False)
-    coverage_amount = Column(Numeric(10, 2), nullable=False)
-    premium = Column(Numeric(10, 2), nullable=False)
+    __table_args__ = {'mysql_engine': 'InnoDB'}
+    policy_id = Column(Integer, primary_key=True, autoincrement=True)
+    asset_name = Column(String(100), nullable=False)
+    product_type = Column(String(20))
+    plan_type = Column(String(20))
+    issue_date = Column(DateTime)
+    total_coverage = Column(Numeric(10, 2), nullable=False)
+    total_premium = Column(Numeric(10, 2), nullable=False)
+    premium_frequency = Column(SQLAEnum(PayementFrequencyEnum, name="payementfrequence_enum"))
+    policy_type = Column(String(20))
+    policy_owner_id = Column(Integer, ForeignKey('customers.customer_id'), nullable=False)
+    policy_date = Column(DateTime)
+    insured_person_id = Column(Integer, ForeignKey('customers.customer_id'), nullable=False)
+    plan_name = Column(String(20))
+    adjusted_cost_basis = Column(Numeric(10, 2))
+    current_dividend_option = Column(String(20))
+    billing_type = Column(String(20))
+    policy_status = Column(SQLAEnum(PolicyStatusEnum), default=PolicyStatusEnum.Active, nullable=False)
+    agent_id = Column(Integer, ForeignKey('agents.agent_id'), nullable=False)
+    commission_rate = Column(Numeric(10, 2))
     description = Column(Text)
     created_at = Column(DateTime, default=datetime.now(timezone.utc))
     updated_at = Column(DateTime, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
 
 class Discount(Base):
     __tablename__ = 'discounts'
+    __table_args__ = {'mysql_engine': 'InnoDB'}
     discount_id = Column(Integer, primary_key=True, autoincrement=True)
     discount_name = Column(String(100), nullable=False)
     discount_type = Column(SQLAEnum(DiscountTypeEnum), nullable=False)
@@ -149,10 +177,11 @@ class Discount(Base):
 
 class Policy(Base):
     __tablename__ = 'policies'
+    __table_args__ = {'mysql_engine': 'InnoDB'}
     policy_id = Column(Integer, primary_key=True, autoincrement=True)
     customer_id = Column(Integer, ForeignKey('customers.customer_id'), nullable=False)
     agent_id = Column(Integer, ForeignKey('agents.agent_id'))
-    product_id = Column(Integer, ForeignKey('insurance_products.product_id'), nullable=False)
+    product_id = Column(Integer, ForeignKey('insurance_products.policy_id'), nullable=False)
     policy_number = Column(String(50), unique=True, nullable=False)
     start_date = Column(DateTime, nullable=False)
     end_date = Column(DateTime, nullable=False)
@@ -166,10 +195,11 @@ class Policy(Base):
     customer = relationship("Customer", backref="policies")
     product = relationship("InsuranceProduct", backref="policies")
     discount = relationship("Discount", backref="policies")
-    agent = relationship("Agent", backref="agents")
+    agent = relationship("Agent", backref="policies")
 
 class Claim(Base):
     __tablename__ = 'claims'
+    __table_args__ = {'mysql_engine': 'InnoDB'}
     claim_id = Column(Integer, primary_key=True, autoincrement=True)
     policy_id = Column(Integer, ForeignKey('policies.policy_id'), nullable=False)
     claim_number = Column(String(50), unique=True, nullable=False)
@@ -185,6 +215,7 @@ class Claim(Base):
 # ------------------ 6. 支付表 Payments ------------------
 class Payment(Base):
     __tablename__ = 'payments'
+    __table_args__ = {'mysql_engine': 'InnoDB'}
     payment_id = Column(Integer, primary_key=True, autoincrement=True)
     policy_id = Column(Integer, ForeignKey('policies.policy_id'), nullable=False)
     payment_date = Column(DateTime, nullable=False)
@@ -200,6 +231,7 @@ class Payment(Base):
 # ------------------ 7. 保险代理人表 Agents ------------------
 class Agent(Base):
     __tablename__ = 'agents'
+    __table_args__ = {'mysql_engine': 'InnoDB'}
     agent_id = Column(Integer, primary_key=True, autoincrement=True)
     name_first = Column(String(30), nullable=False)
     name_middle = Column(String(30))
@@ -214,17 +246,19 @@ class Agent(Base):
 # ------------------ 8. 代理-客户关系表 AgentCustomers ------------------
 class AgentCustomer(Base):
     __tablename__ = 'agent_customers'
+    __table_args__ = {'mysql_engine': 'InnoDB'}
     id = Column(Integer, primary_key=True, autoincrement=True)
     agent_id = Column(Integer, ForeignKey('agents.agent_id'), nullable=False)
     customer_id = Column(Integer, ForeignKey('customers.customer_id'), nullable=False)
     created_at = Column(DateTime, default=datetime.now(timezone.utc))
 
-    agent = relationship("Agent", backref="customers")
-    customer = relationship("Customer", backref="agents")
+    agent = relationship("Agent", backref="agent_customers")
+    customer = relationship("Customer", backref="agents_customers")
 
 # ------------------ 9. 客户关系表 CustomerRelationships ------------------
 class CustomerRelationship(Base):
     __tablename__ = 'customer_relationships'
+    __table_args__ = {'mysql_engine': 'InnoDB'}
     relationship_id = Column(Integer, primary_key=True, autoincrement=True)
     customer_id1 = Column(Integer, ForeignKey('customers.customer_id'), nullable=False)
     customer_id2 = Column(Integer, ForeignKey('customers.customer_id'), nullable=False)
@@ -240,6 +274,7 @@ class CustomerRelationship(Base):
 # ------------------ 10. 保单附件表 PolicyAttachments ------------------
 class PolicyAttachment(Base):
     __tablename__ = 'policy_attachments'
+    __table_args__ = {'mysql_engine': 'InnoDB'}
     attachment_id = Column(Integer, primary_key=True, autoincrement=True)
     policy_id = Column(Integer, ForeignKey('policies.policy_id'), nullable=False)
     file_name = Column(String(255), nullable=False)
@@ -251,6 +286,7 @@ class PolicyAttachment(Base):
 # ------------------ 11. 客户日志表 LogAgendaClients ------------------
 class LogAgendaClient(Base):
     __tablename__ = 'log_agenda_clients'
+    __table_args__ = {'mysql_engine': 'InnoDB'}
     log_agenda_id = Column(Integer, primary_key=True, autoincrement=True)
     customer_id = Column(Integer, ForeignKey('customers.customer_id'), nullable=False)
     agent_id = Column(Integer, ForeignKey('agents.agent_id'), nullable=False)
@@ -264,6 +300,7 @@ class LogAgendaClient(Base):
 # ------------------ 12. 客户日志附件表 LogAgendaAttachments ------------------
 class LogAgendaAttachment(Base):
     __tablename__ = 'log_agenda_attachments'
+    __table_args__ = {'mysql_engine': 'InnoDB'}
     attachment_id = Column(Integer, primary_key=True, autoincrement=True)
     log_agenda_id = Column(Integer, ForeignKey('log_agenda_clients.log_agenda_id'), nullable=False)
     file_name = Column(String(255), nullable=False)
@@ -272,6 +309,31 @@ class LogAgendaAttachment(Base):
 
     log_agenda = relationship("LogAgendaClient", backref="attachments")
 
+# ------------------ 13. 客户请求表 ClientRequests ------------------
+class ClientRequest(Base):
+    __tablename__ = 'clientrequests'
+    __table_args__ = {'mysql_engine': 'InnoDB'}
+    request_id = Column(Integer, primary_key=True, autoincrement=True)
+    customer_id = Column(Integer, ForeignKey('customers.customer_id'), nullable=False)
+    title = Column(String(50))
+    description = Column(Text)
+    created_at = Column(DateTime, default=datetime.now(timezone.utc))
+    received_agent_id = Column(Integer, ForeignKey('agents.agent_id'), nullable=False)
+    handle_agent_id = Column(Integer, ForeignKey('agents.agent_id'), nullable=False)
+    status = Column(SQLAEnum(ClientRequestStatusEnum), default=ClientRequestStatusEnum.In_Progress, nullable=False)
+
+
+# ------------------ 14. 客户请求处理表 ClientRequestHandlers ------------------
+class ClientRequestHandler(Base):
+    __tablename__ = 'clientrequesthandlers'
+    __table_args__ = {'mysql_engine': 'InnoDB'}
+    handle_id = Column(Integer, primary_key=True, autoincrement=True)
+    request_id = Column(Integer, ForeignKey('clientrequests.request_id'), nullable=False)
+    agent_id = Column(Integer, ForeignKey('agents.agent_id'), nullable=False)
+    description = Column(Text)
+    if_close = Column(Boolean,default=False,nullable=False)
+    next_agent_id = Column(Integer, ForeignKey('agents.agent_id'))
+    handled_time = Column(DateTime, default=datetime.now(timezone.utc))
 
 
 # Create les tables if not existe.

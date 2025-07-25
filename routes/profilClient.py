@@ -4,9 +4,45 @@ from flask_login import login_user, logout_user, login_required, current_user
 from database import SessionLocal
 from models import *
 from math import ceil
+from sqlalchemy.orm import aliased
+import sys
+
+sys.stdout.reconfigure(encoding='utf-8')
 
 profilClient_bp = Blueprint('profilClient', __name__)
 
+# 函数
+def calculate_age(birthday_datetime):
+    today = date.today()
+    birthday = birthday_datetime.date()  # 把 datetime 转成 date，去掉时分秒
+    age = today.year - birthday.year
+
+    # 如果今天的月日还没到生日的月日，要减一岁
+    if (today.month, today.day) < (birthday.month, birthday.day):
+        age -= 1
+
+    return age
+
+
+def model_to_dict(model_instance):
+    """自动将SQLAlchemy模型对象转换为dict"""
+    data = {}
+    for column in model_instance.__table__.columns:
+        val = getattr(model_instance, column.name)
+        # 日期处理
+        if val is not None and hasattr(val, 'strftime'):
+            val = val.strftime("%Y-%m-%d")
+        # Enum类型处理
+        if hasattr(val, 'value'):
+            val = val.value
+        data[column.name] = val
+    return data
+    
+# 拼接函数
+def get_full_name(person):
+    return " ".join(filter(None, [person.name_first, person.name_middle, person.name_last]))
+
+## 开始
 @profilClient_bp.route("/get_profilClient_html", methods=["GET", "POST"])
 def get_profilClient_html():
     return render_template("/partials/profilClient.html")
@@ -48,44 +84,49 @@ def customer_info():
     query_para = request.args.get('query', '')
     
     item = db.query(Customer).filter(Customer.customer_id == query_para).first()
+    customer_data = []
+    customer_data_temp = {}
     if not item:
         return {"error": "Customer not found"}, 404
     # 使用模型定义自动获取字段（不包括 _sa_instance_state）
-    customer_data=[]
-    customer_data_temp = {}
-    for column in Customer.__table__.columns:
-        val = getattr(item, column.name)
-        # 日期格式化
-        if isinstance(val, date):
-            val = val.strftime("%Y-%m-%d")
-        # 枚举处理
-        if hasattr(val, "value"):
-            val = val.value
-        customer_data_temp[column.name] = val
-    # 补充自定义字段
-    customer_data_temp['Name'] = f"{item.name_first} {item.name_middle} {item.name_last}"
-    customer_data_temp['Age'] = calculate_age(item.date_of_birth)
-    customer_data.append(customer_data_temp)
+    customer_data_temp.update(model_to_dict(item))
 
-    policies = db.query(Policy, InsuranceProduct, Discount) \
-        .join(InsuranceProduct, InsuranceProduct.product_id == Policy.product_id) \
-        .outerjoin(Discount, Discount.discount_id == Policy.discount_id) \
-        .filter(Policy.customer_id == query_para).all()
+    # 补充自定义字段
+    customer_data_temp.update({
+        'Name' : get_full_name(item),
+        'Age' : calculate_age(item.date_of_birth)
+    })
+    customer_data.append(customer_data_temp)
+    
+
+
+    # 查询客户保单信息 
+    PolicyOwner = aliased(Customer)
+    Insured = aliased(Customer)
+    policies = db.query(InsuranceProduct, PolicyOwner, Insured, Agent \
+            ) \
+            .join(PolicyOwner, PolicyOwner.customer_id == InsuranceProduct.policy_owner_id \
+            ).join(Agent, Agent.agent_id == InsuranceProduct.agent_id \
+            ).join(Insured, Insured.customer_id == InsuranceProduct.insured_person_id \
+            ).filter(InsuranceProduct.policy_owner_id == query_para).all()
+
+    
+    # 结果组装
     policies_data = []
-    for policy, insuranceProduct, discount in policies:
-        policies_data.append({
-            "Policy_number": policy.policy_number,
-            "Product_name" : insuranceProduct.product_name,
-            "Discount" : discount.discount_name if discount else None,
-            "Discount_type": discount.discount_type.value if discount else None,
-            "Discount_niveau": discount.discount_value if discount else None,
-            "Status": policy.status.value,
-            "Start_time": policy.start_date.strftime("%Y-%m-%d"),
-            "End_time": policy.end_date.strftime("%Y-%m-%d"),
-            "Premium_amount": policy.premium_amount,
-            "Final_premium": policy.final_premium,
-            "Agent": policy.agent_id
+    for insurance_product, policy_owner, insured_person, agent in policies:
+        data = {}
+        data.update(model_to_dict(insurance_product))
+        data.update(model_to_dict(agent))
+        # 补充自定义字段
+        data.update({
+            "owner_name": get_full_name(policy_owner),
+            "owner_address": policy_owner.address,
+            "insured_person_name": get_full_name(insured_person),
+		    "agent_name": get_full_name(agent) if hasattr(agent, "name_first") else agent.name  
         })
+        policies_data.append(data)
+   
+
 
     relations = db.query(CustomerRelationship) \
         .filter(
@@ -107,6 +148,7 @@ def customer_info():
             "Email": customer.email,
             "Relationship": relation_ship
         })
+    
 
     agendas = db.query(LogAgendaClient, Agent, LogAgendaAttachment) \
         .join(Agent, Agent.agent_id == LogAgendaClient.agent_id) \
@@ -129,13 +171,45 @@ def customer_info():
     })
 
 
-def calculate_age(birthday_datetime):
-    today = date.today()
-    birthday = birthday_datetime.date()  # 把 datetime 转成 date，去掉时分秒
-    age = today.year - birthday.year
 
-    # 如果今天的月日还没到生日的月日，要减一岁
-    if (today.month, today.day) < (birthday.month, birthday.day):
-        age -= 1
 
-    return age
+@profilClient_bp.route('/detail_product_sub', methods=['GET', 'POST'])
+@login_required
+def detail_product_sub():
+    db = SessionLocal()
+    query_para = request.args.get('query', '')
+
+
+    # 查询客户保单信息 
+    PolicyOwner = aliased(Customer)
+    Insured = aliased(Customer)
+    result = db.query(InsuranceProduct, PolicyOwner, Insured, Agent \
+            ) \
+            .join(PolicyOwner, PolicyOwner.customer_id == InsuranceProduct.policy_owner_id \
+            ).join(Agent, Agent.agent_id == InsuranceProduct.agent_id \
+            ).join(Insured, Insured.customer_id == InsuranceProduct.insured_person_id \
+            ).filter(InsuranceProduct.policy_id == query_para).first()
+
+    
+    # 结果组装
+    if result:  # 避免 result 是 None
+        insurance_product, policy_owner, insured_person, agent = result
+        data_temp = {}
+        data_temp.update(model_to_dict(insurance_product))
+        data_temp.update(model_to_dict(agent))
+        data_temp.update({
+			"owner_name": get_full_name(policy_owner),
+			"owner_address": policy_owner.address,
+			"insured_person_name": get_full_name(insured_person),
+			"agent_name": get_full_name(agent) if hasattr(agent, "name_first") else agent.name  
+		})
+
+        policies_data = [data_temp]
+    else:
+        policies_data = []
+	
+
+   
+    return jsonify({
+        "policies_data": policies_data
+    })

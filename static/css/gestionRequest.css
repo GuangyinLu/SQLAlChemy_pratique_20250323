@@ -1,0 +1,98 @@
+.main {
+    height: 87%;
+}
+
+.affiche {
+    /*height: 80%;*/
+    height: 80vh;
+    display: block;
+    overflow: auto;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    justify-items: center;
+}
+
+.user_info {
+    margin: 0;
+    margin: 30px  30px 30px 30px;
+}
+
+.user_info_list {
+    margin: 0;
+}
+
+.form-check {
+    padding: 5px 0px;
+    margin: 5px 20px 30px;
+    font-weight: bold;
+}
+
+.option_action {
+    display: flex;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+}
+
+.search_user {
+    display: flex;
+    padding: 5px 0 15px 0;
+    margin: 0 0;
+    width: 100%;
+}
+
+.table {
+    background-color: rgba(232, 242, 232, 0);
+    overflow: auto;
+    display: block;
+}
+
+.table td{
+    background-color: rgba(232, 242, 232, 0);
+    overflow: auto; 
+    padding: 5px;
+}
+
+.table th{
+    background-color: rgba(232, 242, 232, 0);
+    overflow: auto;
+    
+}
+
+.table tr:hover {
+    background-color: #bfc1d8;
+    color: #ff0000; /* 字体颜色变为红色 */
+    cursor: pointer;
+}
+
+/* 可选：点击后的样式 */
+.table tr:active {
+    background-color: #e0e0e0;
+}
+
+.client_search-table {
+    height: auto;
+}
+
+.client_search-table tr:hover {
+    background-color: #bdc5e7e7;
+    cursor: pointer;
+}
+
+.client_search-table tr.selected {
+    background-color: #afd7ad;
+    font-weight: bold;
+}
+
+.form-group label {
+    font-weight: bold;
+    text-align: left;
+    padding: 0 0 0 15%;
+    display: flex;
+    align-items: center;
+}
+
+.btn-user {
+    margin: 50px 0;
+}
