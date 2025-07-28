@@ -387,7 +387,7 @@ function showClientAllDetail(customer_id) {
                                         -->
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-primary" onclick="editClient('${item.id}')" data-bs-dismiss="modal">Turn To</button>
+                                        <div id="pop_client_id"></div>                                    
                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                     </div>
                                 </div>
@@ -651,6 +651,7 @@ function fetchCustomerData(customerId) {
             if (response.data.customer && response.data.customer.length > 0) {
 
                 let pop_client_information = "";
+                let pop_client_id_button = "";
                 response.data.customer.forEach(item =>{ 
                     pop_client_information += `
                                         <div class="mb-3 row">
@@ -677,7 +678,11 @@ function fetchCustomerData(customerId) {
                                         </div>                
 
                     `;
+                    pop_client_id_button = `
+                        <button type="button" class="btn btn-primary" onclick="editClient('${item.customer_id}')" data-bs-dismiss="modal">Turn To</button>
+                    `;
                     document.getElementById("pop_client_informations").innerHTML = pop_client_information;
+                    document.getElementById("pop_client_id").innerHTML = pop_client_id_button;
                     document.getElementById('editModal').dataset.customerId = customerId;
                 })
             };

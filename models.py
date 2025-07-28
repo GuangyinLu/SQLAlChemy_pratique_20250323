@@ -42,8 +42,9 @@ class ClaimStatusEnum(Enum):
     Paid = 'Paid'
 
 class ClientRequestStatusEnum(Enum):
+    Create = 'Create'
     In_Progress = 'In_Progress'
-    Closed = 'Closed'
+    Finish = 'Finish'
 
 class PaymentStatusEnum(Enum):
     Success = 'Success'
@@ -318,8 +319,8 @@ class ClientRequest(Base):
     title = Column(String(50))
     description = Column(Text)
     created_at = Column(DateTime, default=datetime.now(timezone.utc))
-    received_agent_id = Column(Integer, ForeignKey('agents.agent_id'), nullable=False)
-    handle_agent_id = Column(Integer, ForeignKey('agents.agent_id'), nullable=False)
+    now_agent_id = Column(Integer, ForeignKey('agents.agent_id'), nullable=False)
+    next_agent_id = Column(Integer, ForeignKey('agents.agent_id'), nullable=True)
     status = Column(SQLAEnum(ClientRequestStatusEnum), default=ClientRequestStatusEnum.In_Progress, nullable=False)
 
 
@@ -329,9 +330,9 @@ class ClientRequestHandler(Base):
     __table_args__ = {'mysql_engine': 'InnoDB'}
     handle_id = Column(Integer, primary_key=True, autoincrement=True)
     request_id = Column(Integer, ForeignKey('clientrequests.request_id'), nullable=False)
-    agent_id = Column(Integer, ForeignKey('agents.agent_id'), nullable=False)
+    now_agent_id = Column(Integer, ForeignKey('agents.agent_id'), nullable=False)
     description = Column(Text)
-    if_close = Column(Boolean,default=False,nullable=False)
+    status = Column(SQLAEnum(ClientRequestStatusEnum), default=ClientRequestStatusEnum.In_Progress, nullable=False)
     next_agent_id = Column(Integer, ForeignKey('agents.agent_id'))
     handled_time = Column(DateTime, default=datetime.now(timezone.utc))
 

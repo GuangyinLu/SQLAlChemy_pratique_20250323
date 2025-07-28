@@ -1,25 +1,16 @@
 .main {
-    height: 87%;
+    height: 92%;
 }
 
-.affiche {
+.affiche_search, .affiche_request {
     /*height: 80%;*/
-    height: 80vh;
+    height: 70vh;
     display: block;
     overflow: auto;
-    justify-content: center;
+    /*justify-content: center;
     align-items: center;
     text-align: center;
-    justify-items: center;
-}
-
-.user_info {
-    margin: 0;
-    margin: 30px  30px 30px 30px;
-}
-
-.user_info_list {
-    margin: 0;
+    justify-items: center;*/
 }
 
 .form-check {
@@ -35,12 +26,6 @@
     width: 100%;
 }
 
-.search_user {
-    display: flex;
-    padding: 5px 0 15px 0;
-    margin: 0 0;
-    width: 100%;
-}
 
 .table {
     background-color: rgba(232, 242, 232, 0);
@@ -71,9 +56,6 @@
     background-color: #e0e0e0;
 }
 
-.client_search-table {
-    height: auto;
-}
 
 .client_search-table tr:hover {
     background-color: #bdc5e7e7;
@@ -88,11 +70,30 @@
 .form-group label {
     font-weight: bold;
     text-align: left;
-    padding: 0 0 0 15%;
+    padding: 0 0 0 0;
     display: flex;
     align-items: center;
+    padding: 5px;
 }
 
 .btn-user {
     margin: 50px 0;
+}
+
+#suggestions_customer, #suggestions_agent, #suggestions_agent_next  {
+    z-index: 1000;
+    max-height: 200px;
+    overflow-y: auto;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 0 0 5px 5px;
+}
+
+.suggestion-item {
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+.suggestion-item:hover {
+    background-color: #f0f0f0;
 }
