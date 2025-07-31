@@ -59,4 +59,9 @@
     overflow: auto;
 }
 
-
+#request_client {
+    height: 60vh;
+    overflow: auto;
+    display: flex !important;
+    flex-wrap: wrap;
+}

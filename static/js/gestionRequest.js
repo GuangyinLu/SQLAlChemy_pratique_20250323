@@ -148,7 +148,6 @@
             event.preventDefault();
 
             let action = document.querySelector("input[name='request_optradio']:checked").value; 
-            console.log(action);
             
             if (action == "modifier") {
                                           
@@ -165,8 +164,6 @@
                     next_agent_id: next_agent_id,
                     description: description
                 };
-
-                console.log(para_json);
 
                 axios.post("/gestionRequest/modifier_Request", para_json, {withCredentials: true})
                 .then(response => {
@@ -207,6 +204,8 @@
             }
 
             document.querySelector(`input[name="request_optradio"][value="vue"]`).checked = true;
+            handleRadioChange(); // ✅ 重新调用逻辑，刷新表单样式
+
             document.querySelectorAll("#request-form input, #request-form textarea").forEach(function(el) {
                 el.value = "";
             });
@@ -220,36 +219,37 @@
         });
 });
 
-$(document).ready(function() {
-    function handleRadioChange() {
-        $('.request_handle').addClass('d-none');
-        $('.submit_confirmation').addClass('d-none');
-        
-        const selectedValue = $('input[name="request_optradio"]:checked').val();
-        // console.log(selectedValue);
 
-        if (selectedValue == "ajouter") {
-            $('.request_info').removeClass('d-none');
-            $('.handle_info').addClass('d-none');
-            $('.submit_confirmation').removeClass('d-none');
-        } else if (selectedValue == "modifier") {
-            $('.handle_info').removeClass('d-none');
-            $('.request_info').addClass('d-none');
-            $('.modifier_handle_request').removeClass('d-none');
-            $('.submit_confirmation').removeClass('d-none');
-        } else if (selectedValue == "supprimer") {
-            $('.handle_info').removeClass('d-none');
-            $('.request_info').addClass('d-none');
-            $('.modifier_handle_request').addClass('d-none');
-            $('.submit_confirmation').removeClass('d-none');
-        } else if (selectedValue == "vue") {
-            $('.handle_info').removeClass('d-none');
-            $('.request_info').addClass('d-none');
-            $('.modifier_handle_request').addClass('d-none');
-            $('.submit_confirmation').addClass('d-none');
-        }
-    }
+function handleRadioChange() {
+    $('.request_handle').addClass('d-none');
+    $('.submit_confirmation').addClass('d-none');
     
+    const selectedValue = $('input[name="request_optradio"]:checked').val();
+    // console.log(selectedValue);
+
+    if (selectedValue == "ajouter") {
+        $('.request_info').removeClass('d-none');
+        $('.handle_info').addClass('d-none');
+        $('.submit_confirmation').removeClass('d-none');
+    } else if (selectedValue == "modifier") {
+        $('.handle_info').removeClass('d-none');
+        $('.request_info').addClass('d-none');
+        $('.modifier_handle_request').removeClass('d-none');
+        $('.submit_confirmation').removeClass('d-none');
+    } else if (selectedValue == "supprimer") {
+        $('.handle_info').removeClass('d-none');
+        $('.request_info').addClass('d-none');
+        $('.modifier_handle_request').addClass('d-none');
+        $('.submit_confirmation').removeClass('d-none');
+    } else if (selectedValue == "vue") {
+        $('.handle_info').removeClass('d-none');
+        $('.request_info').addClass('d-none');
+        $('.modifier_handle_request').addClass('d-none');
+        $('.submit_confirmation').addClass('d-none');
+    }
+}
+
+$(document).ready(function() {    
     $(document).on('change', 'input[name="request_optradio"]', handleRadioChange);
     handleRadioChange(); // 初始化
 });

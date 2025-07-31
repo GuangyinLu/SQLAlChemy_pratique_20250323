@@ -57,6 +57,10 @@ function showClientAllDetail(customer_id) {
     document.getElementById("information_client").innerHTML = "";
     document.getElementById("policy_client").innerHTML = "";
     document.getElementById("relation_client").innerHTML = "";
+    document.getElementById("service_requests").innerHTML = "";
+    document.getElementById("log_request_head").innerHTML = "";
+    document.getElementById("detail_log_request_title").innerHTML = "";
+    document.getElementById("detail_log_request").innerHTML = "";
     document.getElementById("agenda_client").innerHTML = "";
 
     // 调用其他函数并传递行数据
@@ -412,7 +416,43 @@ function showClientAllDetail(customer_id) {
                     }); 
 
                 document.getElementById("relation_client").innerHTML = customer_relation_info;
-            }   
+            } 
+
+            if (response.data.request_data && response.data.request_data.length > 0) {
+                let customer_request_info =`
+                    <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>Request ID</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Title</th>
+                            <th>Next Agent</th>
+                        </tr>	
+                    </thead>
+                    <tbody class="request_table" id="request_detail">
+                `;
+                response.data.request_data.forEach((item,index) =>{                    
+                    customer_request_info += `
+                            <tr  onclick="handleRowClickRequest(this)" data-id="${item.request_id}">
+                                <td>${index+1}</td>
+                                <td>${item.request_id}</td>
+                                <td>${item.created_at}</td>
+                                <td>${item.status}</td>
+                                <td>${item.title}</td>
+                                <td>${item.agent_name}</td>
+                            </tr>
+                        `;
+                    });
+
+                customer_request_info +=`
+                        </tbody>
+                    </table>
+                `;
+
+                document.getElementById("service_requests").innerHTML = customer_request_info; 
+            }
 
             if (response.data.agenda_data && response.data.agenda_data.length > 0) {
                 let customer_agenda_info ="";   
@@ -464,10 +504,8 @@ function handleRowClickProduct(row) {
     // 更新选中行样式
     clearSelectedRowsProduct();
     row.classList.add('selected');
-    console.log('lgy');
-    
+      
     document.getElementById("detail_product_sub").innerHTML = "";
-
 
     // 调用其他函数并传递行数据
     axios.get("/profilClient/detail_product_sub", {params: {query: rowData.policy_id}})
@@ -699,3 +737,73 @@ function editClient(customer_id) {
     showClientAllDetail(customer_id);
 
 }
+
+//显示request的相关函数
+// 处理行点击事件的函数
+function handleRowClickRequest(row) {
+    // 获取行数据
+    const cells = row.cells;
+    const rowData = {
+        request_id: cells[1].textContent
+    };
+   
+    // 更新选中行样式
+    clearSelectedRowsRequest();
+    row.classList.add('selected');
+      
+    document.getElementById("detail_log_request").innerHTML = "";
+
+    // 调用其他函数并传递行数据
+    axios.get("/gestionRequest/Request_per_info", {params: {request_id: rowData.request_id}})
+        .then(response => {
+
+            let log_rows = "";
+            let log_request_head = "Handle Logs"
+            document.getElementById("log_request_head").innerHTML = log_request_head;
+            let log_rows_title = `
+                <tr>
+                    <th>No</th>
+                    <th>Date</th>
+                    <th>Agent</th>
+                    <th>Status</th>
+                    <th>Description</th>
+                    <th>Next Agent</th>
+                </tr>
+            `;
+            document.getElementById("detail_log_request_title").innerHTML = log_rows_title;
+
+            const total = response.data.Request_log.length;  // 总条数                
+            response.data.Request_log.forEach((item,index) => {
+                const reverseIndex = total - index;  // 倒序号，从总数开始递减                  
+                log_rows += `
+                    <tr>
+                        <td>${reverseIndex}</td>
+                        <td>${item.handle_time}</td>
+                        <td>${item.handle_agent}</td>
+                        <td>${item.status_handle}</td>
+                        <td>${item.description}</td>
+                        <td>${item.next_agent}</td>
+                    </tr>
+                `;
+            });                
+            document.getElementById("detail_log_request").innerHTML = log_rows;
+
+        })
+
+        .catch(error => {
+            console.error("Error fetching data:", error);
+        });
+    
+    
+    // 可选：添加选中样式
+    clearSelectedRowsRequest();
+    row.classList.add('selected');
+}
+        
+// 清除之前选中的行
+function clearSelectedRowsRequest() {
+    const rows = document.querySelectorAll('.request_table tr');
+    rows.forEach(row => row.classList.remove('selected'));
+}
+
+

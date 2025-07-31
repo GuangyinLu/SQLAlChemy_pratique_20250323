@@ -127,7 +127,7 @@ def customer_info():
         policies_data.append(data)
    
 
-
+    # 查询客户之间关系
     relations = db.query(CustomerRelationship) \
         .filter(
             (CustomerRelationship.customer_id1 == query_para) | \
@@ -149,7 +149,26 @@ def customer_info():
             "Relationship": relation_ship
         })
     
-
+    # 查询客户的request记录：
+    request_handles = db.query(ClientRequest, Agent) \
+                .join(Agent, Agent.agent_id == ClientRequest.next_agent_id) \
+                .filter(ClientRequest.customer_id == query_para) \
+                .order_by(ClientRequest.request_id) \
+                .all()
+    
+    # 结果组装
+    request_data = []
+    for request_handle, agent in request_handles:
+        data = {}
+        data.update(model_to_dict(request_handle))
+        # data.update(model_to_dict(agent))
+        # 补充自定义字段
+        data.update({
+		    "agent_name": get_full_name(agent) if hasattr(agent, "name_first") else agent.name  
+        })
+        request_data.append(data)
+    
+    # 查询客户的agenda记录
     agendas = db.query(LogAgendaClient, Agent, LogAgendaAttachment) \
         .join(Agent, Agent.agent_id == LogAgendaClient.agent_id) \
         .outerjoin(LogAgendaAttachment, LogAgendaAttachment.log_agenda_id == LogAgendaClient.log_agenda_id) \
@@ -167,6 +186,7 @@ def customer_info():
         "customer": customer_data,
         "policies_data": policies_data,
         "relation": relation_data,
+        "request_data": request_data,
         "agenda_data": agenda_data
     })
 

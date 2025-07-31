@@ -59,6 +59,10 @@ class RelationshipTypeEnum(Enum):
     Business_Partner = 'Business_Partner'
     Other = 'Other'
 
+class logOperation(Enum):
+    INSERT = "INSERT"
+    UPDATE = "UPDATE"
+    DELETE = "DELETE"
 
 # definition class
 class MenuItem(Base):
@@ -86,7 +90,7 @@ class User(Base, UserMixin):
     password_hash = Column(String(200), nullable=False)
     #role = Column(Enum('user', 'agent','admin',  name="role_enum"), nullable=False)
     role = Column(SQLAEnum(RoleEnum,  name="role_enum"), nullable=False)
-    last_active_time = Column(DateTime, default=datetime.now(timezone.utc))
+    last_active_time = Column(DateTime, default=lambda:datetime.now(timezone.utc))
     
     @property
     def role_str(self):
@@ -114,10 +118,10 @@ class Customer(Base):
     smoking_status = Column(String(10))
     province_of_tax = Column(String(20))
     power_of_attorney = Column(String(20))
-    phone = Column(String(20), unique=True, nullable=False)
-    phone_work = Column(String(20), nullable=False)
-    phone_home = Column(String(20), nullable=False)
-    email = Column(String(100), unique=True)
+    phone = Column(String(20), nullable=False)
+    phone_work = Column(String(20))
+    phone_home = Column(String(20))
+    email = Column(String(100))
     email_secondary = Column(String(100))
     address = Column(String(255))
     address_on_file = Column(String(255))
@@ -135,8 +139,8 @@ class Customer(Base):
     custom_segment_2 = Column(String(20))
     account_source = Column(String(20))
     id_card_number = Column(String(50), unique=True, nullable=False)
-    created_at = Column(DateTime, default=datetime.now(timezone.utc))
-    updated_at = Column(DateTime, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=lambda:datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=lambda:datetime.now(timezone.utc), onupdate=lambda:datetime.now(timezone.utc))
 
 class InsuranceProduct(Base):
     __tablename__ = 'insurance_products'
@@ -161,8 +165,8 @@ class InsuranceProduct(Base):
     agent_id = Column(Integer, ForeignKey('agents.agent_id'), nullable=False)
     commission_rate = Column(Numeric(10, 2))
     description = Column(Text)
-    created_at = Column(DateTime, default=datetime.now(timezone.utc))
-    updated_at = Column(DateTime, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=lambda:datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=lambda:datetime.now(timezone.utc), onupdate=lambda:datetime.now(timezone.utc))
 
 class Discount(Base):
     __tablename__ = 'discounts'
@@ -173,8 +177,8 @@ class Discount(Base):
     discount_value = Column(Numeric(10, 2), nullable=False)
     start_date = Column(DateTime, nullable=False)
     end_date = Column(DateTime, nullable=False)
-    created_at = Column(DateTime, default=datetime.now(timezone.utc))
-    updated_at = Column(DateTime, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=lambda:datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=lambda:datetime.now(timezone.utc), onupdate=lambda:datetime.now(timezone.utc))
 
 class Policy(Base):
     __tablename__ = 'policies'
@@ -190,8 +194,8 @@ class Policy(Base):
     discount_id = Column(Integer, ForeignKey('discounts.discount_id'))
     final_premium = Column(Numeric(10, 2), nullable=False)
     status = Column(SQLAEnum(PolicyStatusEnum), default=PolicyStatusEnum.Active, nullable=False)
-    created_at = Column(DateTime, default=datetime.now(timezone.utc))
-    updated_at = Column(DateTime, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=lambda:datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=lambda:datetime.now(timezone.utc), onupdate=lambda:datetime.now(timezone.utc))
 
     customer = relationship("Customer", backref="policies")
     product = relationship("InsuranceProduct", backref="policies")
@@ -208,8 +212,8 @@ class Claim(Base):
     claim_amount = Column(Numeric(10, 2), nullable=False)
     approved_amount = Column(Numeric(10, 2), default=0)
     status = Column(SQLAEnum(ClaimStatusEnum), default=ClaimStatusEnum.Pending, nullable=False)
-    created_at = Column(DateTime, default=datetime.now(timezone.utc))
-    updated_at = Column(DateTime, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=lambda:datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=lambda:datetime.now(timezone.utc), onupdate=lambda:datetime.now(timezone.utc))
 
     policy = relationship("Policy", backref="claims")
 
@@ -224,8 +228,8 @@ class Payment(Base):
     payment_method = Column(String(50), nullable=False)
     transaction_id = Column(String(100), unique=True, nullable=False)
     status = Column(SQLAEnum(PaymentStatusEnum), default=PaymentStatusEnum.Processing, nullable=False)
-    created_at = Column(DateTime, default=datetime.now(timezone.utc))
-    updated_at = Column(DateTime, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=lambda:datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=lambda:datetime.now(timezone.utc), onupdate=lambda:datetime.now(timezone.utc))
 
     policy = relationship("Policy", backref="payments")
 
@@ -241,8 +245,8 @@ class Agent(Base):
     email = Column(String(100), unique=True)
     address = Column(String(255))
     commission_rate = Column(Numeric(5, 2), default=0.00, nullable=False)
-    created_at = Column(DateTime, default=datetime.now(timezone.utc))
-    updated_at = Column(DateTime, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=lambda:datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=lambda:datetime.now(timezone.utc), onupdate=lambda:datetime.now(timezone.utc))
 
 # ------------------ 8. 代理-客户关系表 AgentCustomers ------------------
 class AgentCustomer(Base):
@@ -251,7 +255,7 @@ class AgentCustomer(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     agent_id = Column(Integer, ForeignKey('agents.agent_id'), nullable=False)
     customer_id = Column(Integer, ForeignKey('customers.customer_id'), nullable=False)
-    created_at = Column(DateTime, default=datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=lambda:datetime.now(timezone.utc))
 
     agent = relationship("Agent", backref="agent_customers")
     customer = relationship("Customer", backref="agents_customers")
@@ -264,7 +268,7 @@ class CustomerRelationship(Base):
     customer_id1 = Column(Integer, ForeignKey('customers.customer_id'), nullable=False)
     customer_id2 = Column(Integer, ForeignKey('customers.customer_id'), nullable=False)
     relationship_type = Column(SQLAEnum(RelationshipTypeEnum), nullable=False)
-    created_at = Column(DateTime, default=datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=lambda:datetime.now(timezone.utc))
 
     # 防止重复关系
     __table_args__ = (UniqueConstraint('customer_id1', 'customer_id2', name='unique_relationship'),)
@@ -280,7 +284,7 @@ class PolicyAttachment(Base):
     policy_id = Column(Integer, ForeignKey('policies.policy_id'), nullable=False)
     file_name = Column(String(255), nullable=False)
     file_data = Column(LargeBinary, nullable=False)  # 存储文件数据
-    uploaded_at = Column(DateTime, default=datetime.now(timezone.utc))
+    uploaded_at = Column(DateTime, default=lambda:datetime.now(timezone.utc))
 
     policy = relationship("Policy", backref="attachments")
 
@@ -293,7 +297,7 @@ class LogAgendaClient(Base):
     agent_id = Column(Integer, ForeignKey('agents.agent_id'), nullable=False)
     meeting_date = Column(DateTime, nullable=False)
     description = Column(String(500))
-    created_at = Column(DateTime, default=datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=lambda:datetime.now(timezone.utc))
 
     customer = relationship("Customer", backref="log_agendas")
     agent = relationship("Agent", backref="log_agendas")
@@ -306,7 +310,7 @@ class LogAgendaAttachment(Base):
     log_agenda_id = Column(Integer, ForeignKey('log_agenda_clients.log_agenda_id'), nullable=False)
     file_name = Column(String(255), nullable=False)
     file_data = Column(LargeBinary, nullable=False)  # 存储文件数据
-    uploaded_at = Column(DateTime, default=datetime.now(timezone.utc))
+    uploaded_at = Column(DateTime, default=lambda:datetime.now(timezone.utc))
 
     log_agenda = relationship("LogAgendaClient", backref="attachments")
 
@@ -318,7 +322,7 @@ class ClientRequest(Base):
     customer_id = Column(Integer, ForeignKey('customers.customer_id'), nullable=False)
     title = Column(String(50))
     description = Column(Text)
-    created_at = Column(DateTime, default=datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=lambda:datetime.now(timezone.utc))
     now_agent_id = Column(Integer, ForeignKey('agents.agent_id'), nullable=False)
     next_agent_id = Column(Integer, ForeignKey('agents.agent_id'), nullable=True)
     status = Column(SQLAEnum(ClientRequestStatusEnum), default=ClientRequestStatusEnum.In_Progress, nullable=False)
@@ -334,8 +338,23 @@ class ClientRequestHandler(Base):
     description = Column(Text)
     status = Column(SQLAEnum(ClientRequestStatusEnum), default=ClientRequestStatusEnum.In_Progress, nullable=False)
     next_agent_id = Column(Integer, ForeignKey('agents.agent_id'))
-    handled_time = Column(DateTime, default=datetime.now(timezone.utc))
+    handled_time = Column(DateTime, default=lambda:datetime.now(timezone.utc))
 
+# ------------------ 15. 数据库数据变动操作修改记录表 ChangeLog------------------
+class ChangeLog(Base):
+    __tablename__ = 'change_logs'
+    __table_args__ = {'mysql_engine': 'InnoDB'}
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    table_name = Column(String(100), nullable=False)
+    record_id = Column(Integer, nullable=False)
+    field_name = Column(String(100))
+    old_value = Column(Text)
+    new_value = Column(Text)
+    operation = Column(SQLAEnum(logOperation), nullable=False)
+    changed_at = Column(DateTime, default=lambda:datetime.now(timezone.utc))
+    changed_by = Column(String(100), nullable=False)
+    ip_address = Column(String(45))  # 支持IPv4/IPv6
+    session_id = Column(String(100))
 
 # Create les tables if not existe.
 def init_db():

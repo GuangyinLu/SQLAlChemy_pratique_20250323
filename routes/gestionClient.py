@@ -2,148 +2,200 @@ from datetime import datetime, timezone, date
 from flask import Blueprint, Flask, request, render_template, redirect, url_for, flash, jsonify
 from flask_login import login_user, logout_user, login_required, current_user
 from database import SessionLocal
+from sqlalchemy.exc import SQLAlchemyError
 from models import *
 from math import ceil
 
 gestionClient_bp = Blueprint('gestionClient', __name__)
 
+# 通用日志记录函数
+def log_change(db, table_name, record_id, field_name, old_value, new_value, operation, ip_address=None, session_id=None):
+    # 截断session_id，确保不超过255字符
+    if session_id and len(session_id) > 100:
+        session_id = session_id[:100]
+        print(f"Warning: session_id truncated to 255 characters: {session_id}")
+
+    log_entry = ChangeLog(
+        table_name=table_name,
+        record_id=record_id,
+        field_name=field_name,
+        old_value=str(old_value) if old_value is not None else None,
+        new_value=str(new_value) if new_value is not None else None,
+        operation=operation,
+        changed_by=current_user.username,
+        ip_address=ip_address,
+        session_id=session_id
+    )
+    db.add(log_entry)
+
+
+# 渲染HTML模板
 @gestionClient_bp.route("/get_gestionClient_html", methods=["GET", "POST"])
+@login_required
 def get_gestionClient_html():
     return render_template("/partials/gestionClient.html")
 
+# 搜索客户
 @gestionClient_bp.route('/user_search', methods=['GET'])
 @login_required
 def user_search():
     db = SessionLocal()
-    query_client = request.args.get('query', '')
-
-    # 多表联合查询
-    query_result = db.query(Customer).filter(
+    try:
+        query_client = request.args.get('query', '')
+        query_result = db.query(Customer).filter(
             (Customer.name_first.contains(query_client)) |
             (Customer.name_last.contains(query_client)) |
             (Customer.phone.contains(query_client)) |
-            (Customer.email.contains(query_client)) 
+            (Customer.email.contains(query_client))
         ).all()
-    
-    data = []
-    for customer in query_result:
-        data.append({
+        data = [{
             'id': customer.customer_id,
             'name': f"{customer.name_first} {customer.name_last}",
             'phone': customer.phone,
             'email': customer.email
-        })
-    return jsonify({
-        "data":data
-    })
+        } for customer in query_result]
+        return jsonify({"data": data})
+    finally:
+        db.close()
 
+# 获取客户详细信息
 @gestionClient_bp.route('/customer_per_info', methods=['GET', 'POST'])
 @login_required
 def customer_per_info():
     db = SessionLocal()
-    query_para = request.args.get('query', '')
-    
-    item = db.query(Customer).filter(Customer.customer_id == query_para).first()
-    customer_data=[]    
-    customer_data.append({
-        "Customer_ID" : item.customer_id,
-        "Name_first" : item.name_first,
-        "Name_middle" : item.name_middle,
-        "Name_last" : item.name_last,
-        "Gendre" : item.gender.value,
-        "Birth_Day" : item.date_of_birth.strftime("%Y-%m-%d"),
-        "Phone" : item.phone,
-        "Email" : item.email,
-        "Address" : item.address,
-        "Number_Card_ID" : item.id_card_number        
-    })
+    try:
+        customer_id = request.args.get('query', '')
+        customer = db.query(Customer).filter(Customer.customer_id == customer_id).first()
+        if not customer:
+            return jsonify({"error": "Customer not found"}), 404
+        
+        # 动态获取所有字段，处理日期和枚举
+        customer_data = {}
+        for column in Customer.__table__.columns:
+            value = getattr(customer, column.name)
+            if column.name == 'date_of_birth' and value:
+                value = value.strftime("%Y-%m-%d")
+            elif column.name == 'gender' and value:
+                value = value.value  # 假设gender是枚举
+            elif column.name in ('created_at', 'updated_at') and value:
+                value = value.isoformat()
+            customer_data[column.name] = value
+        return jsonify({"customer": customer_data})
+    finally:
+        db.close()
 
-    return jsonify({
-        "customer": customer_data,
-
-    })
-
-@gestionClient_bp.route('/ajouter_user', methods=['GET', 'POST'])
+# 添加或修改客户
+@gestionClient_bp.route('/save_customer', methods=['POST'])
 @login_required
-def ajouter_user():
+def save_customer():
     db = SessionLocal()
-    query_para = request.get_json().get('query', '')
-    query_Name_first= request.get_json().get('Name_first', '')
-    query_Name_middle= request.get_json().get('Name_middle', '')
-    query_Name_last= request.get_json().get('Name_last', '')
-    query_Gendre= request.get_json().get('Gendre', '')
-    query_Birth_Day= request.get_json().get('Birth_Day', '')
-    query_Phone= request.get_json().get('Phone', '')
-    query_Email= request.get_json().get('Email', '')
-    query_Address= request.get_json().get('Address', '')
-    query_Number_Card_ID= request.get_json().get('Number_Card_ID', '')
+    try:
+        data = request.get_json()
+        customer_id = data.get('customer_id')
+        ip_address = request.remote_addr
+        session_id = request.cookies.get('session')
+        
+        # 准备数据，处理日期和枚举，忽略空值
+        customer_data = {}
+        for key, value in data.items():
+            if key == 'customer_id' or key in ('created_at', 'updated_at'):
+                continue  # 忽略customer_id和时间字段
+            if value is not None and value != '':  # 忽略空值
+                if key == 'date_of_birth' and value:
+                    customer_data[key] = datetime.strptime(value, "%Y-%m-%d").date()
+                elif key == 'gender' and value:
+                    customer_data[key] = value  # 枚举值直接传递
+                else:
+                    customer_data[key] = value
 
-    new_user = Customer(
-        name_first=query_Name_first,
-        name_middle=query_Name_middle,
-        name_last=query_Name_last,
-        gender=query_Gendre,
-        date_of_birth=query_Birth_Day,
-        phone=query_Phone,
-        email=query_Email,
-        address=query_Address,
-        id_card_number=query_Number_Card_ID   
-    )
-
-    db.add(new_user)
-    db.commit()
-
-    return jsonify({
-        "message": "User est ajoute!"
-    })
-
-@gestionClient_bp.route('/modifier_user', methods=['GET', 'POST'])
-@login_required
-def modifier_user():
-    db = SessionLocal()
-    query_para = request.get_json().get('query', '')
-    query_Name_first= request.get_json().get('Name_first', '')
-    query_Name_middle= request.get_json().get('Name_middle', '')
-    query_Name_last= request.get_json().get('Name_last', '')
-    query_Gendre= request.get_json().get('Gendre', '')
-    query_Birth_Day= request.get_json().get('Birth_Day', '')
-    query_Phone= request.get_json().get('Phone', '')
-    query_Email= request.get_json().get('Email', '')
-    query_Address= request.get_json().get('Address', '')
-    query_Number_Card_ID= request.get_json().get('Number_Card_ID', '')    
-
-    customer = db.query(Customer).filter(Customer.customer_id==query_para).first()
-
-    if customer:
-
-        customer.name_first=query_Name_first
-        customer.name_middle=query_Name_middle
-        customer.name_last=query_Name_last
-        customer.gender=query_Gendre
-        customer.date_of_birth=query_Birth_Day
-        customer.phone=query_Phone
-        customer.email=query_Email
-        customer.address=query_Address
-        customer.id_card_number=query_Number_Card_ID
-
+        if customer_id:
+            # 更新现有客户
+            customer = db.query(Customer).filter(Customer.customer_id == customer_id).first()
+            if not customer:
+                return jsonify({"error": "Customer not found"}), 404
+            
+            # 记录变动日志
+            for key, new_value in customer_data.items():
+                if hasattr(customer, key):
+                    old_value = getattr(customer, key)
+                    if old_value != new_value:
+                        old_value_str = old_value.strftime("%Y-%m-%d") if key == 'date_of_birth' and old_value else str(old_value)
+                        new_value_str = new_value.strftime("%Y-%m-%d") if key == 'date_of_birth' and new_value else str(new_value)
+                        if key == 'gender':
+                            old_value_str = old_value.value if old_value else str(old_value)
+                            new_value_str = new_value
+                        log_change(
+                            db=db,
+                            table_name='customers',
+                            record_id=customer_id,
+                            field_name=key,
+                            old_value=old_value_str,
+                            new_value=new_value_str,
+                            operation=logOperation.UPDATE,
+                            ip_address=ip_address,
+                            session_id=session_id
+                        )
+                    setattr(customer, key, new_value)
+        else:
+            # 创建新客户
+            customer = Customer(**customer_data)
+            db.add(customer)
+            db.flush()  # 获取新记录的customer_id
+            # 记录插入日志（仅非空字段）
+            for key, value in customer_data.items():
+                if hasattr(customer, key):
+                    value_str = value.strftime("%Y-%m-%d") if key == 'date_of_birth' and value else str(value)
+                    if key == 'gender':
+                        value_str = value
+                    log_change(
+                        db=db,
+                        table_name='customers',
+                        record_id=customer.customer_id,
+                        field_name=key,
+                        old_value=None,
+                        new_value=value_str,
+                        operation=logOperation.INSERT,
+                        ip_address=ip_address,
+                        session_id=session_id
+                    )
+        
         db.commit()
+        return jsonify({"message": f"Customer {'updated' if customer_id else 'added'} successfully"})
+    except SQLAlchemyError as e:
+        db.rollback()
+        return jsonify({"error": str(e)}), 500
+    finally:
+        db.close()
 
-        return jsonify({
-            "message": "User est modifie!"
-        })
-    
-@gestionClient_bp.route('/supprimer_user', methods=['GET', 'POST'])
+# 删除客户
+@gestionClient_bp.route('/supprimer_user', methods=['POST'])
 @login_required
 def supprimer_user():
     db = SessionLocal()
-    query_para = request.get_json().get('query', '')
-
-    print(query_para)
-    customer = db.query(Customer).filter(Customer.customer_id==query_para).first()
-
-    if customer:
+    try:
+        customer_id = request.get_json().get('customer_id', '')
+        customer = db.query(Customer).filter(Customer.customer_id == customer_id).first()
+        if not customer:
+            return jsonify({"error": "Customer not found"}), 404
+        
+        # 记录删除日志
+        log_change(
+            db=db,
+            table_name='customers',
+            record_id=customer_id,
+            field_name=None,
+            old_value=None,
+            new_value=None,
+            operation=logOperation.DELETE,
+            ip_address=request.remote_addr,
+            session_id=request.cookies.get('session')
+        )
+        
         db.delete(customer)
         db.commit()
-        return jsonify({
-            "message": "User est supprimer!"
-        })
+        return jsonify({"message": "Customer deleted successfully"})
+    except SQLAlchemyError as e:
+        db.rollback()
+        return jsonify({"error": str(e)}), 500
+    finally:
+        db.close()
