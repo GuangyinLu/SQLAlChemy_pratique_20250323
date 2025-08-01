@@ -11,8 +11,8 @@ gestionClient_bp = Blueprint('gestionClient', __name__)
 # 通用日志记录函数
 def log_change(db, table_name, record_id, field_name, old_value, new_value, operation, ip_address=None, session_id=None):
     # 截断session_id，确保不超过255字符
-    if session_id and len(session_id) > 100:
-        session_id = session_id[:100]
+    if session_id and len(session_id) > 255:
+        session_id = session_id[:255]
         print(f"Warning: session_id truncated to 255 characters: {session_id}")
 
     log_entry = ChangeLog(

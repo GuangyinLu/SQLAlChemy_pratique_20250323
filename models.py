@@ -354,7 +354,7 @@ class ChangeLog(Base):
     changed_at = Column(DateTime, default=lambda:datetime.now(timezone.utc))
     changed_by = Column(String(100), nullable=False)
     ip_address = Column(String(45))  # 支持IPv4/IPv6
-    session_id = Column(String(100))
+    session_id = Column(String(255))
 
 # Create les tables if not existe.
 def init_db():

@@ -1,94 +1,267 @@
+<!-- 备注：独立HTML文件，通过scripts.js的loadTabContent动态加载到base.html的#mainContent -->
+<div class="affiche affiche_select">
 
-<div class="main">
-    <h2>Gestion de Produits!</h2>            
-    
-    <div class="row">
-        <div class="col-md-4 border p-3 affiche">
-  
-            <div class="option_action">
-                <div class="form-check">
-                    <input type="radio" class="form-check-input" id="radio1" name="optradio" value="vue" checked>
-                    <label class="form-check-label" for="radio1">Vue</label>
-                </div>
-                <div class="form-check">
-                    <input type="radio" class="form-check-input" id="radio2" name="optradio" value="modifier">
-                    <label class="form-check-label" for="radio2">Modifier</label>
-                </div>
-                <div class="form-check">
-                    <input type="radio" class="form-check-input" id="radio3" name="optradio" value="ajouter">
-                    <label class="form-check-label" for="radio3">Ajouter</label>
-                </div>
-                <div class="form-check">
-                    <input type="radio" class="form-check-input" id="radio4" name="optradio" value="supprimer">
-                    <label class="form-check-label" for="radio4">Supprimer</label>
-                </div>
-            </div>
-
-            <div class="search_user">
-                <label>Recherche (Product,Category,Desc...) </label>
-                <input type="text" id="searchBox" onkeyup="searchCustomers()" placeholder="Recherche...">
-            </div>
-                                
-            <table class="table table-bordered table-striped">
-                <thead>
-                    <tr id="search_results_title"></tr>
-                </thead>
-                <tbody class="client_search-table" id="search_results">
-                    <!-- AJAX 动态填充 -->
-                </tbody>
-            </table>
-
+    <div class="col-8 row">
+        <div class="col-md-2">
+            <input class="optradio_product-input" type="radio" name="optradio_product" id="vue" value="vue" checked>
+            <label class="optradio_product-label" for="vue">Vue</label>
         </div>
-
-        <div class="col-md-8 border p-3 affiche">
-
-            <form id="product-form" class="form-horizontal user_info row">
-                <div class="form-group row">
-                    <label for="product_id" class="col-md-4 control-label">Product_id</label>
-                    <div class="col-md-4">
-                        <input type="number" class="form-control" name="product_id" id="product_id" disabled>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="product_name" class="col-md-4 control-label">Product_name</label>
-                    <div class="col-md-4">
-                        <input type="text" class="form-control" name="product_name" id="product_name">
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="category" class="col-md-4 control-label">Category</label>
-                    <div class="col-md-4">
-                        <input type="text" class="form-control" name="category" id="category">
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="coverage_amount" class="col-md-4 control-label">Coverage_amount</label>
-                    <div class="col-md-4">
-                        <input type="number" class="form-control" name="coverage_amount" id="coverage_amount">
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="premium" class="col-md-4 control-label">Premium</label>
-                    <div class="col-md-4">
-                        <input type="number" class="form-control" name="premium" id="premium">
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="description" class="col-md-4 control-label">Description</label>
-                    <div class="col-md-4">
-                        <input type="text" class="form-control" name="description" id="description">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-md-offset-2 col-md-10 btn-user">
-                      <button type="submit" class="btn btn-default btn-danger border btn-user-conf">Confirmation</button>
-                    </div>
-                </div>
-
-            </form>
-
+        <div class="col-md-2">
+            <input class="optradio_product-input" type="radio" name="optradio_product" id="ajouter" value="ajouter">
+            <label class="optradio_product-label" for="ajouter">Ajouter</label>
+        </div>
+        <div class="col-md-2">
+            <input class="optradio_product-input" type="radio" name="optradio_product" id="modifier" value="modifier" >
+            <label class="optradio_product-label" for="modifier">Modifier</label>
+        </div>
+        <div class="col-md-2">
+            <input class="optradio_product-input" type="radio" name="optradio_product" id="supprimer" value="supprimer">
+            <label class="optradio_product-label" for="supprimer">Supprimer</label>
         </div>
     </div>
 
+    <div class="row">
+        <div class="col-12 mt-2">
+            <h3>Recherche client</h3>
+            <!-- 备注：搜索框，触发300ms防抖搜索 -->
+            <input type="text" id="customerSearchBox" class="form-control transparent-input" placeholder="Rechercher par ID client, nom, téléphone ou email..." oninput="searchCustomers()">
+            <!-- 备注：客户表格，显示ID、姓名、电话、邮箱 -->
+            <table class="table client_search-table mt-3" id="client_search_table">
+                <thead id="customer_search_results_title"></thead>
+                <tbody id="customer_search_results"></tbody>
+            </table>
+            <!-- 备注：客户分页控件，每页10条 -->
+            <div id="customer_pagination" class="mt-2"></div>
+            <div id="selected_customer_info" class="mt-3"></div>
+            <h3 class="mt-4 d-none" id="policies_title">Polices du client</h3>
+            <!-- 备注：保单表格，显示ID、资产名称、产品类型、总保额、投保人ID、被保人ID -->
+            <table class="table client_search-table mt-3 d-none" id="policies_table">
+                <thead id="search_results_title"></thead>
+                <tbody id="search_results"></tbody>
+            </table>
+            <!-- 备注：保单分页控件，每页10条 -->
+            <div id="policy_pagination" class="mt-2 d-none"></div>
+        </div>
+    </div>
+</div>
+<div class="affiche affiche_action d-none">
+    <!-- 备注：保单操作表单，支持查看、添加、修改、删除 -->
 
+    <form id="product-form" class="row g-3">
+        <div class="col-12 mb-3">
+            <button type="button" class="btn btn-primary float-end" id="return_gestionProduct">↩ Retour</button>
+        </div>
+
+        <div class="row">
+            <div class="col-md-3" id="row_policy_id">
+                <label for="policy_id" class="form-label">ID de la police</label>
+                <input type="text" class="form-control user-field transparent-input" id="policy_id"  disabled readonly>
+            </div>
+
+            <div class="col-md-3">
+                <label for="asset_name" class="form-label">Nom de l'actif</label>
+                <div class="d-flex">
+                    <input type="text" class="form-control user-field transparent-input d-flex" id="asset_name" required disabled>
+                    <span class="edit-toggle d-none" onclick="toggleEditable(this)">✏️</span>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <label for="product_type" class="form-label">Type de produit</label>
+                <div class="d-flex">
+                    <input type="text" class="form-control user-field transparent-input d-flex" id="product_type" disabled>
+                    <span class="edit-toggle d-none" onclick="toggleEditable(this)">✏️</span>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <label for="plan_type" class="form-label">Type de plan</label>
+                <div class="d-flex">
+                    <input type="text" class="form-control user-field transparent-input d-flex" id="plan_type" disabled>
+                    <span class="edit-toggle d-none" onclick="toggleEditable(this)">✏️</span>
+                </div>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class = "row">
+            <div class="col-md-3">
+                <label for="issue_date" class="form-label">Issure Date</label>
+                <div class="d-flex">
+                    <input type="date" class="form-control user-field transparent-input" id="issue_date">
+                    <span class="edit-toggle d-none" onclick="toggleEditable(this)">✏️</span>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <label for="total_coverage" class="form-label">Couverture totale</label>
+                <div class="d-flex">
+                    <input type="number" class="form-control user-field transparent-input" id="total_coverage" step="0.01" required>
+                    <span class="edit-toggle d-none" onclick="toggleEditable(this)">✏️</span>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <label for="total_premium" class="form-label">Prime totale</label>
+                <div class="d-flex">
+                    <input type="number" class="form-control user-field transparent-input" id="total_premium" step="0.01" required>
+                    <span class="edit-toggle d-none" onclick="toggleEditable(this)">✏️</span>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <label for="premium_frequency" class="form-label">Fréquence de la prime</label>
+                <div class="d-flex">
+                    <select class="form-control user-field transparent-select" id="premium_frequency">
+                        <option value="">Choisir la fréquence</option>
+                        <option value="Annual">Annuel</option>
+                        <option value="Monthly">Mensuel</option>
+                        <option value="Other">Autre</option>
+                    </select>
+                    <span class="edit-toggle d-none" onclick="toggleEditable(this)">✏️</span>
+                </div>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="row">
+            <div class="col-md-3">
+                <label for="policy_type" class="form-label">Policy Type</label>
+                <div class="d-flex">
+                    <input type="text" class="form-control user-field transparent-input" id="policy_type">
+                    <span class="edit-toggle d-none" onclick="toggleEditable(this)">✏️</span>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <label for="policy_owner_id" class="form-label">Titulaire de la police</label>
+                <div class="d-flex">
+                    <select class="form-control user-field transparent-select" id="policy_owner_id" required>
+                        <option value="">Choisir le titulaire</option>
+                    </select>
+                    <span class="edit-toggle d-none" onclick="toggleEditable(this)">✏️</span>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <label for="insured_person_id" class="form-label">Personne assurée</label>
+                <div class="d-flex">
+                    <select class="form-control user-field transparent-select" id="insured_person_id" required>
+                        <option value="">Choisir la personne assurée</option>
+                    </select>
+                    <span class="edit-toggle d-none" onclick="toggleEditable(this)">✏️</span>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <label for="policy_date" class="form-label">Policy Date</label>
+                <div class="d-flex">
+                    <input type="date" class="form-control user-field transparent-input" id="policy_date">
+                    <span class="edit-toggle d-none" onclick="toggleEditable(this)">✏️</span>
+                </div>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="row">
+            <div class="col-md-3">
+                <label for="plan_name" class="form-label">Plan Name</label>
+                <div class="d-flex">
+                    <input type="text" class="form-control user-field transparent-input" id="plan_name">
+                    <span class="edit-toggle d-none" onclick="toggleEditable(this)">✏️</span>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <label for="adjusted_cost_basis" class="form-label">adjusted_cost_basis</label>
+                <div class="d-flex">
+                    <input type="number" class="form-control user-field transparent-input" id="adjusted_cost_basis">
+                    <span class="edit-toggle d-none" onclick="toggleEditable(this)">✏️</span>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <label for="agent_id" class="form-label">Agent</label>
+                <div class="d-flex">
+                    <select class="form-control user-field transparent-select" id="agent_id" required>
+                        <option value="">Choisir l'agent</option>
+                    </select>
+                    <span class="edit-toggle d-none" onclick="toggleEditable(this)">✏️</span>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <label for="policy_status" class="form-label">Statut de la police</label>
+                <div class="d-flex">
+                    <select class="form-control user-field transparent-select" id="policy_status">
+                        <option value="Active">Actif</option>
+                        <option value="Expired">Expiré</option>
+                        <option value="Pending">En attente</option>
+                        <option value="Cancelled">Annulé</option>
+                    </select>
+                    <span class="edit-toggle d-none" onclick="toggleEditable(this)">✏️</span>
+                </div>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="row">
+            <div class="col-md-3">
+                <label for="current_dividend_option" class="form-label">current_dividend_option</label>
+                <div class="d-flex">
+                    <input type="text" class="form-control user-field transparent-input" id="current_dividend_option">
+                    <span class="edit-toggle d-none" onclick="toggleEditable(this)">✏️</span>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <label for="billing_type" class="form-label">billing_type</label>
+                <div class="d-flex">
+                    <input type="text" class="form-control user-field transparent-input" id="billing_type">
+                    <span class="edit-toggle d-none" onclick="toggleEditable(this)">✏️</span>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <label for="commission_rate" class="form-label">commission_rate</label>
+                <div class="d-flex">
+                    <input type="number" class="form-control user-field transparent-input" id="commission_rate">
+                    <span class="edit-toggle d-none" onclick="toggleEditable(this)">✏️</span>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <label for="description" class="form-label">description</label>
+                <div class="d-flex">
+                    <input type="text" class="form-control user-field transparent-input" id="description">
+                    <span class="edit-toggle d-none" onclick="toggleEditable(this)">✏️</span>
+                </div>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="col-12 submit_confirm">
+            <button type="submit" class="btn btn-primary" id="submit_confirm">Soumettre</button>
+        </div>
+    </form>
+</div>
+<!-- 备注：Bootstrap模态框，修复关闭按钮无障碍问题，添加aria-label -->
+<div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="errorModalLabel">Message</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer la fenêtre modale"></button>
+            </div>
+            <div class="modal-body" id="errorMessage"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            </div>
+        </div>
+    </div>
 </div>
