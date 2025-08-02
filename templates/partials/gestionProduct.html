@@ -24,7 +24,7 @@
         <div class="col-12 mt-2">
             <h3>Recherche client</h3>
             <!-- 备注：搜索框，触发300ms防抖搜索 -->
-            <input type="text" id="customerSearchBox" class="form-control transparent-input" placeholder="Rechercher par ID client, nom, téléphone ou email..." oninput="searchCustomers()">
+            <input type="text" id="customerSearchBox" class="form-control transparent-input" placeholder="Rechercher par ID client, nom, téléphone ou email...">
             <!-- 备注：客户表格，显示ID、姓名、电话、邮箱 -->
             <table class="table client_search-table mt-3" id="client_search_table">
                 <thead id="customer_search_results_title"></thead>
@@ -59,10 +59,10 @@
             </div>
 
             <div class="col-md-3">
-                <label for="asset_name" class="form-label">Nom de l'actif</label>
+                <label for="asset_name" class="form-label">Nom de l'actif *</label>
                 <div class="d-flex">
                     <input type="text" class="form-control user-field transparent-input d-flex" id="asset_name" required disabled>
-                    <span class="edit-toggle d-none" onclick="toggleEditable(this)">✏️</span>
+                    <span class="edit-toggle d-none" >✏️</span>
                 </div>
             </div>
 
@@ -70,7 +70,7 @@
                 <label for="product_type" class="form-label">Type de produit</label>
                 <div class="d-flex">
                     <input type="text" class="form-control user-field transparent-input d-flex" id="product_type" disabled>
-                    <span class="edit-toggle d-none" onclick="toggleEditable(this)">✏️</span>
+                    <span class="edit-toggle d-none" >✏️</span>
                 </div>
             </div>
 
@@ -78,7 +78,7 @@
                 <label for="plan_type" class="form-label">Type de plan</label>
                 <div class="d-flex">
                     <input type="text" class="form-control user-field transparent-input d-flex" id="plan_type" disabled>
-                    <span class="edit-toggle d-none" onclick="toggleEditable(this)">✏️</span>
+                    <span class="edit-toggle d-none" >✏️</span>
                 </div>
             </div>
         </div>
@@ -90,28 +90,28 @@
                 <label for="issue_date" class="form-label">Issure Date</label>
                 <div class="d-flex">
                     <input type="date" class="form-control user-field transparent-input" id="issue_date">
-                    <span class="edit-toggle d-none" onclick="toggleEditable(this)">✏️</span>
+                    <span class="edit-toggle d-none" >✏️</span>
                 </div>
             </div>
 
             <div class="col-md-3">
-                <label for="total_coverage" class="form-label">Couverture totale</label>
+                <label for="total_coverage" class="form-label">Couverture totale *</label>
                 <div class="d-flex">
                     <input type="number" class="form-control user-field transparent-input" id="total_coverage" step="0.01" required>
-                    <span class="edit-toggle d-none" onclick="toggleEditable(this)">✏️</span>
+                    <span class="edit-toggle d-none" >✏️</span>
                 </div>
             </div>
 
             <div class="col-md-3">
-                <label for="total_premium" class="form-label">Prime totale</label>
+                <label for="total_premium" class="form-label">Prime totale *</label>
                 <div class="d-flex">
                     <input type="number" class="form-control user-field transparent-input" id="total_premium" step="0.01" required>
-                    <span class="edit-toggle d-none" onclick="toggleEditable(this)">✏️</span>
+                    <span class="edit-toggle d-none" >✏️</span>
                 </div>
             </div>
 
             <div class="col-md-3">
-                <label for="premium_frequency" class="form-label">Fréquence de la prime</label>
+                <label for="premium_frequency" class="form-label">Fréquence de la prime * </label>
                 <div class="d-flex">
                     <select class="form-control user-field transparent-select" id="premium_frequency">
                         <option value="">Choisir la fréquence</option>
@@ -119,7 +119,7 @@
                         <option value="Monthly">Mensuel</option>
                         <option value="Other">Autre</option>
                     </select>
-                    <span class="edit-toggle d-none" onclick="toggleEditable(this)">✏️</span>
+                    <span class="edit-toggle d-none" >✏️</span>
                 </div>
             </div>
         </div>
@@ -131,27 +131,27 @@
                 <label for="policy_type" class="form-label">Policy Type</label>
                 <div class="d-flex">
                     <input type="text" class="form-control user-field transparent-input" id="policy_type">
-                    <span class="edit-toggle d-none" onclick="toggleEditable(this)">✏️</span>
+                    <span class="edit-toggle d-none" >✏️</span>
                 </div>
             </div>
 
             <div class="col-md-3">
-                <label for="policy_owner_id" class="form-label">Titulaire de la police</label>
+                <label for="policy_owner_id" class="form-label">Titulaire de la police *</label>
                 <div class="d-flex">
                     <select class="form-control user-field transparent-select" id="policy_owner_id" required>
                         <option value="">Choisir le titulaire</option>
                     </select>
-                    <span class="edit-toggle d-none" onclick="toggleEditable(this)">✏️</span>
+                    <span class="edit-toggle d-none" >✏️</span>
                 </div>
             </div>
 
             <div class="col-md-3">
-                <label for="insured_person_id" class="form-label">Personne assurée</label>
+                <label for="insured_person_id" class="form-label">Personne assurée *</label>
                 <div class="d-flex">
                     <select class="form-control user-field transparent-select" id="insured_person_id" required>
                         <option value="">Choisir la personne assurée</option>
                     </select>
-                    <span class="edit-toggle d-none" onclick="toggleEditable(this)">✏️</span>
+                    <span class="edit-toggle d-none" >✏️</span>
                 </div>
             </div>
 
@@ -159,7 +159,7 @@
                 <label for="policy_date" class="form-label">Policy Date</label>
                 <div class="d-flex">
                     <input type="date" class="form-control user-field transparent-input" id="policy_date">
-                    <span class="edit-toggle d-none" onclick="toggleEditable(this)">✏️</span>
+                    <span class="edit-toggle d-none" >✏️</span>
                 </div>
             </div>
         </div>
@@ -171,7 +171,7 @@
                 <label for="plan_name" class="form-label">Plan Name</label>
                 <div class="d-flex">
                     <input type="text" class="form-control user-field transparent-input" id="plan_name">
-                    <span class="edit-toggle d-none" onclick="toggleEditable(this)">✏️</span>
+                    <span class="edit-toggle d-none" >✏️</span>
                 </div>
             </div>
 
@@ -179,17 +179,17 @@
                 <label for="adjusted_cost_basis" class="form-label">adjusted_cost_basis</label>
                 <div class="d-flex">
                     <input type="number" class="form-control user-field transparent-input" id="adjusted_cost_basis">
-                    <span class="edit-toggle d-none" onclick="toggleEditable(this)">✏️</span>
+                    <span class="edit-toggle d-none" >✏️</span>
                 </div>
             </div>
 
             <div class="col-md-3">
-                <label for="agent_id" class="form-label">Agent</label>
+                <label for="agent_id" class="form-label">Agent *</label>
                 <div class="d-flex">
                     <select class="form-control user-field transparent-select" id="agent_id" required>
                         <option value="">Choisir l'agent</option>
                     </select>
-                    <span class="edit-toggle d-none" onclick="toggleEditable(this)">✏️</span>
+                    <span class="edit-toggle d-none" >✏️</span>
                 </div>
             </div>
 
@@ -202,7 +202,7 @@
                         <option value="Pending">En attente</option>
                         <option value="Cancelled">Annulé</option>
                     </select>
-                    <span class="edit-toggle d-none" onclick="toggleEditable(this)">✏️</span>
+                    <span class="edit-toggle d-none" >✏️</span>
                 </div>
             </div>
         </div>
@@ -214,7 +214,7 @@
                 <label for="current_dividend_option" class="form-label">current_dividend_option</label>
                 <div class="d-flex">
                     <input type="text" class="form-control user-field transparent-input" id="current_dividend_option">
-                    <span class="edit-toggle d-none" onclick="toggleEditable(this)">✏️</span>
+                    <span class="edit-toggle d-none" >✏️</span>
                 </div>
             </div>
 
@@ -222,7 +222,7 @@
                 <label for="billing_type" class="form-label">billing_type</label>
                 <div class="d-flex">
                     <input type="text" class="form-control user-field transparent-input" id="billing_type">
-                    <span class="edit-toggle d-none" onclick="toggleEditable(this)">✏️</span>
+                    <span class="edit-toggle d-none" >✏️</span>
                 </div>
             </div>
 
@@ -230,7 +230,7 @@
                 <label for="commission_rate" class="form-label">commission_rate</label>
                 <div class="d-flex">
                     <input type="number" class="form-control user-field transparent-input" id="commission_rate">
-                    <span class="edit-toggle d-none" onclick="toggleEditable(this)">✏️</span>
+                    <span class="edit-toggle d-none" >✏️</span>
                 </div>
             </div>
 
@@ -238,7 +238,7 @@
                 <label for="description" class="form-label">description</label>
                 <div class="d-flex">
                     <input type="text" class="form-control user-field transparent-input" id="description">
-                    <span class="edit-toggle d-none" onclick="toggleEditable(this)">✏️</span>
+                    <span class="edit-toggle d-none" >✏️</span>
                 </div>
             </div>
         </div>
@@ -265,3 +265,5 @@
         </div>
     </div>
 </div>
+
+

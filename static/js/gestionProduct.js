@@ -1,16 +1,16 @@
-    // 全局变量
-    let selectedCustomerId = null;
-    let selectedCustomerName = null;
-    let customerCurrentPage = 1;
-    let policyCurrentPage = 1;
-    let customerTotalPages = 1;
-    let policyTotalPages = 1;
-    let debounceTimer;
+// gestionProduct.js
+const state = {
+    selectedCustomerId: null,
+    selectedCustomerName: null,
+    customerCurrentPage: 1,
+    policyCurrentPage: 1,
+    customerTotalPages: 1,
+    policyTotalPages: 1,
+    debounceTimer: null
+};
 
-
-    // 初始化
-    
-    // 设置初始单选按钮
+function init() {
+    console.log('初始化 gestionProduct.js');
     const radio = document.querySelector(`input[name="optradio_product"][value="vue"]`);
     if (radio) {
         radio.checked = true;
@@ -19,35 +19,58 @@
         console.error('未找到 value="vue" 的单选按钮');
     }
 
-    // 绑定单选按钮事件
     document.querySelectorAll('input[name="optradio_product"]').forEach(radio => {
+        radio.removeEventListener('change', handleModeChange);
         radio.addEventListener('change', handleModeChange);
     });
 
-    // 返回按钮
     const element_return = document.getElementById("return_gestionProduct");
     if (element_return) {
+        element_return.removeEventListener("click", resetInterface);
         element_return.addEventListener("click", resetInterface);
     }
 
-    // 表单提交
-    const element_submit = document.getElementById('customer-form');
+    const element_submit = document.getElementById('product-form');
     if (element_submit) {
+        element_submit.removeEventListener("submit", handleFormSubmit);
         element_submit.addEventListener("submit", handleFormSubmit);
     }
 
-    // 加载下拉框选项
-    loadDropdownOptions();
+    const customerSearchBox = document.getElementById('customerSearchBox');
+    if (customerSearchBox) {
+        customerSearchBox.removeEventListener('input', searchCustomers);
+        customerSearchBox.addEventListener('input', searchCustomers);
+    }
 
-    // 初始化模式
+    const customerSearchResults = document.getElementById('customer_search_results');
+    if (customerSearchResults) {
+        customerSearchResults.removeEventListener('click', handleCustomerRowClick);
+        customerSearchResults.addEventListener('click', handleCustomerRowClick);
+    }
+
+    const policySearchResults = document.getElementById('search_results');
+    if (policySearchResults) {
+        policySearchResults.removeEventListener('click', handleRowClick);
+        policySearchResults.addEventListener('click', handleRowClick);
+    }
+
+    /*
+    const afficheAction = document.querySelector('.affiche_action');
+    if (afficheAction) {
+        afficheAction.removeEventListener('click', handleEditToggleClick);
+        afficheAction.addEventListener('click', handleEditToggleClick);
+    } */
+    document.querySelectorAll('.edit-toggle').forEach(span => {
+        span.removeEventListener('click', handleEditToggleClick);
+        span.addEventListener('click', handleEditToggleClick);
+    });
+
+    loadDropdownOptions();
     handleModeChange();
     
+}
 
-
-
-// 备注：加载下拉框选项（客户和代理人）
 function loadDropdownOptions() {
-    // 加载客户列表
     axios.get("/gestionProduct/get_customers")
         .then(response => {
             const selectOwner = document.getElementById("policy_owner_id");
@@ -65,9 +88,8 @@ function loadDropdownOptions() {
                 selectInsured.appendChild(optionInsured);
             });
         })
-        .catch(error => showError("Erreur lors du chargement des clients: " + (error.response?.data?.error || error)));
+        .catch(error => showError("加载客户列表出错: " + (error.response?.data?.error || error)));
 
-    // 加载代理人列表
     axios.get("/gestionProduct/get_agents")
         .then(response => {
             const selectAgent = document.getElementById("agent_id");
@@ -79,12 +101,11 @@ function loadDropdownOptions() {
                 selectAgent.appendChild(option);
             });
         })
-        .catch(error => showError("Erreur lors du chargement des agents: " + (error.response?.data?.error || error)));
+        .catch(error => showError("加载代理人列表出错: " + (error.response?.data?.error || error)));
 }
 
-// 备注：处理模式切换（查看/添加/修改/删除）
 function handleModeChange() {
-    const checkedRadio = document.querySelector('input[name="optradio_product"]:checked');    
+    const checkedRadio = document.querySelector('input[name="optradio_product"]:checked');
     if (!checkedRadio) {
         console.warn("未选中任何 'optradio_product' 单选按钮，尝试重新初始化");
         const radio = document.querySelector(`input[name="optradio_product"][value="vue"]`);
@@ -96,7 +117,6 @@ function handleModeChange() {
             return;
         }
     }
-
 
     const mode = checkedRadio.value;
     const isViewMode = mode === 'vue';
@@ -143,16 +163,15 @@ function handleModeChange() {
         const policyIdInput = document.getElementById("policy_id");
         if (policyIdInput) policyIdInput.value = "";
         const policyOwnerSelect = document.getElementById("policy_owner_id");
-        if (policyOwnerSelect && selectedCustomerId) {
-            policyOwnerSelect.value = selectedCustomerId;
+        if (policyOwnerSelect && state.selectedCustomerId) {
+            policyOwnerSelect.value = state.selectedCustomerId;
         }
     }
 }
 
-// 备注：客户搜索（300ms防抖）
 function searchCustomers() {
-    clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(() => {
+    clearTimeout(state.debounceTimer);
+    state.debounceTimer = setTimeout(() => {
         const query = document.getElementById('customerSearchBox').value;
         if (!query) {
             document.getElementById("customer_search_results").innerHTML = "";
@@ -164,20 +183,20 @@ function searchCustomers() {
             document.getElementById("search_results").innerHTML = "";
             document.getElementById("search_results_title").innerHTML = "";
             document.getElementById("policy_pagination").innerHTML = "";
-            selectedCustomerId = null;
-            selectedCustomerName = null;
-            customerCurrentPage = 1;
-            customerTotalPages = 1;
+            state.selectedCustomerId = null;
+            state.selectedCustomerName = null;
+            state.customerCurrentPage = 1;
+            state.customerTotalPages = 1;
             return;
         }
-        
+
         document.getElementById("client_search_table").classList.remove('d-none');
         document.getElementById("customer_pagination").classList.remove('d-none');
 
-        axios.get("/gestionProduct/user_search", { params: { query, page: customerCurrentPage } })
+        axios.get("/gestionProduct/user_search", { params: { query, page: state.customerCurrentPage } })
             .then(response => {
                 const rows = response.data.data.map(item => `
-                    <tr onclick="selectCustomer(this, ${item.id}, '${item.name}')" data-id="${item.id}">
+                    <tr data-id="${item.id}" data-name='${item.name}'>
                         <td>${item.id}</td>
                         <td>${item.name}</td>
                         <td>${item.phone}</td>
@@ -191,52 +210,70 @@ function searchCustomers() {
                         <th>Téléphone</th>
                         <th>Email</th>
                     </tr>`;
-                customerTotalPages = response.data.total_pages;
+                state.customerTotalPages = response.data.total_pages;
                 updateCustomerPagination();
             })
-            .catch(error => showError("Erreur lors de la recherche de clients: " + (error.response?.data?.error || error)));
+            .catch(error => showError("搜索客户出错: " + (error.response?.data?.error || error)));
     }, 300);
 }
 
-// 备注：更新客户分页控件
+function handleCustomerRowClick(e) {
+    const row = e.target.closest('tr');
+    if (row) {
+        const customerId = row.dataset.id;
+        const customerName = row.cells[1].textContent;
+        console.log('选择客户:', { customerId, customerName });
+        selectCustomer(row, customerId, customerName);
+    }
+}
+
 function updateCustomerPagination() {
     const pagination = document.getElementById("customer_pagination");
     pagination.innerHTML = `
         <nav>
             <ul class="pagination">
-                <li class="page-item ${customerCurrentPage === 1 ? 'disabled' : ''}">
-                    <a class="page-link" href="#" onclick="changeCustomerPage(${customerCurrentPage - 1})">Précédent</a>
+                <li class="page-item ${state.customerCurrentPage === 1 ? 'disabled' : ''}">
+                    <a class="page-link" href="#" data-page="${state.customerCurrentPage - 1}">Précédent</a>
                 </li>
                 <li class="page-item">
-                    <span class="page-link">Page ${customerCurrentPage} de ${customerTotalPages}</span>
+                    <span class="page-link">Page ${state.customerCurrentPage} de ${state.customerTotalPages}</span>
                 </li>
-                <li class="page-item ${customerCurrentPage === customerTotalPages ? 'disabled' : ''}">
-                    <a class="page-link" href="#" onclick="changeCustomerPage(${customerCurrentPage + 1})">Suivant</a>
+                <li class="page-item ${state.customerCurrentPage === state.customerTotalPages ? 'disabled' : ''}">
+                    <a class="page-link" href="#" data-page="${state.customerCurrentPage + 1}">Suivant</a>
                 </li>
             </ul>
         </nav>`;
+
+    // 事件委托
+    pagination.querySelectorAll('.page-link').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const page = parseInt(e.target.dataset.page);
+            if (!isNaN(page)) {
+                changeCustomerPage(page);
+            }
+        });
+    });
 }
 
-// 备注：切换客户分页
 function changeCustomerPage(page) {
-    if (page < 1 || page > customerTotalPages) return;
-    customerCurrentPage = page;
+    if (page < 1 || page > state.customerTotalPages) return;
+    state.customerCurrentPage = page;
     searchCustomers();
 }
 
-// 备注：选择客户，加载保单
 function selectCustomer(row, customerId, customerName) {
-    selectedCustomerId = customerId;
-    selectedCustomerName = customerName;
+    state.selectedCustomerId = customerId;
+    state.selectedCustomerName = customerName;
     document.getElementById("selected_customer_info").innerHTML = `Client sélectionné: ${customerName} (ID: ${customerId})`;
     document.querySelectorAll('#customer_search_results tr').forEach(r => r.classList.remove('selected'));
     row.classList.add('selected');
-    policyCurrentPage = 1;
-    
-    axios.get("/gestionProduct/customer_products", { params: { query: customerId, page: policyCurrentPage } })
+    state.policyCurrentPage = 1;
+
+    axios.get("/gestionProduct/customer_products", { params: { query: customerId, page: state.policyCurrentPage } })
         .then(response => {
             const rows = response.data.data.map(item => `
-                <tr onclick="handleRowClick(this)" data-id="${item.id}">
+                <tr data-id="${item.id}">
                     <td>${item.id}</td>
                     <td>${item.asset_name}</td>
                     <td>${item.product_type}</td>
@@ -254,48 +291,57 @@ function selectCustomer(row, customerId, customerName) {
                     <th>Type de produit</th>
                     <th>Couverture totale</th>
                     <th>ID titulaire</th>
-                    <th>Owner Name</th>                    
+                    <th>Owner Name</th>
                     <th>ID assuré</th>
                     <th>Insured Name</th>
                 </tr>`;
-            policyTotalPages = response.data.total_pages;
+            state.policyTotalPages = response.data.total_pages;
             document.getElementById("policies_title").classList.remove('d-none');
             document.getElementById("policies_table").classList.remove('d-none');
             document.getElementById("client_search_table").classList.add('d-none');
             document.getElementById("customer_pagination").classList.add('d-none');
             updatePolicyPagination();
         })
-        .catch(error => showError("Erreur lors de la recherche des polices: " + (error.response?.data?.error || error)));
+        .catch(error => showError("搜索保单出错: " + (error.response?.data?.error || error)));
 }
 
-// 备注：更新保单分页控件
 function updatePolicyPagination() {
     const pagination = document.getElementById("policy_pagination");
     pagination.classList.remove('d-none');
     pagination.innerHTML = `
         <nav>
             <ul class="pagination">
-                <li class="page-item ${policyCurrentPage === 1 ? 'disabled' : ''}">
-                    <a class="page-link" href="#" onclick="changePolicyPage(${policyCurrentPage - 1})">Précédent</a>
+                <li class="page-item ${state.policyCurrentPage === 1 ? 'disabled' : ''}">
+                    <a class="page-link" href="#" data-page="${state.policyCurrentPage - 1}">Précédent</a>
                 </li>
                 <li class="page-item">
-                    <span class="page-link">Page ${policyCurrentPage} de ${policyTotalPages}</span>
+                    <span class="page-link">Page ${state.policyCurrentPage} de ${state.policyTotalPages}</span>
                 </li>
-                <li class="page-item ${policyCurrentPage === policyTotalPages ? 'disabled' : ''}">
-                    <a class="page-link" href="#" onclick="changePolicyPage(${policyCurrentPage + 1})">Suivant</a>
+                <li class="page-item ${state.policyCurrentPage === state.policyTotalPages ? 'disabled' : ''}">
+                    <a class="page-link" href="#" data-page="${state.policyCurrentPage + 1}">Suivant</a>
                 </li>
             </ul>
         </nav>`;
+
+    // 事件委托
+    pagination.querySelectorAll('.page-link').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const page = parseInt(e.target.dataset.page);
+            if (!isNaN(page)) {
+                changePolicyPage(page);
+            }
+        });
+    });
 }
 
-// 备注：切换保单分页
 function changePolicyPage(page) {
-    if (page < 1 || page > policyTotalPages || !selectedCustomerId) return;
-    policyCurrentPage = page;
-    axios.get("/gestionProduct/customer_products", { params: { query: selectedCustomerId, page: policyCurrentPage } })
+    if (page < 1 || page > state.policyTotalPages || !state.selectedCustomerId) return;
+    state.policyCurrentPage = page;
+    axios.get("/gestionProduct/customer_products", { params: { query: state.selectedCustomerId, page: state.policyCurrentPage } })
         .then(response => {
             const rows = response.data.data.map(item => `
-                <tr onclick="handleRowClick(this)" data-id="${item.id}">
+                <tr data-id="${item.id}">
                     <td>${item.id}</td>
                     <td>${item.asset_name}</td>
                     <td>${item.product_type}</td>
@@ -308,14 +354,19 @@ function changePolicyPage(page) {
                 <tr>
                     <th>ID</th><th>Nom de l'actif</th><th>Type de produit</th><th>Couverture totale</th><th>ID titulaire</th><th>ID assuré</th>
                 </tr>`;
-            policyTotalPages = response.data.total_pages;
+            state.policyTotalPages = response.data.total_pages;
             updatePolicyPagination();
         })
-        .catch(error => showError("Erreur lors de la recherche des polices: " + (error.response?.data?.error || error)));
+        .catch(error => showError("搜索保单出错: " + (error.response?.data?.error || error)));
 }
 
-// 备注：点击保单行，加载详情
-function handleRowClick(row) {
+function handleRowClick(e) {
+    const row = e.target.closest('tr');
+    if (!row || !row.dataset || !row.dataset.id) {
+        console.warn("无效点击，未选中任何有效行");
+        return;
+    }
+
     const id = row.dataset.id;
     const afficheSelect = document.querySelector('.affiche_select');
     const afficheAction = document.querySelector('.affiche_action');
@@ -341,20 +392,27 @@ function handleRowClick(row) {
             });
             handleModeChange();
         })
-        .catch(error => showError("Erreur lors du chargement des détails de la police: " + (error.response?.data?.error || error)));
+        .catch(error => showError("加载保单详情出错: " + (error.response?.data?.error || error)));
 
     document.querySelectorAll('#search_results tr').forEach(r => r.classList.remove('selected'));
     row.classList.add('selected');
 }
 
-// 备注：切换字段编辑状态
 function toggleEditable(el) {
     const input = el.previousElementSibling;
     input.disabled = !input.disabled;
     if (!input.disabled) input.focus();
 }
 
-// 备注：点击非编辑区域，禁用修改模式下的字段
+function handleEditToggleClick(e) {
+    const span = e.target.closest('.edit-toggle');
+    if (span) {
+        const input = span.previousElementSibling;
+        input.disabled = !input.disabled;
+        if (!input.disabled) input.focus();
+    }
+}
+
 document.addEventListener('click', (e) => {
     if (!e.target.classList.contains('edit-toggle') && !e.target.classList.contains('user-field')) {
         const mode = document.querySelector('input[name="optradio_product"]:checked')?.value;
@@ -364,7 +422,6 @@ document.addEventListener('click', (e) => {
     }
 });
 
-// 备注：处理表单提交
 function handleFormSubmit(event) {
     event.preventDefault();
     const mode = document.querySelector("input[name='optradio_product']:checked")?.value;
@@ -382,28 +439,27 @@ function handleFormSubmit(event) {
             formData[key] = element.value;
         }
         if (requiredFields.includes(key) && !formData[key]) {
-            showError(`Le champ ${element.previousElementSibling?.textContent || key} est requis.`);
+            showError(`字段 ${element.previousElementSibling?.textContent || key} 为必填项。`);
             throw new Error(`字段 ${key} 为必填项。`);
         }
     });
     formData.policy_id = document.getElementById("policy_id")?.value || null;
 
     const url = mode === 'supprimer' ? '/gestionProduct/supprimer_product' : '/gestionProduct/save_product';
-    
+
     axios.post(url, formData)
         .then(response => {
-            showError(response.data.message || "Opération réussie", true);
+            showError(response.data.message || "操作成功", true);
             document.querySelector(`input[name="optradio_product"][value="vue"]`).checked = true;
             handleModeChange();
             resetInterface();
-            if (selectedCustomerId && selectedCustomerName) {
-                selectCustomer({ classList: { add: () => {}, remove: () => {} } }, selectedCustomerId, selectedCustomerName);
+            if (state.selectedCustomerId && state.selectedCustomerName) {
+                selectCustomer({ classList: { add: () => {}, remove: () => {} } }, state.selectedCustomerId, state.selectedCustomerName);
             }
         })
-        .catch(error => showError("Erreur: " + (error.response?.data?.error || error)));
+        .catch(error => showError("错误: " + (error.response?.data?.error || error)));
 }
 
-// 备注：重置界面
 function resetInterface() {
     console.log("重置界面");
     const afficheSelect = document.querySelector('.affiche_select');
@@ -441,12 +497,11 @@ function resetInterface() {
     handleModeChange();
 }
 
-// 备注：显示模态框提示，区分成功和错误
 function showError(message, isSuccess = false) {
     const modal = document.getElementById("errorModal");
     if (modal) {
         const title = modal.querySelector(".modal-title");
-        title.innerText = isSuccess ? "Succès" : "Erreur";
+        title.innerText = isSuccess ? "成功" : "错误";
         title.style.color = isSuccess ? "#28a745" : "#dc3545";
         document.getElementById("errorMessage").innerText = message;
         new bootstrap.Modal(modal).show();
@@ -454,3 +509,70 @@ function showError(message, isSuccess = false) {
         alert(message);
     }
 }
+
+function cleanup() {
+    console.log('清理 gestionProduct.js');
+    clearTimeout(state.debounceTimer);
+    state.selectedCustomerId = null;
+    state.selectedCustomerName = null;
+    state.customerCurrentPage = 1;
+    state.customerTotalPages = 1;
+    state.policyCurrentPage = 1;
+    state.policyTotalPages = 1;
+    state.debounceTimer = null;
+
+    document.querySelectorAll('input[name="optradio_product"]').forEach(radio => {
+        radio.removeEventListener('change', handleModeChange);
+    });
+    const element_return = document.getElementById("return_gestionProduct");
+    if (element_return) {
+        element_return.removeEventListener("click", resetInterface);
+    }
+    const element_submit = document.getElementById('product-form');
+    if (element_submit) {
+        element_submit.removeEventListener("submit", handleFormSubmit);
+    }
+    const customerSearchBox = document.getElementById('customerSearchBox');
+    if (customerSearchBox) {
+        customerSearchBox.removeEventListener('input', searchCustomers);
+    }
+    const customerSearchResults = document.getElementById('customer_search_results');
+    if (customerSearchResults) {
+        customerSearchResults.removeEventListener('click', handleCustomerRowClick);
+    }
+    const policySearchResults = document.getElementById('search_results');
+    if (policySearchResults) {
+        policySearchResults.removeEventListener('click', handleRowClick);
+    }
+    const afficheAction = document.querySelector('.affiche_action');
+    if (afficheAction) {
+        afficheAction.removeEventListener('click', handleEditToggleClick);
+    }
+    const customerPagination = document.getElementById("customer_pagination");
+    if (customerPagination) {
+        customerPagination.innerHTML = '';
+    }
+    const policyPagination = document.getElementById("policy_pagination");
+    if (policyPagination) {
+        policyPagination.innerHTML = '';
+    }
+}
+
+export { 
+    state, 
+    init, 
+    handleModeChange, 
+    loadDropdownOptions, 
+    resetInterface, 
+    handleFormSubmit, 
+    cleanup, 
+    searchCustomers, 
+    updateCustomerPagination, 
+    changeCustomerPage, 
+    selectCustomer,
+    updatePolicyPagination, 
+    changePolicyPage, 
+    handleRowClick, 
+    handleEditToggleClick, 
+    showError 
+};

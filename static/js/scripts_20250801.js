@@ -22,7 +22,8 @@ function loadTabContent(tabId) {
     console.log("Chargement de l'onglet:", tabId);
 
     if (tabId == -11) {
-        axios.get('/auth/logout', { withCredentials: true })
+        // Déconnexion
+        axios.get('/auth/logout',{ withCredentials: true })
             .then(response => {
                 document.getElementById('mainContent').innerHTML = response.data;
                 removeModuleResources("logout");
@@ -30,29 +31,23 @@ function loadTabContent(tabId) {
             .catch(error => {
                 console.error("Erreur lors de la déconnexion :", error);
             });
-        return;
+        return; // Ne pas continuer si déconnexion
     }
 
     if (tabId == 11) {
-        window.location.href = "/auth/logout";
+        window.location.href = "/auth/logout";  // 由后端重定向
         return;
     }
 
-    window.currentModule = window.currentModule || { key: null };
 
-    if (window.currentModule.key) {
-        removeModuleResources(window.currentModule.key);
-        if (window.currentModule.cleanup) {
-            window.currentModule.cleanup();
-        }
-    }
-
+    // Charger le contenu HTML
     axios.get(`/menuNavigateur/tab-content/${tabId}`)
         .then(response => {
             document.getElementById('mainContent').innerHTML = response.data;
         })
         .catch(error => console.error('Erreur de chargement du contenu:', error));
 
+    // Charger les métadonnées (CSS & JS)
     axios.get(`/menuNavigateur/tab-meta/${tabId}`)
         .then(response => {
             const tab = response.data;
@@ -60,53 +55,19 @@ function loadTabContent(tabId) {
                 console.error(tab.error);
                 return;
             }
-
-            window.currentModule.key = tab.menu_key;
-
+            removeModuleResources(tab.menu_key);
             if (tab.css_name) {
                 loadCSS(`/static/css/${tab.css_name}`, tab.menu_key);
             }
-
             if (tab.js_name) {
-                //loadJS(`/static/js/${tab.js_name}`, tab.menu_key);
-                import(`/static/js/${tab.js_name}`)
-                .then(module => {
-                    console.log(`模块 ${tab.js_name} 加载成功`);
-                    if (module.init) {
-                        module.init();
-                    }
-                    window.currentModule.cleanup = module.cleanup || null;
-                })
-                .catch(error => console.error('加载 JS 模块出错:', error));
+                loadJS(`/static/js/${tab.js_name}`, tab.menu_key);
             }
+            
         })
         .catch(error => console.error('Erreur de chargement des métadonnées:', error));
-}
+    
 
-// 加载资源时添加特定标记
-function loadCSS(href, moduleName) {
-    const link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.href = href;
-    link.dataset.module = moduleName;  // 标记属于哪个模块
-    link.dataset.dynamic = 'true';     // 标记为动态加载
-    document.head.appendChild(link);
-  }
-  
-function loadJS(src, moduleName) {
-    const script = document.createElement('script');
-    script.src = src;
-    script.dataset.module = moduleName;
-    script.dataset.dynamic = 'true';
-    document.body.appendChild(script);
-  }
-  
-  // 移除特定模块的资源
-function removeModuleResources(menuKey) {
-    const css = document.getElementById(`css-${menuKey}`);
-    if (css) css.remove();
-    const script = document.getElementById(`js-${menuKey}`);
-    if (script) script.remove();
+    
 }
 
 function initSubTabs() {
@@ -139,7 +100,29 @@ function initSubTabs() {
     });
 }
 
-
+// 加载资源时添加特定标记
+function loadCSS(href, moduleName) {
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = href;
+    link.dataset.module = moduleName;  // 标记属于哪个模块
+    link.dataset.dynamic = 'true';     // 标记为动态加载
+    document.head.appendChild(link);
+  }
+  
+  function loadJS(src, moduleName) {
+    const script = document.createElement('script');
+    script.src = src;
+    script.dataset.module = moduleName;
+    script.dataset.dynamic = 'true';
+    document.body.appendChild(script);
+  }
+  
+  // 移除特定模块的资源
+  function removeModuleResources(moduleName) {
+    document.querySelectorAll(`link[data-module="${moduleName}"]`).forEach(el => el.remove());
+    document.querySelectorAll(`script[data-module="${moduleName}"]`).forEach(el => el.remove());
+  }
  
 function updateTime() {
     let now = new Date();

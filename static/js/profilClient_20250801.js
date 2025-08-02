@@ -1,99 +1,54 @@
-// profilClient.js
-function init() {
-    console.log('初始化 profilClient.js');
-    const searchBox = document.getElementById('searchBox');
-    if (searchBox) {
-        searchBox.removeEventListener('keyup', searchCustomers);
-        searchBox.addEventListener('keyup', searchCustomers);
-        console.log('绑定 searchCustomers 到 searchBox');
-    } else {
-        console.warn('未找到 searchBox, 可能不在 profilClient 页面');
-    }
-
-    // 绑定表格行点击事件（客户搜索）
-    const searchResults = document.getElementById('search_results');
-    if (searchResults) {
-        searchResults.removeEventListener('click', handleSearchRowClick);
-        searchResults.addEventListener('click', handleSearchRowClick);
-    }
-
-    // 绑定产品表格行点击事件
-    const productTable = document.getElementById('policy_client');
-    if (productTable) {
-        productTable.removeEventListener('click', handleProductRowClick);
-        productTable.addEventListener('click', handleProductRowClick);
-    }
-
-    // 绑定请求表格行点击事件
-    const requestTable = document.getElementById('service_requests');
-    if (requestTable) {
-        requestTable.removeEventListener('click', handleRequestRowClick);
-        requestTable.addEventListener('click', handleRequestRowClick);
-    }
-
-    // 绑定返回按钮
-    const returnButton = document.getElementById('returnProductDetail');
-    if (returnButton) {
-        returnButton.removeEventListener('click', return_product_detail);
-        returnButton.addEventListener('click', return_product_detail);
-    }
-
-    // 绑定模态框中的客户链接
-    const relationClient = document.getElementById('relation_client');
-    if (relationClient) {
-        relationClient.removeEventListener('click', handleRelationClick);
-        relationClient.addEventListener('click', handleRelationClick);
-    }
-
-    // 绑定模态框中的“转到”按钮
-    const popClientId = document.getElementById('pop_client_id');
-    if (popClientId) {
-        popClientId.addEventListener('click', handlePopClientClick);
-    }
-
-}
-
 function searchCustomers() {
-    console.log('触发搜索:', document.getElementById('searchBox')?.value);
-    const query = document.getElementById('searchBox')?.value || '';
-    axios.get("/profilClient/search", { params: { query } })
+    let query = document.getElementById('searchBox').value;
+    //fetch('/search?query=' + query)
+
+    axios.get("/profilClient/search", {params: {query: query}})
         .then(response => {
-            let rows = "";
-            response.data.data.forEach(item => {
+            let rows = "";                
+            response.data.data.forEach(item => {                  
                 rows += `
-                    <tr data-id="${item.id}">
+                    <tr  onclick="handleRowClick(this)" data-id="${item.id}">
                         <td>${item.id}</td>
-                        <td>${item.policy_id || ''}</td>
+                        <td>${item.policy_id}</td>
                         <td>${item.name}</td>
                         <td>${item.phone}</td>
                         <td>${item.email}</td>
                     </tr>
                 `;
-            });
+            });                
             document.getElementById("search_results").innerHTML = rows;
-            document.getElementById("search_results_title").innerHTML = `
-                <tr>
-                    <th>ID</th>
-                    <th>Policy ID</th>
-                    <th>Name</th>
-                    <th>Phone</th>
-                    <th>Email</th>
-                </tr>
-            `;
-        })
-        .catch(error => console.error('搜索客户出错:', error));
+
+            let row_title = `
+                    <tr>
+                        <th>ID</th>
+                        <th>Policy ID</th>
+                        <th>Name</th>
+                        <th>Phone</th>
+                        <th>Email</th>
+                    </tr>
+                `;
+            document.getElementById("search_results_title").innerHTML = row_title;
+
+        });
 }
 
 // 处理行点击事件的函数
-function handleSearchRowClick(e) {
-    const row = e.target.closest('tr');
-    if (row) {
-        const cells = row.cells;
-        const rowData = { customer_id: cells[0].textContent };
-        clearSelectedRows();
-        row.classList.add('selected');
-        showClientAllDetail(rowData.customer_id);
-    }
+function handleRowClick(row) {
+    // 获取行数据
+    const cells = row.cells;
+    const rowData = {
+        customer_id: cells[0].textContent
+    };
+   
+    // 更新选中行样式
+    clearSelectedRows();
+    row.classList.add('selected');
+
+    showClientAllDetail(rowData.customer_id);
+
+    clearSelectedRows();
+    row.classList.add('selected');
+
 }
 
 // 获取客户的基本信息并显示出来
@@ -371,7 +326,7 @@ function showClientAllDetail(customer_id) {
                 `;
                 response.data.policies_data.forEach((item,index) =>{                    
                     customer_policies_info += `
-                            <tr data-id="${item.policy_id}">
+                            <tr  onclick="handleRowClickProduct(this)" data-id="${item.policy_id}">
                                 <td>${index+1}</td>
                                 <td>${item.asset_name}</td>
                                 <td>${item.policy_id}</td>
@@ -382,7 +337,11 @@ function showClientAllDetail(customer_id) {
                         `;
                     });
 
-                customer_policies_info +=`</tbody></table>`;
+                customer_policies_info +=`
+                        </tbody>
+                    </table>
+                `;
+
                 document.getElementById("policy_client").innerHTML = customer_policies_info; 
             }
 
@@ -396,9 +355,49 @@ function showClientAllDetail(customer_id) {
                                 <p>Customer_ID: ${item.id}</p>
                             </div>
                             <div class="col-md-3">
-                                <p>Name: <span class="link" data-customer-id="${item.id}" data-bs-toggle="modal" data-bs-target="#editModal">${item.Name}</span></p>
+                                <p>Name: <span class="link" onclick="fetchCustomerData('${item.id}')" data-bs-toggle="modal" data-bs-target="#editModal">${item.Name}</span></p>
                             </div>
                         </div>
+
+                        
+
+                        <!-- 模态框   -->
+                        <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="editModalLabel">Client Informations</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div id="pop_client_informations"></div>
+                                        <!--
+                                        <div class="mb-3">
+                                            <label for="editName" class="form-label">Name</label>
+                                            <input type="text" class="form-control" id="editName" oninput="updateField('editName', 'nameOutput')">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="editPhone" class="form-label">Phone</label>
+                                            <input type="text" class="form-control" id="editPhone" oninput="updateField('editPhone', 'phoneOutput')">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="editEmail" class="form-label">Email</label>
+                                            <input type="text" class="form-control" id="editEmail" oninput="updateField('editEmail', 'emailOutput')">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="editRelationship" class="form-label">Relation</label>
+                                            <input type="text" class="form-control" id="editRelationship" oninput="updateField('editRelationship', 'relationshipOutput')">
+                                        </div>
+                                        -->
+                                    </div>
+                                    <div class="modal-footer">
+                                        <div id="pop_client_id"></div>                                    
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>                       
+                       
 
                         <div class="row">
                             <div class="col-md-3 offset-md-1">
@@ -436,7 +435,7 @@ function showClientAllDetail(customer_id) {
                 `;
                 response.data.request_data.forEach((item,index) =>{                    
                     customer_request_info += `
-                            <tr  data-id="${item.request_id}">
+                            <tr  onclick="handleRowClickRequest(this)" data-id="${item.request_id}">
                                 <td>${index+1}</td>
                                 <td>${item.request_id}</td>
                                 <td>${item.created_at}</td>
@@ -495,182 +494,179 @@ function processRowData(data) {
 
 //显示product的相关函数
 // 处理行点击事件的函数
-function handleProductRowClick(e) {
-    const row = e.target.closest('tr');
-    if (row) {
-        // 获取行数据
-        const cells = row.cells;
-        const rowData = {
-            policy_id: cells[2].textContent
-        };
+function handleRowClickProduct(row) {
+    // 获取行数据
+    const cells = row.cells;
+    const rowData = {
+        policy_id: cells[2].textContent
+    };
+   
+    // 更新选中行样式
+    clearSelectedRowsProduct();
+    row.classList.add('selected');
+      
+    document.getElementById("detail_product_sub").innerHTML = "";
+
+    // 调用其他函数并传递行数据
+    axios.get("/profilClient/detail_product_sub", {params: {query: rowData.policy_id}})
+        .then(response => {
+
+            if (response.data.policies_data && response.data.policies_data.length > 0) {
+                let customer_policies_info = ` `;
+                let name_agent = ` `;
+                response.data.policies_data.forEach((item,index) =>{                    
+                    customer_policies_info += `
+                        <h5>Product Information</h5>
+                            <div class="row">
+                            <div class="col-md-2 border">
+                                <p>
+                                    <strong>Total coverage:</strong><br> 
+                                    <span class="text-muted">$${item.total_coverage}</span>
+                                </p>
+                            </div>
+                            <div class="col-md-2 ms-1 border">
+                                <p>
+                                    <strong>Total premium: </strong><br>
+                                    <span class="text-muted">$${item.total_premium}</span><br><br>
+                                    <strong>Premium frequency: </strong><br>
+                                    <span class="text-muted">${item.premium_frequency}</span><br><br>
+                                    <strong>Next premium due date: </strong><br>
+                                    <span class="text-muted">To calculate </span><br><br>                                    
+                                </p>
+                            </div>
+                            <div class="col-md-2 ms-1 border">
+                                <p>
+                                    <strong>Net cash surrender value: </strong><br>
+                                    <span class="text-muted">${item.goes_by}</span><br><br>
+                                    <span class="text-muted">Amount you'll receive if you chose to cancel the policy.</span>
+                                </p>
+                            </div>
+                        </div>
+                        <h5 class="mt-3">Policy details</h5>
+                        <div class="row">
+                            <div class="col-md-2 border-bottom">
+                                <p>
+                                    <strong>Policy ID:</strong><br> 
+                                    <span class="text-muted">${item.policy_id}</span>
+                                </p>
+                            </div>
+                            <div class="col-md-2 ms-3 border-bottom">
+                                <p>
+                                    <strong>Policy type: </strong><br>
+                                    <span class="text-muted">${item.product_type}</span>
+                                </p>
+                            </div>
+                            <div class="col-md-2 ms-3 border-bottom">
+                                <p>
+                                    <strong>Policy owner(s) </strong><br>
+                                    <span class="text-muted">${item.owner_name}</span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-2 border-bottom">
+                                <p>
+                                    <strong>Policy date:</strong><br> 
+                                    <span class="text-muted">${item.policy_date}</span>
+                                </p>
+                            </div>
+                            <div class="col-md-2 ms-3 border-bottom">
+                                <p>
+                                    <strong>Owner's mailing address: </strong><br>
+                                    <span class="text-muted">${item.owner_address}</span>
+                                </p>
+                            </div>
+                            <div class="col-md-2 ms-3 border-bottom">
+                                <p>
+                                    <strong>Insured person(s) </strong><br>
+                                    <span class="text-muted">${item.insured_person_name}</span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-2 border-bottom">
+                                <p>
+                                    <strong>Plan name:</strong><br> 
+                                    <span class="text-muted">${item.plan_name}</span>
+                                </p>
+                            </div>
+                            <div class="col-md-2 ms-3 border-bottom">
+                                <p>
+                                    <strong>Adjusted cost basis: </strong><br>
+                                    <span class="text-muted">$${item.adjusted_cost_basis}</span>
+                                </p>
+                            </div>
+                            <div class="col-md-2 ms-3 border-bottom">
+                                <p>
+                                    <strong>Current dividend option </strong><br>
+                                    <span class="text-muted">${item.current_dividend_option}</span>
+                                </p>
+                            </div>
+                        </div>
+                        <h5 class="mt-3">Billing</h5>
+                        <div class="row">
+                            <div class="col-md-2 border-bottom">
+                                <p>
+                                    <strong>Total premium:</strong><br> 
+                                    <span class="text-muted">$${item.total_premium}</span>
+                                </p>
+                            </div>
+                            <div class="col-md-2 ms-3 border-bottom">
+                                <p>
+                                    <strong>Premium frequence: </strong><br>
+                                    <span class="text-muted">Annual or monthly </span>
+                                </p>
+                            </div>
+                            <div class="col-md-2 ms-3 border-bottom">
+                                <p>
+                                    <strong>Next premium due date </strong><br>
+                                    <span class="text-muted">To calculate</span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-2 border-bottom">
+                                <p>
+                                    <strong>Billing type:</strong><br> 
+                                    <span class="text-muted">${item.billing_type}</span>
+                                </p>
+                            </div>
+                            <div class="col-md-2 ms-3 border-bottom">
+                                <p>
+                                    <strong>Policy status: </strong><br>
+                                    <span class="text-muted">${item.policy_status}</span>
+                                </p>
+                            </div>
+                        </div>
+                        `;
+                        name_agent += `<p>
+                                    <strong>Agent:</strong><br>
+                                    <span class="text-muted">${item.agent_name}</span> 
+                                </p>`;
+                    });
+
+                customer_policies_info +=`
+                        </tbody>
+                    </table>
+                `;
+
+                document.getElementById("detail_product_sub").innerHTML = customer_policies_info; 
+                document.getElementById("name_agent").innerHTML = name_agent;
+            }
+
+        })
+        .catch(error => {
+            console.error("Error fetching data:", error);
+        });
     
-        // 更新选中行样式
-        clearSelectedRowsProduct();
-        row.classList.add('selected');
-        
-        document.getElementById("detail_product_sub").innerHTML = "";
-
-        // 调用其他函数并传递行数据
-        axios.get("/profilClient/detail_product_sub", {params: {query: rowData.policy_id}})
-            .then(response => {
-
-                if (response.data.policies_data && response.data.policies_data.length > 0) {
-                    let customer_policies_info = ` `;
-                    let name_agent = ` `;
-                    response.data.policies_data.forEach((item,index) =>{                    
-                        customer_policies_info += `
-                            <h5>Product Information</h5>
-                                <div class="row">
-                                <div class="col-md-2 border">
-                                    <p>
-                                        <strong>Total coverage:</strong><br> 
-                                        <span class="text-muted">$${item.total_coverage}</span>
-                                    </p>
-                                </div>
-                                <div class="col-md-2 ms-1 border">
-                                    <p>
-                                        <strong>Total premium: </strong><br>
-                                        <span class="text-muted">$${item.total_premium}</span><br><br>
-                                        <strong>Premium frequency: </strong><br>
-                                        <span class="text-muted">${item.premium_frequency}</span><br><br>
-                                        <strong>Next premium due date: </strong><br>
-                                        <span class="text-muted">To calculate </span><br><br>                                    
-                                    </p>
-                                </div>
-                                <div class="col-md-2 ms-1 border">
-                                    <p>
-                                        <strong>Net cash surrender value: </strong><br>
-                                        <span class="text-muted">${item.goes_by}</span><br><br>
-                                        <span class="text-muted">Amount you'll receive if you chose to cancel the policy.</span>
-                                    </p>
-                                </div>
-                            </div>
-                            <h5 class="mt-3">Policy details</h5>
-                            <div class="row">
-                                <div class="col-md-2 border-bottom">
-                                    <p>
-                                        <strong>Policy ID:</strong><br> 
-                                        <span class="text-muted">${item.policy_id}</span>
-                                    </p>
-                                </div>
-                                <div class="col-md-2 ms-3 border-bottom">
-                                    <p>
-                                        <strong>Policy type: </strong><br>
-                                        <span class="text-muted">${item.product_type}</span>
-                                    </p>
-                                </div>
-                                <div class="col-md-2 ms-3 border-bottom">
-                                    <p>
-                                        <strong>Policy owner(s) </strong><br>
-                                        <span class="text-muted">${item.owner_name}</span>
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-2 border-bottom">
-                                    <p>
-                                        <strong>Policy date:</strong><br> 
-                                        <span class="text-muted">${item.policy_date}</span>
-                                    </p>
-                                </div>
-                                <div class="col-md-2 ms-3 border-bottom">
-                                    <p>
-                                        <strong>Owner's mailing address: </strong><br>
-                                        <span class="text-muted">${item.owner_address}</span>
-                                    </p>
-                                </div>
-                                <div class="col-md-2 ms-3 border-bottom">
-                                    <p>
-                                        <strong>Insured person(s) </strong><br>
-                                        <span class="text-muted">${item.insured_person_name}</span>
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-2 border-bottom">
-                                    <p>
-                                        <strong>Plan name:</strong><br> 
-                                        <span class="text-muted">${item.plan_name}</span>
-                                    </p>
-                                </div>
-                                <div class="col-md-2 ms-3 border-bottom">
-                                    <p>
-                                        <strong>Adjusted cost basis: </strong><br>
-                                        <span class="text-muted">$${item.adjusted_cost_basis}</span>
-                                    </p>
-                                </div>
-                                <div class="col-md-2 ms-3 border-bottom">
-                                    <p>
-                                        <strong>Current dividend option </strong><br>
-                                        <span class="text-muted">${item.current_dividend_option}</span>
-                                    </p>
-                                </div>
-                            </div>
-                            <h5 class="mt-3">Billing</h5>
-                            <div class="row">
-                                <div class="col-md-2 border-bottom">
-                                    <p>
-                                        <strong>Total premium:</strong><br> 
-                                        <span class="text-muted">$${item.total_premium}</span>
-                                    </p>
-                                </div>
-                                <div class="col-md-2 ms-3 border-bottom">
-                                    <p>
-                                        <strong>Premium frequence: </strong><br>
-                                        <span class="text-muted">Annual or monthly </span>
-                                    </p>
-                                </div>
-                                <div class="col-md-2 ms-3 border-bottom">
-                                    <p>
-                                        <strong>Next premium due date </strong><br>
-                                        <span class="text-muted">To calculate</span>
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-2 border-bottom">
-                                    <p>
-                                        <strong>Billing type:</strong><br> 
-                                        <span class="text-muted">${item.billing_type}</span>
-                                    </p>
-                                </div>
-                                <div class="col-md-2 ms-3 border-bottom">
-                                    <p>
-                                        <strong>Policy status: </strong><br>
-                                        <span class="text-muted">${item.policy_status}</span>
-                                    </p>
-                                </div>
-                            </div>
-                            `;
-                            name_agent += `<p>
-                                        <strong>Agent:</strong><br>
-                                        <span class="text-muted">${item.agent_name}</span> 
-                                    </p>`;
-                        });
-
-                    customer_policies_info +=`
-                            </tbody>
-                        </table>
-                    `;
-
-                    document.getElementById("detail_product_sub").innerHTML = customer_policies_info; 
-                    document.getElementById("name_agent").innerHTML = name_agent;
-                }
-
-            })
-            .catch(error => {
-                console.error("Error fetching data:", error);
-            });
-        
-        
-        // 可选：添加选中样式
-        clearSelectedRowsProduct();
-        row.classList.add('selected');
-        $('.affiche-search').addClass('d-none');  //隐藏搜索栏
-        $('.info_client').addClass('d-none');
-        $('.detail_client').addClass('d-none');
-        $('.detail_product').removeClass('d-none'); //显示保单细节
-    }
+    
+    // 可选：添加选中样式
+    clearSelectedRowsProduct();
+    row.classList.add('selected');
+    $('.affiche-search').addClass('d-none');  //隐藏搜索栏
+    $('.info_client').addClass('d-none');
+    $('.detail_client').addClass('d-none');
+	$('.detail_product').removeClass('d-none'); //显示保单细节
 }
         
 // 清除之前选中的行
@@ -721,14 +717,11 @@ function fetchCustomerData(customerId) {
 
                     `;
                     pop_client_id_button = `
-                        <button type="button" class="btn btn-primary" data-customer-id="${item.customer_id}" data-bs-dismiss="modal">Turn To</button>
+                        <button type="button" class="btn btn-primary" onclick="editClient('${item.customer_id}')" data-bs-dismiss="modal">Turn To</button>
                     `;
                     document.getElementById("pop_client_informations").innerHTML = pop_client_information;
                     document.getElementById("pop_client_id").innerHTML = pop_client_id_button;
                     document.getElementById('editModal').dataset.customerId = customerId;
-
-                    // 显示模态框
-                    $('#editModal').modal('show');
                 })
             };
             
@@ -737,163 +730,80 @@ function fetchCustomerData(customerId) {
     } catch (error) {
         console.error('Error fetching customer data:', error);
         document.getElementById('error_message').textContent = '无法加载客户数据，请稍后重试';
-        $('#errorModal').modal('show');
     }
+}
+
+function editClient(customer_id) {
+    showClientAllDetail(customer_id);
+
 }
 
 //显示request的相关函数
 // 处理行点击事件的函数
-function handleRequestRowClick(e) {
-    const row = e.target.closest('tr');
-    if (row) {
-        // 获取行数据
-        const cells = row.cells;
-        const rowData = {
-            request_id: cells[1].textContent
-        };
-    
-        // 更新选中行样式
-        clearSelectedRowsRequest();
-        row.classList.add('selected');
-        
-        document.getElementById("detail_log_request").innerHTML = "";
+function handleRowClickRequest(row) {
+    // 获取行数据
+    const cells = row.cells;
+    const rowData = {
+        request_id: cells[1].textContent
+    };
+   
+    // 更新选中行样式
+    clearSelectedRowsRequest();
+    row.classList.add('selected');
+      
+    document.getElementById("detail_log_request").innerHTML = "";
 
-        // 调用其他函数并传递行数据
-        axios.get("/gestionRequest/Request_per_info", {params: {request_id: rowData.request_id}})
-            .then(response => {
+    // 调用其他函数并传递行数据
+    axios.get("/gestionRequest/Request_per_info", {params: {request_id: rowData.request_id}})
+        .then(response => {
 
-                let log_rows = "";
-                let log_request_head = "Handle Logs"
-                document.getElementById("log_request_head").innerHTML = log_request_head;
-                let log_rows_title = `
+            let log_rows = "";
+            let log_request_head = "Handle Logs"
+            document.getElementById("log_request_head").innerHTML = log_request_head;
+            let log_rows_title = `
+                <tr>
+                    <th>No</th>
+                    <th>Date</th>
+                    <th>Agent</th>
+                    <th>Status</th>
+                    <th>Description</th>
+                    <th>Next Agent</th>
+                </tr>
+            `;
+            document.getElementById("detail_log_request_title").innerHTML = log_rows_title;
+
+            const total = response.data.Request_log.length;  // 总条数                
+            response.data.Request_log.forEach((item,index) => {
+                const reverseIndex = total - index;  // 倒序号，从总数开始递减                  
+                log_rows += `
                     <tr>
-                        <th>No</th>
-                        <th>Date</th>
-                        <th>Agent</th>
-                        <th>Status</th>
-                        <th>Description</th>
-                        <th>Next Agent</th>
+                        <td>${reverseIndex}</td>
+                        <td>${item.handle_time}</td>
+                        <td>${item.handle_agent}</td>
+                        <td>${item.status_handle}</td>
+                        <td>${item.description}</td>
+                        <td>${item.next_agent}</td>
                     </tr>
                 `;
-                document.getElementById("detail_log_request_title").innerHTML = log_rows_title;
+            });                
+            document.getElementById("detail_log_request").innerHTML = log_rows;
 
-                const total = response.data.Request_log.length;  // 总条数                
-                response.data.Request_log.forEach((item,index) => {
-                    const reverseIndex = total - index;  // 倒序号，从总数开始递减                  
-                    log_rows += `
-                        <tr>
-                            <td>${reverseIndex}</td>
-                            <td>${item.handle_time}</td>
-                            <td>${item.handle_agent}</td>
-                            <td>${item.status_handle}</td>
-                            <td>${item.description}</td>
-                            <td>${item.next_agent}</td>
-                        </tr>
-                    `;
-                });                
-                document.getElementById("detail_log_request").innerHTML = log_rows;
+        })
 
-            })
-
-            .catch(error => {
-                console.error("Error fetching data:", error);
-            });
-        
-        
-        // 可选：添加选中样式
-        clearSelectedRowsRequest();
-        row.classList.add('selected');
-    }
+        .catch(error => {
+            console.error("Error fetching data:", error);
+        });
+    
+    
+    // 可选：添加选中样式
+    clearSelectedRowsRequest();
+    row.classList.add('selected');
 }
         
-//点击 relation中的用户
-function handleRelationClick(e) {
-    const link = e.target.closest('.link');
-    if (link) {
-        const customerId = link.dataset.customerId;
-        fetchCustomerData(customerId);
-    }
-}
-
-function handlePopClientClick(e) {
-    const button = e.target.closest('.btn-primary');
-    if (button) {
-        const customerId = button.getAttribute('data-customer-id');
-        console.log('点击“转到”按钮，customerId:', customerId);
-        const editModal = document.getElementById('editModal');
-        if (editModal) {
-            const modalInstance = bootstrap.Modal.getInstance(editModal) || new bootstrap.Modal(editModal);
-            modalInstance.hide();
-            console.log('模态框关闭');
-        }
-        editClient(customerId);
-    }
-}
-
-function editClient(customerId) {
-    console.log('调用 editClient，customerId:', customerId);
-    const editModal = document.getElementById('editModal');
-    if (editModal) {
-        const modalInstance = bootstrap.Modal.getInstance(editModal) || new bootstrap.Modal(editModal);
-        modalInstance.hide();
-        console.log('模态框关闭');
-    }
-    showClientAllDetail(customerId);
-}
-
 // 清除之前选中的行
 function clearSelectedRowsRequest() {
     const rows = document.querySelectorAll('.request_table tr');
     rows.forEach(row => row.classList.remove('selected'));
 }
 
-function cleanup() {
-    console.log('清理 profilClient.js');
-    const searchBox = document.getElementById('searchBox');
-    if (searchBox) {
-        searchBox.removeEventListener('keyup', searchCustomers);
-    }
-    const searchResults = document.getElementById('search_results');
-    if (searchResults) {
-        searchResults.removeEventListener('click', handleSearchRowClick);
-    }
-    const productTable = document.getElementById('product_detail');
-    if (productTable) {
-        productTable.removeEventListener('click', handleProductRowClick);
-    }
-    const requestTable = document.getElementById('request_detail');
-    if (requestTable) {
-        requestTable.removeEventListener('click', handleRequestRowClick);
-    }
-    const returnButton = document.querySelector('.btn-primary');
-    if (returnButton) {
-        returnButton.removeEventListener('click', return_product_detail);
-    }
-    const relationClient = document.getElementById('relation_client');
-    if (relationClient) {
-        relationClient.removeEventListener('click', handleRelationClick);
-    }
-    const popClientId = document.getElementById('pop_client_id');
-    if (popClientId) {
-        popClientId.removeEventListener('click', handlePopClientClick);
-    }
 
-}
-
-export {
-    init,
-    searchCustomers,
-    handleSearchRowClick,
-    showClientAllDetail,
-    clearSelectedRows,
-    handleProductRowClick,
-    clearSelectedRowsProduct,
-    return_product_detail,
-    fetchCustomerData,
-    editClient,
-    handleRequestRowClick,
-    clearSelectedRowsRequest,
-    cleanup,
-    handleRelationClick,
-    handlePopClientClick
-};

@@ -16,7 +16,7 @@
         <div class="row border p-3 affiche affiche-search">
             <h4>Recherche......</h4>
             <label>Saisir (Name,Phone,Email,Policy_ID) </label>
-            <input type="text" id="searchBox" placeholder="Recherche...">
+            <input type="text" id="searchBox" onkeyup="searchCustomers()" placeholder="Recherche...">
             <div id="results"></div>
             <table class="table table-bordered table-striped">
                 <thead>
@@ -132,66 +132,13 @@
 
         <div class="row border ps-3 detail_product d-none">
             <div class="row ">
-                <button type="button" class="btn btn-primary offset-md-10 col-md-2" id="returnProductDetail">Return</button>
+                <button type="button" class="btn btn-primary offset-md-10 col-md-2" onclick="return_product_detail()">Return</button>
             </div>
             <div class="row" id="detail_product_sub">
 
             </div>
         </div>
-
-                                
-
-        <!-- 模态框   -->
-        <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="editModalLabel">Client Informations</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div id="pop_client_informations"></div>
-                        <!--
-                        <div class="mb-3">
-                            <label for="editName" class="form-label">Name</label>
-                            <input type="text" class="form-control" id="editName" oninput="updateField('editName', 'nameOutput')">
-                        </div>
-                        <div class="mb-3">
-                            <label for="editPhone" class="form-label">Phone</label>
-                            <input type="text" class="form-control" id="editPhone" oninput="updateField('editPhone', 'phoneOutput')">
-                        </div>
-                        <div class="mb-3">
-                            <label for="editEmail" class="form-label">Email</label>
-                            <input type="text" class="form-control" id="editEmail" oninput="updateField('editEmail', 'emailOutput')">
-                        </div>
-                        <div class="mb-3">
-                            <label for="editRelationship" class="form-label">Relation</label>
-                            <input type="text" class="form-control" id="editRelationship" oninput="updateField('editRelationship', 'relationshipOutput')">
-                        </div>
-                        -->
-                    </div>
-                    <div class="modal-footer">
-                        <div id="pop_client_id"></div>                                    
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </div>
-        </div>    
-        
-        <div id="errorModal" class="modal">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">错误</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" aria-label="关闭模态窗口"></button>
-                    </div>
-                    <div class="modal-body">
-                        <p id="errorMessage"></p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
+    
   
     </div>
 
