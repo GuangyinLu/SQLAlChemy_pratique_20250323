@@ -58,9 +58,9 @@
                         <div class="form-group col-md-6 row">
                             <label for="customer_name" class="col-md-4 control-label">Customer_name</label>
                             <div class="col-md-8 position-relative">
-                                <input type="text" class="form-control search_suggestions" name="customer_name" 
+                                <input type="text" class="form-control" name="customer_name" 
                                     id="customer_name" autocomplete="off" 
-                                    data-param1='customer_name' data-param2='suggestions_customer' data-param3='customer_id' data-param4='/gestionRequest/search_customer' >
+                                    oninput="searchSuggestions('customer_name', 'suggestions_customer', 'customer_id', '/gestionRequest/search_customer')" >
                                 <div id="suggestions_customer" class="list-group position-absolute w-100 shadow d-none" ></div>
                             </div>
                         
@@ -118,9 +118,9 @@
                         <div class="form-group col-md-6 row">
                             <label for="agent_name" class="col-md-4 control-label">Now Agent</label>
                             <div class="col-md-8 position-relative">
-                                <input type="text" class="form-control search_suggestions" name="agent_name" 
+                                <input type="text" class="form-control" name="agent_name" 
                                 id="agent_name" autocomplete="off" 
-                                data-param1='agent_name' data-param2='suggestions_agent' data-param3='agent_id' data-param4='/gestionRequest/search_agent' >
+                                oninput="searchSuggestions('agent_name','suggestions_agent','agent_id','/gestionRequest/search_agent')" >
                                 <div id="suggestions_agent" class="list-group position-absolute w-100 shadow d-none" ></div>
                             </div>
                         </div>
@@ -137,9 +137,9 @@
                         <div class="form-group col-md-6 row">
                             <label for="handle_agent_name" class="col-md-4 control-label">Next Agent</label>
                             <div class="col-md-8 position-relative">
-                                <input type="text" class="form-control search_suggestions" name="handle_agent_name" 
+                                <input type="text" class="form-control" name="handle_agent_name" 
                                 id="handle_agent_name" autocomplete="off" 
-                                data-param1='handle_agent_name' data-param2='suggestions_agent_next' data-param3='next_agent_id' data-param4='/gestionRequest/search_agent' >
+                                oninput="searchSuggestions('handle_agent_name','suggestions_agent_next','next_agent_id','/gestionRequest/search_agent')" >
                                 <div id="suggestions_agent_next" class="list-group position-absolute w-100 shadow d-none" ></div>
                             </div>
                         </div>
@@ -183,9 +183,9 @@
                             <div class="form-group col-md-6 row">
                                 <label for="handle_now_agent_name" class="col-md-4 control-label">Now Agent</label>
                                 <div class="col-md-8 position-relative">
-                                    <input type="text" class="form-control search_suggestions" name="handle_now_agent_name" 
+                                    <input type="text" class="form-control" name="handle_now_agent_name" 
                                     id="handle_now_agent_name" autocomplete="off" 
-                                    data-param1='handle_now_agent_name' data-param2='suggestions_agent_handle' data-param3='handle_agent_id' data-param4='/gestionRequest/search_agent' >
+                                    oninput="searchSuggestions('handle_now_agent_name','suggestions_agent_handle','handle_agent_id','/gestionRequest/search_agent')" >
                                     <div id="suggestions_agent_handle" class="list-group position-absolute w-100 shadow d-none" ></div>
                                 </div>
                             </div>
@@ -201,9 +201,9 @@
                             <div class="form-group col-md-6 row">
                                 <label for="handle_next_agent_name" class="col-md-4 control-label">Next Agent</label>
                                 <div class="col-md-8 position-relative">
-                                    <input type="text" class="form-control search_suggestions" name="handle_next_agent_name" 
+                                    <input type="text" class="form-control" name="handle_next_agent_name" 
                                     id="handle_next_agent_name" autocomplete="off" 
-                                    data-param1='handle_next_agent_name' data-param2='suggestions_agent_next_handle' data-param3='handle_next_agent_id' data-param4='/gestionRequest/search_agent' >
+                                    oninput="searchSuggestions('handle_next_agent_name','suggestions_agent_next_handle','handle_next_agent_id','/gestionRequest/search_agent')" >
                                     <div id="suggestions_agent_next_handle" class="list-group position-absolute w-100 shadow d-none" ></div>
                                 </div>
                             </div>

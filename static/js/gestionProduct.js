@@ -1,4 +1,7 @@
 // gestionProduct.js
+let isInitialized = false;
+let isDomUpdate = false; // 防止 DOM 修改触发 MutationObserver
+
 const state = {
     selectedCustomerId: null,
     selectedCustomerName: null,
@@ -10,7 +13,13 @@ const state = {
 };
 
 function init() {
-    console.log('初始化 gestionProduct.js');
+    if (isInitialized) {
+        console.log('gestionProduct.js 已初始化，跳过');
+        return;
+    }
+    isInitialized = true;
+    console.log('初始化 gestionClient.js');
+
     const radio = document.querySelector(`input[name="optradio_product"][value="vue"]`);
     if (radio) {
         radio.checked = true;
@@ -36,10 +45,10 @@ function init() {
         element_submit.addEventListener("submit", handleFormSubmit);
     }
 
-    const customerSearchBox = document.getElementById('customerSearchBox');
-    if (customerSearchBox) {
-        customerSearchBox.removeEventListener('input', searchCustomers);
-        customerSearchBox.addEventListener('input', searchCustomers);
+    const customerSearchBoxProduct = document.getElementById('customerSearchBoxProduct');
+    if (customerSearchBoxProduct) {
+        customerSearchBoxProduct.removeEventListener('input', searchCustomers);
+        customerSearchBoxProduct.addEventListener('input', searchCustomers);
     }
 
     const customerSearchResults = document.getElementById('customer_search_results');
@@ -54,12 +63,6 @@ function init() {
         policySearchResults.addEventListener('click', handleRowClick);
     }
 
-    /*
-    const afficheAction = document.querySelector('.affiche_action');
-    if (afficheAction) {
-        afficheAction.removeEventListener('click', handleEditToggleClick);
-        afficheAction.addEventListener('click', handleEditToggleClick);
-    } */
     document.querySelectorAll('.edit-toggle').forEach(span => {
         span.removeEventListener('click', handleEditToggleClick);
         span.addEventListener('click', handleEditToggleClick);
@@ -172,7 +175,7 @@ function handleModeChange() {
 function searchCustomers() {
     clearTimeout(state.debounceTimer);
     state.debounceTimer = setTimeout(() => {
-        const query = document.getElementById('customerSearchBox').value;
+        const query = document.getElementById('customerSearchBoxProduct').value;
         if (!query) {
             document.getElementById("customer_search_results").innerHTML = "";
             document.getElementById("customer_search_results_title").innerHTML = "";
@@ -520,6 +523,7 @@ function cleanup() {
     state.policyCurrentPage = 1;
     state.policyTotalPages = 1;
     state.debounceTimer = null;
+    isInitialized = false;
 
     document.querySelectorAll('input[name="optradio_product"]').forEach(radio => {
         radio.removeEventListener('change', handleModeChange);
@@ -532,9 +536,9 @@ function cleanup() {
     if (element_submit) {
         element_submit.removeEventListener("submit", handleFormSubmit);
     }
-    const customerSearchBox = document.getElementById('customerSearchBox');
-    if (customerSearchBox) {
-        customerSearchBox.removeEventListener('input', searchCustomers);
+    const customerSearchBoxProduct = document.getElementById('customerSearchBoxProduct');
+    if (customerSearchBoxProduct) {
+        customerSearchBoxProduct.removeEventListener('input', searchCustomers);
     }
     const customerSearchResults = document.getElementById('customer_search_results');
     if (customerSearchResults) {

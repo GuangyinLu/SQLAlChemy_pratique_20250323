@@ -44,6 +44,7 @@ def get_full_name(person):
 
 ## 开始
 @profilClient_bp.route("/get_profilClient_html", methods=["GET", "POST"])
+@login_required
 def get_profilClient_html():
     return render_template("/partials/profilClient.html")
 

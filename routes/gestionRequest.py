@@ -80,6 +80,9 @@ def Request_per_info():
             .filter(ClientRequest.request_id == query_request_id) \
             .first()
     
+    if item_base is None:
+        return jsonify({'error': '请求信息不存在或已被删除'}), 404
+    
     Request_Base_data = []
     item_request, item_customer, item_agent = item_base
 
@@ -237,18 +240,38 @@ def modifier_Request():
 @login_required
 def supprimer_Request():
     db = SessionLocal()
-    query_para = request.get_json().get('query', '')
-    
-    print(query_para)
-    Request = db.query(InsuranceRequest).filter(InsuranceRequest.Request_id==query_para).first()
+    try:
+        query_para = int(request.get_json().get('query', ''))
+        print("准备删除 request_id:", query_para)
 
-    if Request:
-        db.delete(Request)
-        db.commit()
+        # 1. 删除子表中所有关联记录（ClientRequestHandler）
+        db.query(ClientRequestHandler).filter_by(request_id=query_para).delete()
+
+        # 2. 删除主表记录（ClientRequest）
+        req = db.query(ClientRequest).filter_by(request_id=query_para).first()
+
+        if req:
+            db.delete(req)
+            db.commit()
+            return jsonify({
+                "message": "Request 已成功删除！"
+            })
+        else:
+            return jsonify({
+                "message": "未找到该 Request，删除失败！"
+            }), 404
+
+    except Exception as e:
+        db.rollback()
+        print("删除失败:", e)
         return jsonify({
-            "message": "Request est supprimer!"
-        })
-    
+            "error": "删除过程中出错: " + str(e)
+        }), 500
+
+    finally:
+        db.close()
+
+
 @gestionRequest_bp.route('/search_customer', methods=['GET'])
 @login_required
 def search_customer():

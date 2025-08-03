@@ -1,13 +1,13 @@
 // profilClient.js
 function init() {
     console.log('初始化 profilClient.js');
-    const searchBox = document.getElementById('searchBox');
-    if (searchBox) {
-        searchBox.removeEventListener('keyup', searchCustomers);
-        searchBox.addEventListener('keyup', searchCustomers);
-        console.log('绑定 searchCustomers 到 searchBox');
+    const searchProfilBox = document.getElementById('searchProfilBox');
+    if (searchProfilBox) {
+        searchProfilBox.removeEventListener('keyup', searchCustomers);
+        searchProfilBox.addEventListener('keyup', searchCustomers);
+        console.log('绑定 searchCustomers 到 searchProfilBox');
     } else {
-        console.warn('未找到 searchBox, 可能不在 profilClient 页面');
+        console.warn('未找到 searchProfilBox, 可能不在 profilClient 页面');
     }
 
     // 绑定表格行点击事件（客户搜索）
@@ -54,8 +54,8 @@ function init() {
 }
 
 function searchCustomers() {
-    console.log('触发搜索:', document.getElementById('searchBox')?.value);
-    const query = document.getElementById('searchBox')?.value || '';
+    console.log('触发搜索:', document.getElementById('searchProfilBox')?.value);
+    const query = document.getElementById('searchProfilBox')?.value || '';
     axios.get("/profilClient/search", { params: { query } })
         .then(response => {
             let rows = "";
@@ -849,23 +849,23 @@ function clearSelectedRowsRequest() {
 
 function cleanup() {
     console.log('清理 profilClient.js');
-    const searchBox = document.getElementById('searchBox');
-    if (searchBox) {
-        searchBox.removeEventListener('keyup', searchCustomers);
+    const searchProfilBox = document.getElementById('searchProfilBox');
+    if (searchProfilBox) {
+        searchProfilBox.removeEventListener('keyup', searchCustomers);
     }
     const searchResults = document.getElementById('search_results');
     if (searchResults) {
         searchResults.removeEventListener('click', handleSearchRowClick);
     }
-    const productTable = document.getElementById('product_detail');
+    const productTable = document.getElementById('policy_client');
     if (productTable) {
         productTable.removeEventListener('click', handleProductRowClick);
     }
-    const requestTable = document.getElementById('request_detail');
+    const requestTable = document.getElementById('service_requests');
     if (requestTable) {
         requestTable.removeEventListener('click', handleRequestRowClick);
     }
-    const returnButton = document.querySelector('.btn-primary');
+    const returnButton = document.getElementById('returnProductDetail');
     if (returnButton) {
         returnButton.removeEventListener('click', return_product_detail);
     }
