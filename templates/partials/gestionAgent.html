@@ -1,108 +1,103 @@
 <div class="main">
-    <h2>Gestion de Agent!</h2>            
+    <h1>Gestion de Agent</h1>
     
-    <div class="row">
-        <div class="col-md-4 border p-3 affiche">
-  
-            <div class="option_action">
+        <div class="border-top p-1 affiche_select affiche">
+            <div class="option_action mb-3">
                 <div class="form-check">
-                    <input type="radio" class="form-check-input" id="radio1" name="optradio" value="vue" checked>
-                    <label class="form-check-label" for="radio1">Vue</label>
+                    <input class="form-check-input" type="radio" name="optradio" id="vue" value="vue">
+                    <label class="form-check-label" for="vue">Vue</label>
                 </div>
                 <div class="form-check">
-                    <input type="radio" class="form-check-input" id="radio2" name="optradio" value="modifier">
-                    <label class="form-check-label" for="radio2">Modifier</label>
+                    <input class="form-check-input" type="radio" name="optradio" id="modifier" value="modifier">
+                    <label class="form-check-label" for="modifier">Modifier</label>
                 </div>
                 <div class="form-check">
-                    <input type="radio" class="form-check-input" id="radio3" name="optradio" value="ajouter">
-                    <label class="form-check-label" for="radio3">Ajouter</label>
+                    <input class="form-check-input" type="radio" name="optradio" id="ajouter" value="ajouter">
+                    <label class="form-check-label" for="ajouter">Ajouter</label>
                 </div>
                 <div class="form-check">
-                    <input type="radio" class="form-check-input" id="radio4" name="optradio" value="supprimer">
-                    <label class="form-check-label" for="radio4">Supprimer</label>
+                    <input class="form-check-input" type="radio" name="optradio" id="supprimer" value="supprimer">
+                    <label class="form-check-label" for="supprimer">Supprimer</label>
                 </div>
             </div>
 
             <div class="search_user">
-                <label>Recherche (Name,Phone,Email...) </label>
-                <input type="text" id="searchBox_agent" onkeyup="searchAgent()" placeholder="Recherche...">
+                <input type="text" class="form-control" id="searchBox_agent" placeholder="Recherche (Name, Phone, Email...)">
+                <table class="table agent_search-table">
+                    <thead id="search_agent_results_title"></thead>
+                    <tbody id="search_agent_results"></tbody>
+                </table>
             </div>
-                                
-            <table class="table table-bordered table-striped">
-                <thead>
-                    <tr id="search_agent_results_title"></tr>
-                </thead>
-                <tbody class="client_search-table" id="search_agent_results">
-                    <!-- AJAX 动态填充 -->
-                </tbody>
-            </table>
-
         </div>
 
-        <div class="col-md-8 border p-3 affiche">
-
-            <form id="agent-form" class="form-horizontal user_info row">
-                <div class="form-group row">
-                    <label for="agent_id" class="col-md-4 control-label">Agent_id</label>
-                    <div class="col-md-4">
-                        <input type="number" class="form-control" name="agent_id" id="agent_id" disabled>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="name_first" class="col-md-4 control-label">Name_first</label>
-                    <div class="col-md-4">
-                        <input type="text" class="form-control" name="name_first" id="name_first">
-                    </div>
+        <div class="border-top p-1 agent_info affiche_action d-none">
+            <form id="agent-form" class="row g-3">
+                
+                <div class="col-12 mb-3">
+                    <button type="button" class="btn btn-primary float-end" id="return_gestionAgent">↩ Retour</button>
                 </div>
 
-                <div class="form-group row">
-                    <label for="name_middle" class="col-md-4 control-label">Name_middle</label>
-                    <div class="col-md-4">
-                        <input type="text" class="form-control" name="name_middle" id="name_middle">
+                <div class="form-group row" id="row_agent_id">
+                    <label for="agent_id" class="col-sm-3 col-form-label">Agent ID</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control user-field" id="agent_id" disabled>
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="name_last" class="col-md-4 control-label">Name_last</label>
-                    <div class="col-md-4">
-                        <input type="text" class="form-control" name="name_last" id="name_last">
+                    <label for="name_first" class="col-sm-3 col-form-label">First Name</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control user-field" id="name_first" required>
+                        <span class="edit-toggle d-none">✏️</span>
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="phone" class="col-md-4 control-label">Phone</label>
-                    <div class="col-md-4">
-                        <input type="tel" class="form-control" name="phone" id="phone">
+                    <label for="name_middle" class="col-sm-3 col-form-label">Middle Name</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control user-field" id="name_middle">
+                        <span class="edit-toggle d-none">✏️</span>
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="email" class="col-md-4 control-label">Email</label>
-                    <div class="col-md-4">
-                        <input type="email" class="form-control" name="email" id="email">
+                    <label for="name_last" class="col-sm-3 col-form-label">Last Name</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control user-field" id="name_last" required>
+                        <span class="edit-toggle d-none">✏️</span>
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="address" class="col-md-4 control-label">Address</label>
-                    <div class="col-md-4">
-                        <input type="text" class="form-control" name="address" id="address">
+                    <label for="phone" class="col-sm-3 col-form-label">Phone</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control user-field" id="phone" required>
+                        <span class="edit-toggle d-none">✏️</span>
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="commission_rate" class="col-md-4 control-label">Commission_rate</label>
-                    <div class="col-md-4">
-                        <input type="number" step="0.01" min="0" max="10" class="form-control" name="commission_rate" id="commission_rate">
+                    <label for="email" class="col-sm-3 col-form-label">Email</label>
+                    <div class="col-sm-9">
+                        <input type="email" class="form-control user-field" id="email" required>
+                        <span class="edit-toggle d-none">✏️</span>
                     </div>
                 </div>
-                <div class="form-group">
-                    <div class="col-md-offset-2 col-md-10 btn-user">
-                      <button type="submit" class="btn btn-default btn-danger border btn-user-conf">Confirmation</button>
+                <div class="form-group row">
+                    <label for="address" class="col-sm-3 col-form-label">Address</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control user-field" id="address">
+                        <span class="edit-toggle d-none">✏️</span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="commission_rate" class="col-sm-3 col-form-label">Commission Rate</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control user-field" id="commission_rate">
+                        <span class="edit-toggle d-none">✏️</span>
                     </div>
                 </div>
 
+                <div class="submit_confirm">
+                    <button type="submit" class="btn btn-primary btn-user" id="submit_confirm">Confirmation</button>
+                </div>
             </form>
-
         </div>
-    </div>
 
-
+    
 </div>
-
-

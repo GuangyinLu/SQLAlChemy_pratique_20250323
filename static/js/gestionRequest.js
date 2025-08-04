@@ -21,101 +21,114 @@ function init() {
         Object.assign(state, window.moduleState['gestionRequest']);
     }
 
-    // 设置默认单选框
-    const radio = document.querySelector(`input[name="request_optradio"][value="vue"]`);
-    if (radio) {
-        radio.checked = true;
-        console.log('选中的单选框:', radio.value);
-    } else {
-        console.error('未找到 value="vue" 的单选按钮');
-    }
+    const elements = [
+        { id: 'searchBox_request', event: 'input', handler: handleSearchInput },
+        { id: 'request_search_results', event: 'click', handler: handleTableRowClick },
+        { id: 'request-form', event: 'submit', handler: handleFormSubmit },
+        { selector: 'input[name="request_optradio"]', event: 'change', handler: handleRadioChangeEvent, multiple: true },
+        { selector: '.search_suggestions', event: 'input', handler: handleSuggestionInput, multiple: true }
+    ];
 
-    // 绑定事件（使用事件委托）
-    document.querySelectorAll('input[name="request_optradio"]').forEach(radio => {
-        radio.removeEventListener('change', handleRadioChangeEvent);
-        radio.addEventListener('change', handleRadioChangeEvent);
-    });
+    let retryCount = 0;
+    const maxRetries = 10;
 
-    const searchInputRequest = document.getElementById("searchBox_request");
-    if (searchInputRequest) {
-        searchInputRequest.removeEventListener("input", handleSearchInput);
-        searchInputRequest.addEventListener("input", handleSearchInput);
-    }
+    const tryInit = () => {
+        let allElementsFound = true;
 
-    const rowTablecustomer = document.getElementById("request_search_results");
-    if (rowTablecustomer) {
-        rowTablecustomer.removeEventListener("click", handleTableRowClick);
-        rowTablecustomer.addEventListener("click", handleTableRowClick);
-    }
+        elements.forEach(({ id, selector, event, handler, multiple }) => {
+            if (multiple) {
+                const items = document.querySelectorAll(selector);
+                if (items.length === 0) {
+                    console.warn(`未找到 ${selector}，将重试`);
+                    allElementsFound = false;
+                } else {
+                    items.forEach(item => {
+                        item.removeEventListener(event, handler);
+                        item.addEventListener(event, handler);
+                        // console.log(`绑定 ${event} 到 ${selector}`);
+                    });
+                }
+            } else {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.removeEventListener(event, handler);
+                    element.addEventListener(event, handler);
+                    // console.log(`绑定 ${event} 到 ${id}`);
+                } else {
+                    console.warn(`未找到 ${id}，将重试`);
+                    allElementsFound = false;
+                }
+            }
+        });
 
-    const submitFormRequest = document.getElementById("request-form");
-    if (submitFormRequest) {
-        submitFormRequest.removeEventListener("submit", handleFormSubmit);
-        submitFormRequest.addEventListener("submit", handleFormSubmit);
-    }
-
-    const formContainer = document.querySelectorAll('.search_suggestions');
-    formContainer.forEach( suggestion => {
-        suggestion.removeEventListener('input', handleSuggestionInput);
-        suggestion.addEventListener('input', handleSuggestionInput);
-    });
-
-    // 初始化下拉建议
-    /*
-    ['customer', 'agent', 'agent_next'].forEach(type => {
-        const input = document.getElementById(`search_${type}`);
-        if (input) {
-            input.removeEventListener('input', handleSuggestionInput);
-            input.addEventListener('input', handleSuggestionInput);
+        if (allElementsFound) {
+            // 设置默认单选框
+            const radio = document.querySelector(`input[name="request_optradio"][value="vue"]`);
+            if (radio) {
+                radio.checked = true;
+                console.log('选中的单选框:', radio.value);
+            } else {
+                console.error('未找到 value="vue" 的单选按钮');
+            }
+            handleRadioChange();
+        } else if (retryCount < maxRetries) {
+            retryCount++;
+            console.log(`重试初始化 (${retryCount}/${maxRetries})`);
+            setTimeout(tryInit, 100);
+        } else {
+            console.error('达到最大重试次数，部分元素仍未找到');
         }
-    });*/
+    };
 
-    // 初始化单选框状态
-    handleRadioChange();
+    tryInit();
 }
 
 function cleanup() {
-    console.log('清理 gestionRequest.js');
+    console.log('开始清理 gestionRequest.js');
     isInitialized = false;
     isDomUpdate = false;
     clearTimeout(state.debounceTimer);
     state.debounceTimer = null;
+    state.selectedRequestId = null;
 
     // 保存状态
     window.moduleState = window.moduleState || {};
     window.moduleState['gestionRequest'] = { ...state };
 
-    // 移除事件监听器
-    document.querySelectorAll('input[name="request_optradio"]').forEach(radio => {
-        radio.removeEventListener('change', handleRadioChangeEvent);
-    });
-    const searchInputRequest = document.getElementById("searchBox_request");
-    if (searchInputRequest) {
-        searchInputRequest.removeEventListener("input", handleSearchInput);
-    }
-    const rowTableRequest = document.getElementById("request_search_results");
-    if (rowTableRequest) {
-        rowTableRequest.removeEventListener("click", handleTableRowClick);
-    }
-    const submitFormRequest = document.getElementById("formRequestConfirmation");
-    if (submitFormRequest) {
-        submitFormRequest.removeEventListener("submit", handleFormSubmit);
-    }
+    const elements = [
+        { id: 'searchBox_request', event: 'input', handler: handleSearchInput },
+        { id: 'request_search_results', event: 'click', handler: handleTableRowClick },
+        { id: 'request-form', event: 'submit', handler: handleFormSubmit },
+        { selector: 'input[name="request_optradio"]', event: 'change', handler: handleRadioChangeEvent, multiple: true },
+        { selector: '.search_suggestions', event: 'input', handler: handleSuggestionInput, multiple: true }
+    ];
 
-    ['customer', 'agent', 'agent_next'].forEach(type => {
-        const input = document.getElementById(`search_${type}`);
-        if (input) {
-            input.removeEventListener('input', handleSuggestionInput);
+    elements.forEach(({ id, selector, event, handler, multiple }) => {
+        if (multiple) {
+            const items = document.querySelectorAll(selector);
+            items.forEach(item => {
+                item.removeEventListener(event, handler);
+                // console.log(`已移除 ${selector} 的 ${event} 事件监听器`);
+            });
+        } else {
+            const element = document.getElementById(id);
+            if (element) {
+                element.removeEventListener(event, handler);
+                // console.log(`已移除 ${id} 的 ${event} 事件监听器`);
+            }
         }
     });
 
     // 清空表格和分页
-    const elements = ['request_search_results', 'search_request_results_title', 'log_handle_request_search_results', 'search_log_handle_request_title', 'request_base'];
-    elements.forEach(id => {
+    const elementsToClear = ['request_search_results', 'search_request_results_title', 'log_handle_request_search_results', 'search_log_handle_request_title', 'request_base'];
+    elementsToClear.forEach(id => {
         const el = document.getElementById(id);
         if (el) el.innerHTML = '';
     });
+
+    console.log('完成清理 gestionRequest.js');
 }
+
 
 function handleSearchInput(e) {
     if (e.target.id === 'searchBox_request') {

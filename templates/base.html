@@ -24,7 +24,7 @@
                     {% if current_user.is_authenticated %}
                         {% for menu in menus %}
                         <a href="#" class="list-group-item list-group-item-action menu-item" 
-                        data-target="{{ menu.id }}">{{ menu.menu_name }}</a>
+                        data-module="{{ menu.id }}">{{ menu.menu_name }}</a>
                         {% endfor %}
                     {% endif %}
                 </div>

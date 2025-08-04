@@ -1,5 +1,4 @@
 // gestionClient.js
-
 let isInitialized = false;
 
 function init() {
@@ -10,57 +9,100 @@ function init() {
     isInitialized = true;
     console.log('初始化 gestionClient.js');
 
-    // 模式切换
-    const radio = document.querySelector(`input[name="optradio_client"][value="vue"]`);
-    if (radio) {
-        radio.checked = true;
-        console.log('选中的单选框:', radio.value);
-    } else {
-        console.error('未找到 value="vue" 的单选按钮');
-    }
+    const elements = [
+        { id: 'searchBox', event: 'input', handler: searchCustomers },
+        { id: 'search_results', event: 'click', handler: handleRowClientClick },
+        { id: 'customer-form', event: 'submit', handler: handleFormSubmit },
+        { id: 'return_gestionClient', event: 'click', handler: resetInterface },
+        { selector: 'input[name="optradio_client"]', event: 'change', handler: handleModeChange, multiple: true },
+        { selector: '.edit-toggle', event: 'click', handler: handleEditToggleClick, multiple: true }
+    ];
 
-    document.querySelectorAll('input[name="optradio_client"]').forEach(radio => {
-        radio.removeEventListener('change', handleModeChange);
-        radio.addEventListener('change', handleModeChange);
-    });
+    let retryCount = 0;
+    const maxRetries = 10;
 
-    //绑定搜索用户输入事件
-        const customerSearchBox = document.getElementById('searchBox');
-    if (customerSearchBox) {
-        customerSearchBox.removeEventListener('input', searchCustomers);
-        customerSearchBox.addEventListener('input', searchCustomers);
-    }
+    const tryInit = () => {
+        let allElementsFound = true;
 
-    // 返回按钮
-    const element_return = document.getElementById("return_gestionClient");
-    if (element_return) {
-        element_return.removeEventListener("click", resetInterface);
-        element_return.addEventListener("click", resetInterface);
-    }
+        elements.forEach(({ id, selector, event, handler, multiple }) => {
+            if (multiple) {
+                const items = document.querySelectorAll(selector);
+                if (items.length === 0) {
+                    console.warn(`未找到 ${selector}，将重试`);
+                    allElementsFound = false;
+                } else {
+                    items.forEach(item => {
+                        item.removeEventListener(event, handler);
+                        item.addEventListener(event, handler);
+                        // console.log(`绑定 ${event} 到 ${selector}`);
+                    });
+                }
+            } else {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.removeEventListener(event, handler);
+                    element.addEventListener(event, handler);
+                    // console.log(`绑定 ${event} 到 ${id}`);
+                } else {
+                    console.warn(`未找到 ${id}，将重试`);
+                    allElementsFound = false;
+                }
+            }
+        });
 
-    // 表单提交
-    const element_submit = document.getElementById('customer-form');
-    if (element_submit) {
-        element_submit.removeEventListener("submit", handleFormSubmit);
-        element_submit.addEventListener("submit", handleFormSubmit);
-    }
+        if (allElementsFound) {
+            // 设置默认单选框
+            const radio = document.querySelector(`input[name="optradio_client"][value="vue"]`);
+            if (radio) {
+                radio.checked = true;
+                console.log('选中的单选框:', radio.value);
+            } else {
+                console.error('未找到 value="vue" 的单选按钮');
+            }
+            handleModeChange();
+        } else if (retryCount < maxRetries) {
+            retryCount++;
+            console.log(`重试初始化 (${retryCount}/${maxRetries})`);
+            setTimeout(tryInit, 100);
+        } else {
+            console.error('达到最大重试次数，部分元素仍未找到');
+        }
+    };
 
-    //绑定客户行点击事件
-    const customerSearchResults = document.getElementById('search_results');
-    if (customerSearchResults) {
-        customerSearchResults.removeEventListener('click', handleRowClientClick);
-        customerSearchResults.addEventListener('click', handleRowClientClick);
-    }
-
-    // 绑定编辑开关
-    document.querySelectorAll('.edit-toggle').forEach(span => {
-        span.removeEventListener('click', handleEditToggleClick);
-        span.addEventListener('click', handleEditToggleClick);
-    });
-
-    handleModeChange();
+    tryInit();
 }
 
+function cleanup() {
+    console.log('开始清理 gestionClient.js');
+    isInitialized = false;
+
+    const elements = [
+        { id: 'searchBox', event: 'input', handler: searchCustomers },
+        { id: 'search_results', event: 'click', handler: handleRowClientClick },
+        { id: 'customer-form', event: 'submit', handler: handleFormSubmit },
+        { id: 'return_gestionClient', event: 'click', handler: resetInterface },
+        { selector: 'input[name="optradio_client"]', event: 'change', handler: handleModeChange, multiple: true },
+        { selector: '.edit-toggle', event: 'click', handler: handleEditToggleClick, multiple: true }
+    ];
+
+    elements.forEach(({ id, selector, event, handler, multiple }) => {
+        if (multiple) {
+            const items = document.querySelectorAll(selector);
+            items.forEach(item => {
+                item.removeEventListener(event, handler);
+                // console.log(`已移除 ${selector} 的 ${event} 事件监听器`);
+            });
+        } else {
+            const element = document.getElementById(id);
+            if (element) {
+                element.removeEventListener(event, handler);
+                // console.log(`已移除 ${id} 的 ${event} 事件监听器`);
+            }
+        }
+    });
+
+    console.log('完成清理 gestionClient.js');
+}
 
 function handleModeChange() {
   const mode = document.querySelector('input[name="optradio_client"]:checked').value;
@@ -225,34 +267,6 @@ function showError(message, isSuccess = false) {
     } else {
         alert(message);
     }
-}
-
-function cleanup() {
-    console.log('清理 profilClient.js');
-    isInitialized = false;
-
-	document.querySelectorAll('input[name="optradio_client"]').forEach(radio => {
-        radio.removeEventListener('change', handleModeChange);
-    });
-    const customerSearchBox = document.getElementById('searchBox');
-    if (customerSearchBox) {
-        customerSearchBox.removeEventListener('input', searchCustomers);
-    }
-    const element_return = document.getElementById("return_gestionClient");
-    if (element_return) {
-        element_return.removeEventListener("click", resetInterface);
-    }
-    const element_submit = document.getElementById('customer-form');
-    if (element_submit) {
-        element_submit.removeEventListener("submit", handleFormSubmit);
-    }
-    const customerSearchResults = document.getElementById('customer_search_results');
-    if (customerSearchResults) {
-        customerSearchResults.removeEventListener('click', handleRowClientClick);
-    }
-    document.querySelectorAll('.edit-toggle').forEach(span => {
-        span.removeEventListener('click', handleEditToggleClick);
-    });	
 }
 
 export {

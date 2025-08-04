@@ -11,122 +11,221 @@ gestionAgent_bp = Blueprint('gestionAgent', __name__)
 def get_gestionAgent_html():
     return render_template("/partials/gestionAgent.html")
 
+
 @gestionAgent_bp.route('/agent_search', methods=['GET'])
 @login_required
 def agent_search():
     db = SessionLocal()
     query_client = request.args.get('query', '')
 
-    # 多表联合查询
-    query_result = db.query(Agent).filter(
+    try:
+        query_result = db.query(Agent).filter(
             (Agent.name_first.contains(query_client)) |
             (Agent.name_last.contains(query_client)) |
             (Agent.phone.contains(query_client)) |
-            (Agent.email.contains(query_client)) 
+            (Agent.email.contains(query_client))
         ).all()
-    
-    data = []
-    for item in query_result:
-        data.append({
+
+        data = [{
             'agent_id': item.agent_id,
             'agent_name': f"{item.name_first} {item.name_last}",
             'phone': item.phone,
             'email': item.email
-        })
-    return jsonify({
-        "data": data
-    })
+        } for item in query_result]
 
-@gestionAgent_bp.route('/agent_per_info', methods=['GET', 'POST'])
+        return jsonify({
+            "success": True,
+            "data": data
+        })
+    except Exception as e:
+        db.rollback()
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
+    finally:
+        db.close()
+
+@gestionAgent_bp.route('/agent_per_info', methods=['GET'])
 @login_required
 def agent_per_info():
     db = SessionLocal()
     query_para = request.args.get('query', '')
-   
-    item = db.query(Agent).filter(Agent.agent_id == query_para).first()
-    data=[]    
-    data.append({
-        "agent_id" : item.agent_id,
-        "name_first" : item.name_first,
-        "name_middle" : item.name_middle,
-        "name_last" : item.name_last,
-        "phone" : item.phone,
-        "email" : item.email,
-        "address" : item.address,
-        "commission_rate" : item.commission_rate
-    })
 
-    return jsonify({
-        "agent": data
+    try:
+        item = db.query(Agent).filter(Agent.agent_id == query_para).first()
+        if not item:
+            return jsonify({
+                "success": False,
+                "error": "Agent not found"
+            }), 404
 
-    })
+        data = [{
+            "agent_id": item.agent_id,
+            "name_first": item.name_first,
+            "name_middle": item.name_middle or '',
+            "name_last": item.name_last,
+            "phone": item.phone,
+            "email": item.email,
+            "address": item.address or '',
+            "commission_rate": item.commission_rate or ''
+        }]
 
-@gestionAgent_bp.route('/ajouter_agent', methods=['GET', 'POST'])
+        return jsonify({
+            "success": True,
+            "agent": data
+        })
+    except Exception as e:
+        db.rollback()
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
+    finally:
+        db.close()
+
+
+@gestionAgent_bp.route('/ajouter_agent', methods=['POST'])
 @login_required
 def ajouter_agent():
     db = SessionLocal()
-    '''
-    query_para = request.get_json().get('query', '')
-    query_name_first= request.get_json().get('name_first', '')
-    query_name_middle= request.get_json().get('name_middle', '')
-    query_agent_value= request.get_json().get('agent_value', '')
-    query_start_date= request.get_json().get('start_date', '')
-    query_end_date= request.get_json().get('end_date', '')
-    query_start_date= request.get_json().get('start_date', '')
-    query_end_date= request.get_json().get('end_date', '')'''
+    data = request.get_json()
 
-    new_item = Agent(
-        name_first = request.get_json().get('name_first', ''),
-        name_middle = request.get_json().get('name_middle', ''),
-        name_last = request.get_json().get('name_last', ''),
-        phone = request.get_json().get('phone', ''),
-        email = request.get_json().get('email', ''),
-        address = request.get_json().get('address', ''),
-        commission_rate = request.get_json().get('commission_rate', '')
-    )
+    try:
+        required_fields = ['name_first', 'name_last', 'phone', 'email']
+        for field in required_fields:
+            if not data.get(field):
+                return jsonify({
+                    "success": False,
+                    "error": f"Field {field} is required"
+                }), 400
 
-    db.add(new_item)
-    db.commit()
+        new_item = Agent(
+            name_first=data.get('name_first', ''),
+            name_middle=data.get('name_middle', ''),
+            name_last=data.get('name_last', ''),
+            phone=data.get('phone', ''),
+            email=data.get('email', ''),
+            address=data.get('address', ''),
+            commission_rate=data.get('commission_rate', '')
+        )
 
-    return jsonify({
-        "message": "agent est ajoute!"
-    })
+        db.add(new_item)
+        db.commit()
 
-@gestionAgent_bp.route('/modifier_agent', methods=['GET', 'POST'])
+        return jsonify({
+            "success": True,
+            "message": "Agent est ajouté!"
+        })
+    except Exception as e:
+        db.rollback()
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
+    finally:
+        db.close()
+
+@gestionAgent_bp.route('/modifier_agent', methods=['POST'])
 @login_required
 def modifier_agent():
     db = SessionLocal()
-    query_para = request.get_json().get('query', '')
+    data = request.get_json()
+    query_para = data.get('agent_id')
 
-    item = db.query(Agent).filter(Agent.agent_id==query_para).first()
+    try:
+        if not query_para:
+            return jsonify({
+                "success": False,
+                "error": "Agent ID is required"
+            }), 400
 
-    if item:
-        item.name_first = request.get_json().get('name_first', '')
-        item.name_middle = request.get_json().get('name_middle', '')
-        item.name_last = request.get_json().get('name_last', '')
-        item.phone = request.get_json().get('phone', '')
-        item.email = request.get_json().get('email', '')
-        item.address = request.get_json().get('address', '')
-        item.commission_rate = request.get_json().get('commission_rate', '')        
+        item = db.query(Agent).filter(Agent.agent_id == query_para).first()
+        if not item:
+            return jsonify({
+                "success": False,
+                "error": "Agent not found"
+            }), 404
+
+        required_fields = ['name_first', 'name_last', 'phone', 'email']
+        for field in required_fields:
+            if not data.get(field):
+                return jsonify({
+                    "success": False,
+                    "error": f"Field {field} is required"
+                }), 400
+
+        item.name_first = data.get('name_first', item.name_first)
+        item.name_middle = data.get('name_middle', item.name_middle)
+        item.name_last = data.get('name_last', item.name_last)
+        item.phone = data.get('phone', item.phone)
+        item.email = data.get('email', item.email)
+        item.address = data.get('address', item.address)
+        item.commission_rate = data.get('commission_rate', item.commission_rate)
 
         db.commit()
 
         return jsonify({
-            "message": "agent est modifie!"
+            "success": True,
+            "message": "Agent est modifié!"
         })
-    
-@gestionAgent_bp.route('/supprimer_agent', methods=['GET', 'POST'])
+    except Exception as e:
+        db.rollback()
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
+    finally:
+        db.close()
+
+@gestionAgent_bp.route('/supprimer_agent', methods=['POST'])
 @login_required
 def supprimer_agent():
     db = SessionLocal()
-    query_para = request.get_json().get('query', '')
-    
-    print(query_para)
-    item = db.query(Agent).filter(Agent.agent_id==query_para).first()
+    query_para = request.get_json().get('agent_id')
 
-    if item:
+    try:
+        if not query_para:
+            return jsonify({
+                "success": False,
+                "error": "Agent ID is required"
+            }), 400
+
+        item = db.query(Agent).filter(Agent.agent_id == query_para).first()
+        if not item:
+            return jsonify({
+                "success": False,
+                "error": "Agent not found"
+            }), 404
+
         db.delete(item)
         db.commit()
+
         return jsonify({
-            "message": "agent est supprimer!"
+            "success": True,
+            "message": "Agent est supprimé!"
         })
+    except Exception as e:
+        db.rollback()
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
+    finally:
+        db.close()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

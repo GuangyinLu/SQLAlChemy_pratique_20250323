@@ -1,72 +1,67 @@
+/* 全局容器 */
 .main {
-    height: 87%;
+    height: 87vh; /* 使用 vh 单位，与 .affiche 一致 */
+    padding: 20px;
 }
 
+/* 主显示区域 */
 .affiche {
-    /*height: 80%;*/
     height: 80vh;
-    display: block;
-    overflow: auto;
-    justify-content: center;
-    align-items: center;
+    overflow-y: auto; /* 仅垂直滚动 */
     text-align: center;
-    justify-items: center;
 }
 
-.user_info {
-    margin: 0;
-    margin: 30px  30px 30px 30px;
+/* 搜索和表单区域切换 */
+.affiche_select {
+    display: block !important;
 }
 
-.user_info_list {
-    margin: 0;
+.affiche_select.d-none {
+    display: none !important;
 }
 
-.form-check {
-    padding: 5px 0px;
-    margin: 5px 20px 30px;
-    font-weight: bold;
+.affiche_action {
+    display: none !important;
 }
 
-.option_action {
-    display: flex;
-    padding: 0;
-    margin: 0;
-    width: 100%;
+.affiche_action:not(.d-none) {
+    display: block !important;
 }
 
+/* 搜索区域 */
 .search_user {
     display: flex;
-    padding: 5px 0 15px 0;
-    margin: 0 0;
+    flex-direction: column;
+    padding: 0.5rem 0 1rem;
     width: 100%;
 }
 
+.search_user input.form-control {
+    max-width: 500px;
+    margin: 0 auto 0.625rem; /* 10px */
+}
+
+/* 表格样式 */
 .table {
-    background-color: rgba(232, 242, 232, 0);
-    overflow: auto;
-    display: block;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: transparent; /* 简化为 transparent */
+    overflow-x: auto;
 }
 
-.table td{
-    background-color: rgba(232, 242, 232, 0);
-    overflow: auto; 
-    padding: 5px;
-}
-
-.table th{
-    background-color: rgba(232, 242, 232, 0);
-    overflow: auto;
-    
+.table th,
+.table td {
+    padding: 0.3125rem; /* 5px */
+    background-color: transparent;
 }
 
 .table tr:hover {
     background-color: #bfc1d8;
-    color: #ff0000; /* 字体颜色变为红色 */
+    color: #ff0000;
     cursor: pointer;
 }
 
-/* 可选：点击后的样式 */
 .table tr:active {
     background-color: #e0e0e0;
 }
@@ -76,8 +71,7 @@
 }
 
 .client_search-table tr:hover {
-    background-color: #bdc5e7e7;
-    cursor: pointer;
+    background-color: #bdc5e7; /* 修正 #bdc5e7e7 为有效颜色 */
 }
 
 .client_search-table tr.selected {
@@ -85,15 +79,74 @@
     font-weight: bold;
 }
 
+/* 表单区域 */
+.user_info {
+    margin: 1.875rem; /* 30px */
+}
+
+.user_info_list {
+    margin: 0;
+}
+
 .form-group label {
     font-weight: bold;
     text-align: left;
-    padding: 0 0 0 15%;
+    padding-left: 15%;
     display: flex;
     align-items: center;
 }
 
-.btn-user {
-    margin: 50px 0;
+.form-group .edit-toggle {
+    cursor: pointer;
+    margin-left: 0.625rem; /* 10px */
+    color: #007bff;
 }
 
+.form-group .edit-toggle.d-none {
+    display: none;
+}
+
+/* 单选按钮 */
+.form-check {
+    padding: 0.3125rem 0; /* 5px */
+    margin: 0.3125rem 1.25rem 1.875rem; /* 5px 20px 30px */
+    font-weight: bold;
+}
+
+.option_action {
+    display: flex;
+    width: 100%;
+}
+
+/* 提交按钮 */
+.submit_confirm {
+    margin-top: 1.25rem; /* 20px */
+    text-align: center;
+}
+
+.btn-user {
+    margin: 3.125rem 0; /* 50px */
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .main {
+        padding: 10px;
+    }
+
+    .search_user input.form-control {
+        max-width: 100%; /* 小屏幕下输入框全宽 */
+    }
+
+    .table {
+        max-width: 100%; /* 小屏幕下表格全宽 */
+    }
+
+    .form-group label {
+        padding-left: 5%; /* 减小左侧填充 */
+    }
+
+    .user_info {
+        margin: 1rem; /* 16px */
+    }
+}

@@ -1,60 +1,49 @@
 // profilClient.js
 function init() {
     console.log('初始化 profilClient.js');
-    const searchProfilBox = document.getElementById('searchProfilBox');
-    if (searchProfilBox) {
-        searchProfilBox.removeEventListener('keyup', searchCustomers);
-        searchProfilBox.addEventListener('keyup', searchCustomers);
-        console.log('绑定 searchCustomers 到 searchProfilBox');
-    } else {
-        console.warn('未找到 searchProfilBox, 可能不在 profilClient 页面');
-    }
+    
+    const elements = [
+        { id: 'searchProfilBox', event: 'keyup', handler: searchCustomers },
+        { id: 'search_results', event: 'click', handler: handleSearchRowClick },
+        { id: 'policy_client', event: 'click', handler: handleProductRowClick },
+        { id: 'service_requests', event: 'click', handler: handleRequestRowClick },
+        { id: 'returnProductDetail', event: 'click', handler: return_product_detail },
+        { id: 'relation_client', event: 'click', handler: handleRelationClick },
+        { id: 'pop_client_id', event: 'click', handler: handlePopClientClick }
+    ];
 
-    // 绑定表格行点击事件（客户搜索）
-    const searchResults = document.getElementById('search_results');
-    if (searchResults) {
-        searchResults.removeEventListener('click', handleSearchRowClick);
-        searchResults.addEventListener('click', handleSearchRowClick);
-    }
+    let retryCount = 0;
+    const maxRetries = 10; // 最大重试次数，避免无限循环
 
-    // 绑定产品表格行点击事件
-    const productTable = document.getElementById('policy_client');
-    if (productTable) {
-        productTable.removeEventListener('click', handleProductRowClick);
-        productTable.addEventListener('click', handleProductRowClick);
-    }
+    const tryInit = () => {
+        let allElementsFound = true;
 
-    // 绑定请求表格行点击事件
-    const requestTable = document.getElementById('service_requests');
-    if (requestTable) {
-        requestTable.removeEventListener('click', handleRequestRowClick);
-        requestTable.addEventListener('click', handleRequestRowClick);
-    }
+        elements.forEach(({ id, event, handler }) => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.removeEventListener(event, handler);
+                element.addEventListener(event, handler);
+                // console.log(`绑定 ${event} 到 ${id}`);
+            } else {
+                console.warn(`未找到 ${id}，将重试`);
+                allElementsFound = false;
+            }
+        });
 
-    // 绑定返回按钮
-    const returnButton = document.getElementById('returnProductDetail');
-    if (returnButton) {
-        returnButton.removeEventListener('click', return_product_detail);
-        returnButton.addEventListener('click', return_product_detail);
-    }
+        if (!allElementsFound && retryCount < maxRetries) {
+            retryCount++;
+            console.log(`重试初始化 (${retryCount}/${maxRetries})`);
+            setTimeout(tryInit, 100); // 100ms 后重试
+        } else if (!allElementsFound) {
+            console.error('达到最大重试次数，部分元素仍未找到');
+        }
+    };
 
-    // 绑定模态框中的客户链接
-    const relationClient = document.getElementById('relation_client');
-    if (relationClient) {
-        relationClient.removeEventListener('click', handleRelationClick);
-        relationClient.addEventListener('click', handleRelationClick);
-    }
-
-    // 绑定模态框中的“转到”按钮
-    const popClientId = document.getElementById('pop_client_id');
-    if (popClientId) {
-        popClientId.addEventListener('click', handlePopClientClick);
-    }
-
+    tryInit();
 }
 
 function searchCustomers() {
-    console.log('触发搜索:', document.getElementById('searchProfilBox')?.value);
+    // console.log('触发搜索:', document.getElementById('searchProfilBox')?.value);
     const query = document.getElementById('searchProfilBox')?.value || '';
     axios.get("/profilClient/search", { params: { query } })
         .then(response => {
@@ -848,37 +837,29 @@ function clearSelectedRowsRequest() {
 }
 
 function cleanup() {
-    console.log('清理 profilClient.js');
-    const searchProfilBox = document.getElementById('searchProfilBox');
-    if (searchProfilBox) {
-        searchProfilBox.removeEventListener('keyup', searchCustomers);
-    }
-    const searchResults = document.getElementById('search_results');
-    if (searchResults) {
-        searchResults.removeEventListener('click', handleSearchRowClick);
-    }
-    const productTable = document.getElementById('policy_client');
-    if (productTable) {
-        productTable.removeEventListener('click', handleProductRowClick);
-    }
-    const requestTable = document.getElementById('service_requests');
-    if (requestTable) {
-        requestTable.removeEventListener('click', handleRequestRowClick);
-    }
-    const returnButton = document.getElementById('returnProductDetail');
-    if (returnButton) {
-        returnButton.removeEventListener('click', return_product_detail);
-    }
-    const relationClient = document.getElementById('relation_client');
-    if (relationClient) {
-        relationClient.removeEventListener('click', handleRelationClick);
-    }
-    const popClientId = document.getElementById('pop_client_id');
-    if (popClientId) {
-        popClientId.removeEventListener('click', handlePopClientClick);
-    }
+    console.log('开始清理 profilClient.js');
 
+    const elements = [
+        { id: 'searchProfilBox', event: 'keyup', handler: searchCustomers },
+        { id: 'search_results', event: 'click', handler: handleSearchRowClick },
+        { id: 'policy_client', event: 'click', handler: handleProductRowClick },
+        { id: 'service_requests', event: 'click', handler: handleRequestRowClick },
+        { id: 'returnProductDetail', event: 'click', handler: return_product_detail },
+        { id: 'relation_client', event: 'click', handler: handleRelationClick },
+        { id: 'pop_client_id', event: 'click', handler: handlePopClientClick }
+    ];
+
+    elements.forEach(({ id, event, handler }) => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.removeEventListener(event, handler);
+            console.log(`已移除 ${id} 的 ${event} 事件监听器`);
+        }
+    });
+
+    console.log('完成清理 profilClient.js');
 }
+
 
 export {
     init,
