@@ -39,7 +39,7 @@ function init() {
                     items.forEach(item => {
                         item.removeEventListener(event, handler);
                         item.addEventListener(event, handler);
-                        console.log(`绑定 ${event} 到 ${selector}`);
+                        // console.log(`绑定 ${event} 到 ${selector}`);
                     });
                 }
             } else {
@@ -47,7 +47,7 @@ function init() {
                 if (element) {
                     element.removeEventListener(event, handler);
                     element.addEventListener(event, handler);
-                    console.log(`绑定 ${event} 到 ${id}`);
+                    // console.log(`绑定 ${event} 到 ${id}`);
                 } else {
                     console.warn(`未找到 ${id}，将重试`);
                     allElementsFound = false;
@@ -59,7 +59,7 @@ function init() {
             const radio = document.querySelector(`input[name="optradio"][value="vue"]`);
             if (radio) {
                 radio.checked = true;
-                console.log('选中的单选框:', radio.value);
+                // console.log('选中的单选框:', radio.value);
             } else {
                 console.error('未找到 value="vue" 的单选按钮');
             }
@@ -77,7 +77,7 @@ function init() {
 }
 
 function cleanup() {
-    console.log('开始清理 gestionAgent.js');
+    // console.log('开始清理 gestionAgent.js');
     isInitialized = false;
     clearTimeout(state.debounceTimer);
     state.debounceTimer = null;
@@ -97,13 +97,13 @@ function cleanup() {
             const items = document.querySelectorAll(selector);
             items.forEach(item => {
                 item.removeEventListener(event, handler);
-                console.log(`已移除 ${selector} 的 ${event} 事件监听器`);
+                // console.log(`已移除 ${selector} 的 ${event} 事件监听器`);
             });
         } else {
             const element = document.getElementById(id);
             if (element) {
                 element.removeEventListener(event, handler);
-                console.log(`已移除 ${id} 的 ${event} 事件监听器`);
+                // console.log(`已移除 ${id} 的 ${event} 事件监听器`);
             }
         }
     });
@@ -113,7 +113,7 @@ function cleanup() {
     const searchResultsTitle = document.getElementById('search_agent_results_title');
     if (searchResultsTitle) searchResultsTitle.innerHTML = '';
 
-    console.log('完成清理 gestionAgent.js');
+    // console.log('完成清理 gestionAgent.js');
 }
 
 function handleAgentRowClick(e) {
@@ -157,16 +157,16 @@ function handleModeChange() {
         return;
     }
 
-    console.log("mode=",mode);
-    console.log("mode=",mode);
+    // console.log("mode=",mode);
+    // console.log("mode=",mode);
 
     searchUser.style.display = isAddMode ? 'none' : 'block';
     submitConfirm.style.display = isViewMode ? 'none' : 'block';
     rowAgentId.style.display = isAddMode ? 'none' : 'flex';
     submitButton.innerHTML = mode === 'vue' ? 'Voir' : mode === 'ajouter' ? 'Ajouter' : mode === 'modifier' ? 'Modifier' : 'Supprimer';
-    console.log("search",searchUser.style.display);
-    console.log("submit=",submitConfirm.style.display);
-    console.log("mode123=",submitButton.innerHTML);
+    // console.log("search",searchUser.style.display);
+    // console.log("submit=",submitConfirm.style.display);
+    // console.log("mode123=",submitButton.innerHTML);
 
     document.querySelectorAll('.user-field').forEach(el => {
         el.disabled = isViewMode || mode === 'supprimer';
@@ -206,7 +206,7 @@ function searchAgent() {
 
         axios.get('/gestionAgent/agent_search', { params: { query } })
             .then(response => {
-                const rows = response.data.data.map(item => `
+                 const rows = response.data.data.map(item => `
                     <tr data-id="${item.agent_id}">
                         <td>${item.agent_id}</td>
                         <td>${item.agent_name}</td>
@@ -214,6 +214,7 @@ function searchAgent() {
                         <td>${item.email}</td>
                     </tr>
                 `).join('');
+                
                 const rowTitle = `
                     <tr>
                         <th>ID</th>
@@ -344,6 +345,9 @@ function resetInterface() {
         console.error('未找到查看单选按钮');
     }
 
+    document.getElementById("searchBox_agent").value = "";
+    document.getElementById('search_agent_results').innerHTML = "";
+    document.getElementById('search_agent_results_title').innerHTML = "";
     handleModeChange();
 }
 

@@ -24,7 +24,7 @@ function init() {
     const elements = [
         { id: 'customerSearchBoxProduct', event: 'input', handler: searchCustomers },
         { id: 'customer_search_results', event: 'click', handler: handleCustomerRowClick },
-        { id: 'search_results', event: 'click', handler: handleRowClick },
+        { id: 'search_product_results', event: 'click', handler: handleProductRowClick },
         { id: 'product-form', event: 'submit', handler: handleFormSubmit },
         { id: 'return_gestionProduct', event: 'click', handler: resetInterface },
         { selector: 'input[name="optradio_product"]', event: 'change', handler: handleModeChange, multiple: true },
@@ -101,7 +101,7 @@ function cleanup() {
     const elements = [
         { id: 'customerSearchBoxProduct', event: 'input', handler: searchCustomers },
         { id: 'customer_search_results', event: 'click', handler: handleCustomerRowClick },
-        { id: 'search_results', event: 'click', handler: handleRowClick },
+        { id: 'search_product_results', event: 'click', handler: handleProductRowClick },
         { id: 'product-form', event: 'submit', handler: handleFormSubmit },
         { id: 'return_gestionProduct', event: 'click', handler: resetInterface },
         { selector: 'input[name="optradio_product"]', event: 'change', handler: handleModeChange, multiple: true },
@@ -246,8 +246,8 @@ function searchCustomers() {
             document.getElementById("selected_customer_info").innerHTML = "";
             document.getElementById("policies_title").classList.add('d-none');
             document.getElementById("policies_table").classList.add('d-none');
-            document.getElementById("search_results").innerHTML = "";
-            document.getElementById("search_results_title").innerHTML = "";
+            document.getElementById("search_product_results").innerHTML = "";
+            document.getElementById("search_product_results_title").innerHTML = "";
             document.getElementById("policy_pagination").innerHTML = "";
             state.selectedCustomerId = null;
             state.selectedCustomerName = null;
@@ -258,6 +258,10 @@ function searchCustomers() {
 
         document.getElementById("client_search_table").classList.remove('d-none');
         document.getElementById("customer_pagination").classList.remove('d-none');
+        document.getElementById("policies_title").classList.add('d-none');
+        document.getElementById("policies_table").classList.add('d-none');
+        document.getElementById("selected_customer_info").classList.add('d-none');
+        document.getElementById("policy_pagination").classList.add('d-none');
 
         axios.get("/gestionProduct/user_search", { params: { query, page: state.customerCurrentPage } })
             .then(response => {
@@ -288,7 +292,7 @@ function handleCustomerRowClick(e) {
     if (row) {
         const customerId = row.dataset.id;
         const customerName = row.cells[1].textContent;
-        console.log('选择客户:', { customerId, customerName });
+        // console.log('选择客户:', { customerId, customerName });
         selectCustomer(row, customerId, customerName);
     }
 }
@@ -336,6 +340,17 @@ function selectCustomer(row, customerId, customerName) {
     row.classList.add('selected');
     state.policyCurrentPage = 1;
 
+    // 隐藏客户搜索相关元素
+    document.getElementById("client_search_table").classList.add('d-none');
+    document.getElementById("customer_pagination").classList.add('d-none');
+    document.getElementById("policies_title").classList.remove('d-none');
+    document.getElementById("policies_table").classList.remove('d-none');
+    document.getElementById("selected_customer_info").classList.remove('d-none');
+    
+    // 显式清空搜索结果和标题
+    document.getElementById("customer_search_results").innerHTML = "";
+    document.getElementById("customer_search_results_title").innerHTML = "";
+
     axios.get("/gestionProduct/customer_products", { params: { query: customerId, page: state.policyCurrentPage } })
         .then(response => {
             const rows = response.data.data.map(item => `
@@ -349,8 +364,8 @@ function selectCustomer(row, customerId, customerName) {
                     <td>${item.insured_person_id}</td>
                     <td>${item.insured_person_name}</td>
                 </tr>`).join('');
-            document.getElementById("search_results").innerHTML = rows;
-            document.getElementById("search_results_title").innerHTML = `
+            document.getElementById("search_product_results").innerHTML = rows;
+            document.getElementById("search_product_results_title").innerHTML = `
                 <tr>
                     <th>ID</th>
                     <th>Nom de l'actif</th>
@@ -362,13 +377,16 @@ function selectCustomer(row, customerId, customerName) {
                     <th>Insured Name</th>
                 </tr>`;
             state.policyTotalPages = response.data.total_pages;
+            // 隐藏客户搜索相关元素
             document.getElementById("policies_title").classList.remove('d-none');
-            document.getElementById("policies_table").classList.remove('d-none');
+            document.getElementById("policies_table").classList.remove('d-none');            
             document.getElementById("client_search_table").classList.add('d-none');
             document.getElementById("customer_pagination").classList.add('d-none');
+
             updatePolicyPagination();
+
         })
-        .catch(error => showError("搜索保单出错: " + (error.response?.data?.error || error)));
+        .catch(error => showError("搜索保单出错: " + (error.response?.data?.error || error))); 
 }
 
 function updatePolicyPagination() {
@@ -415,8 +433,8 @@ function changePolicyPage(page) {
                     <td>${item.policy_owner_id}</td>
                     <td>${item.insured_person_id}</td>
                 </tr>`).join('');
-            document.getElementById("search_results").innerHTML = rows;
-            document.getElementById("search_results_title").innerHTML = `
+            document.getElementById("search_product_results").innerHTML = rows;
+            document.getElementById("search_product_results_title").innerHTML = `
                 <tr>
                     <th>ID</th><th>Nom de l'actif</th><th>Type de produit</th><th>Couverture totale</th><th>ID titulaire</th><th>ID assuré</th>
                 </tr>`;
@@ -426,7 +444,7 @@ function changePolicyPage(page) {
         .catch(error => showError("搜索保单出错: " + (error.response?.data?.error || error)));
 }
 
-function handleRowClick(e) {
+function handleProductRowClick(e) {
     const row = e.target.closest('tr');
     if (!row || !row.dataset || !row.dataset.id) {
         console.warn("无效点击，未选中任何有效行");
@@ -559,6 +577,7 @@ function resetInterface() {
         console.error("未找到查看单选按钮");
     }
 
+    document.getElementById("customerSearchBoxProduct").value = "";
     loadDropdownOptions();
     handleModeChange();
 }
@@ -590,7 +609,7 @@ export {
     selectCustomer,
     updatePolicyPagination, 
     changePolicyPage, 
-    handleRowClick, 
+    handleProductRowClick, 
     handleEditToggleClick, 
     showError 
 };

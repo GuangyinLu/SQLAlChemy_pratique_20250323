@@ -26,18 +26,18 @@
             <!-- 备注：搜索框，触发300ms防抖搜索 -->
             <input type="text" id="customerSearchBoxProduct" class="form-control transparent-input" placeholder="Rechercher par ID client, nom, téléphone ou email...">
             <!-- 备注：客户表格，显示ID、姓名、电话、邮箱 -->
-            <table class="table client_search-table mt-3" id="client_search_table">
-                <thead id="customer_search_results_title"></thead>
-                <tbody id="customer_search_results"></tbody>
+            <table class="table client_search-table mt-3 d-none" id="client_search_table">
+                <thead id="customer_search_results_title" class=""></thead>
+                <tbody id="customer_search_results" class=""></tbody>                
             </table>
             <!-- 备注：客户分页控件，每页10条 -->
-            <div id="customer_pagination" class="mt-2"></div>
+            <div id="customer_pagination" class="mt-2 d-none"></div>
             <div id="selected_customer_info" class="mt-3"></div>
             <h3 class="mt-4 d-none" id="policies_title">Polices du client</h3>
             <!-- 备注：保单表格，显示ID、资产名称、产品类型、总保额、投保人ID、被保人ID -->
-            <table class="table client_search-table mt-3 d-none" id="policies_table">
-                <thead id="search_results_title"></thead>
-                <tbody id="search_results"></tbody>
+            <table class="table product_search-table mt-3 d-none" id="policies_table">
+                <thead id="search_product_results_title"></thead>
+                <tbody id="search_product_results"></tbody>
             </table>
             <!-- 备注：保单分页控件，每页10条 -->
             <div id="policy_pagination" class="mt-2 d-none"></div>

@@ -73,7 +73,7 @@ function init() {
 }
 
 function cleanup() {
-    console.log('开始清理 gestionClient.js');
+    // console.log('开始清理 gestionClient.js');
     isInitialized = false;
 
     const elements = [
@@ -101,7 +101,7 @@ function cleanup() {
         }
     });
 
-    console.log('完成清理 gestionClient.js');
+    // console.log('完成清理 gestionClient.js');
 }
 
 function handleModeChange() {
@@ -249,6 +249,7 @@ function handleFormSubmit(event) {
 function resetInterface() {
   $('.affiche_select').removeClass('d-none');
   $('.affiche_action').addClass('d-none');
+  document.getElementById("searchBox").value = "";
   document.getElementById("search_results").innerHTML = "";
   document.getElementById("search_results_title").innerHTML = "";
   document.getElementById("customer-form").reset();
