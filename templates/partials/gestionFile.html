@@ -1,0 +1,244 @@
+
+<div class="affiche affiche_select">
+
+    <div class="col-8 row">
+        <div class="col-md-2">
+            <input class="optradio_file-input" type="radio" name="optradio_file" id="vue" value="vue" checked>
+            <label class="optradio_file-label" for="vue">Vue</label>
+        </div>
+        <div class="col-md-2">
+            <input class="optradio_file-input" type="radio" name="optradio_file" id="ajouter" value="ajouter">
+            <label class="optradio_file-label" for="ajouter">Ajouter</label>
+        </div>
+        
+        <div class="col-md-2">
+            <input class="optradio_file-input" type="radio" name="optradio_file" id="modifier" value="modifier" >
+            <label class="optradio_file-label" for="modifier">Modifier</label>
+        </div>
+        
+        <div class="col-md-2">
+            <input class="optradio_file-input" type="radio" name="optradio_file" id="supprimer" value="supprimer">
+            <label class="optradio_file-label" for="supprimer">Supprimer</label>
+        </div> 
+    </div>
+   
+    <div class="row">
+        <div class="col-12 mt-2">
+            <h3>Recherche client</h3>
+            <!-- 备注：搜索框，触发300ms防抖搜索 -->
+            <input type="text" id="customerSearchBoxFile" class="form-control transparent-input" placeholder="Rechercher par ID client, nom, téléphone ou email...">
+            <!-- 备注：客户表格，显示ID、姓名、电话、邮箱 -->
+            <table class="table client_search-table mt-3 d-none" id="client_search_table">
+                <thead id="customer_search_results_title" class=""></thead>
+                <tbody id="customer_search_results" class=""></tbody>                
+            </table>
+            <!-- 备注：客户分页控件，每页10条 -->
+            <div id="customer_pagination" class="mt-2 d-none"></div>
+            <div id="selected_customer_info" class="mt-3"></div>
+            <h3 class="mt-4 d-none" id="file_list_title">Filelist du client</h3>
+            <!-- 备注：保单表格，显示ID、资产名称、产品类型、总保额、投保人ID、被保人ID -->
+            <table class="table file_search-table mt-3 d-none" id="file_list_table">
+                <thead id="search_file_results_title"></thead>
+                <tbody id="search_file_results"></tbody>
+            </table>
+            <!-- 备注：保单分页控件，每页10条 -->
+            <div id="file_list_pagination" class="mt-2 d-none"></div>
+        </div>
+    </div>
+</div>
+<div class="affiche affiche_action d-none">
+    <!-- 备注：保单操作表单，支持查看、添加、修改、删除 -->
+
+    <form id="file-form" class="row g-3">
+        <div class="col-12 mb-3">
+            <button type="button" class="btn btn-primary float-end" id="return_gestionFile">↩ Retour</button>
+        </div>
+
+        <div class="row">
+            <div class="col-md-3" id="row_file_id">
+                <label for="id" class="form-label">ID File</label>
+                <input type="number" class="form-control user-field transparent-input" id="id"  disabled readonly>
+            </div>
+            
+            <div class="col-md-3">
+                <label for="customer_name" class="form-label">Customer Name</label>
+                <div class="d-flex position-relative">
+                    <input type="text" class="form-control user-field transparent-input search_suggestions d-flex" 
+                        id="customer_name" name="customer_name" autocomplete="off" 
+                        data-param1='customer_name' data-param2='suggestions_customer' 
+                        data-param3='customer_id' data-param4='/gestionRequest/search_customer'
+                        disabled>                    
+                    <span class="edit-toggle d-none" >✏️</span>
+                    <div id="suggestions_customer" class="list-group position-absolute w-100 shadow d-none" ></div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <label for="customer_id" class="form-label">customer_id</label>
+                <div class="d-flex">
+                    <input type="number" class="form-control user-field transparent-input d-flex" id="customer_id" readonly disabled>
+                    <span class="edit-toggle d-none" >✏️</span>
+                </div>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="row">
+            <div class="col-md-3">
+                <label for="file_type" class="form-label">Type File</label>
+                <div class="d-flex">
+                    <select class="form-control user-field transparent-select" id="file_type">
+                        <option value="contract">Contract</option>
+                        <option value="visit_record">visit_record</option>
+                        <option value="application">application</option>
+                        <option value="document">document</option>
+                    </select>
+                    <span class="edit-toggle d-none" >✏️</span>
+                </div>
+            </div>
+            
+            <div class="col-md-3">
+                <label for="associated_event_name" class="form-label">Associated Event Name</label>
+                <div class="d-flex position-relative">
+                    <input type="text" class="form-control user-field transparent-input search_associated_suggestions d-flex" 
+                        id="associated_event_name" name="customer_name" autocomplete="off" 
+                        data-associated_name='associated_event_name' data-associated_suggestion='suggestions_associated_event' 
+                        data-associated_event_id='associated_event_id' data-associated_search_url='/gestionFile/search_associated_event'
+                        data-associated_customer_id='customer_id' data-associated_file_type='file_type'
+                        disabled>                    
+                    <span class="edit-toggle d-none" >✏️</span>
+
+                    <div id="suggestions_associated_event" class="list-group position-absolute w-100 shadow d-none" ></div>
+                </div>
+            </div>
+
+            <!--
+            <div class="col-md-3">
+                <label for="associated_event_name" class="form-label">Associated Event Name *</label>
+                <div class="d-flex">
+                    <select class="form-control user-field transparent-select search_suggestions d-flex" id="associated_event_name" required>
+                        <option value="">Choisir Event</option>
+                    </select>
+                    <span class="edit-toggle d-none" >✏️</span>
+                </div>
+            </div>-->
+
+            <div class="col-md-3">
+                <label for="associated_event_id" class="form-label">Associated Event id</label>
+                <div class="d-flex">
+                    <input type="number" class="form-control user-field transparent-input d-flex" id="associated_event_id" readonly disabled>
+                    <span class="edit-toggle d-none" >✏️</span>
+                </div>
+            </div>
+
+        </div>
+
+        <hr>
+
+        <div class = "row">
+            <div class="col-md-3">
+                <label for="upload_time" class="form-label">upload_time</label>
+                <div class="d-flex">
+                    <input type="date" class="form-control user-field transparent-input" id="upload_time">
+                    <span class="edit-toggle d-none" >✏️</span>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <label for="uploaded_by" class="form-label">uploaded_by</label>
+                <div class="d-flex">
+                    <input type="text" class="form-control user-field transparent-input" id="uploaded_by" >
+                    <span class="edit-toggle d-none" >✏️</span>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <label for="status" class="form-label">Status </label>
+                <div class="d-flex">
+                    <select class="form-control user-field transparent-select" id="status">
+                        <option value="Active">Active</option>
+                        <option value="Desactive">Desactive</option>
+                    </select>
+                    <span class="edit-toggle d-none" >✏️</span>
+                </div>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="mb-3">
+            <label for="original_filename" class="form-label">original_filename</label>
+            <div class="d-flex">
+                <input type="text" class="form-control user-field transparent-input" id="original_filename" name="original_filename" readonly disabled>
+                <!-- <span class="edit-toggle d-none" >✏️</span> -->
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="fileInput" class="form-label">choisir le file:</label>
+            <input type="file" class="form-control user-field" id="fileInput" name="file" accept=".pdf,.jpg,.png">
+        </div>
+        <input type="hidden" id="clientId" name="client_id">
+
+        <hr>
+
+        <div class="col-12 submit_confirm">
+            <button type="submit" class="btn btn-primary" id="submit_confirm">Soumettre</button>
+        </div>
+    </form>
+</div>
+
+
+
+<!-- 文件预览模态框 -->
+<div class="modal fade" id="filePreviewModal" tabindex="-1" aria-labelledby="filePreviewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="filePreviewModalLabel">File View</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <iframe id="filePreviewFrame" style="width: 100%; height: 500px; border: none;"></iframe>
+            </div>
+
+            <form id="download_file_form" method="POST" action="/gestionFile/download_file">
+                <input type="hidden" id="download_file_id" name="file_id">
+                <button type="submit" class="btn btn-primary mt-3" id="download_button"> DownLoad </button>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<!-- 文件编辑模态框 -->
+<div class="modal fade" id="fileEditModal" tabindex="-1" aria-labelledby="fileEditModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="fileEditModalLabel">编辑文件</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="fileEditForm" class="ajax-form" action="/api/files">
+                    <input type="hidden" id="editFileId" name="file_id">
+                    <div class="mb-3">
+                        <label for="editFileName" class="form-label">文件名称</label>
+                        <input type="text" class="form-control" id="editFileName" name="file_name">
+                    </div>
+                    <div class="mb-3">
+                        <label for="editFileCategory" class="form-label">文件类别</label>
+                        <select class="form-select" id="editFileCategory" name="file_category">
+                            <option value="contracts">保险合同</option>
+                            <option value="visit_records">回访纪要</option>
+                            <option value="applications">申请表格</option>
+                            <option value="documents">证件复印件</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">保存</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

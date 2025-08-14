@@ -64,6 +64,17 @@ class logOperation(Enum):
     UPDATE = "UPDATE"
     DELETE = "DELETE"
 
+class CustomerFileType(Enum):
+    contract = 'contract'
+    visit_record = 'visit_record'
+    application = 'application'
+    document = 'document'
+
+class CustomerFileStatus(Enum):
+    Active = 'Active'
+    Desactive = 'Desactive'
+
+
 # definition class
 class MenuItem(Base):
     __tablename__ = "menu_items"
@@ -141,6 +152,8 @@ class Customer(Base):
     id_card_number = Column(String(50), unique=True, nullable=False)
     created_at = Column(DateTime, default=lambda:datetime.now(timezone.utc))
     updated_at = Column(DateTime, default=lambda:datetime.now(timezone.utc), onupdate=lambda:datetime.now(timezone.utc))
+
+    files = relationship('CustomerFile', back_populates='customer')
 
 class InsuranceProduct(Base):
     __tablename__ = 'insurance_products'
@@ -355,6 +368,22 @@ class ChangeLog(Base):
     changed_by = Column(String(100), nullable=False)
     ip_address = Column(String(45))  # 支持IPv4/IPv6
     session_id = Column(String(255))
+
+# ------------------ 16. 客户文件表 CustomerFile------------------
+class CustomerFile(Base):
+    __tablename__ = 'customer_files'
+    __table_args__ = {'mysql_engine': 'InnoDB'}
+    id = Column(Integer, primary_key=True,autoincrement=True)
+    customer_id = Column(Integer, ForeignKey('customers.customer_id'), nullable=False)
+    file_type = Column(SQLAEnum(CustomerFileType),default=CustomerFileType.contract,nullable=False)         # 文件类型（合同、申请表等）
+    associated_event_id = Column(Integer)
+    original_filename = Column(String(255))    # 原始文件名
+    stored_path = Column(String(500))          # 服务器路径
+    upload_time = Column(DateTime, default=lambda:datetime.now(timezone.utc))
+    uploaded_by = Column(String(100))          # 上传用户
+    status = Column(SQLAEnum(CustomerFileStatus),default=CustomerFileStatus.Active,nullable=False) # 文件状态（支持软删除）
+
+    customer = relationship('Customer', back_populates='files')
 
 # Create les tables if not existe.
 def init_db():

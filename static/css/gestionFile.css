@@ -1,0 +1,135 @@
+.main {
+    height: 100%;
+}
+
+.affiche {
+    /*height: 80%;*/
+    height: 70vh;
+    display: block;
+    overflow: auto;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    justify-items: center;
+}
+
+.form-check {
+    padding: 5px 0px;
+    margin: 5px 20px 30px;
+    font-weight: bold;
+}
+
+.option_action {
+    display: flex;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+}
+
+.search_user {
+    display: flex;
+    padding: 5px 0 15px 0;
+    margin: 0 0;
+    width: 100%;
+}
+
+.table {
+    background-color: rgba(232, 242, 232, 0);
+    overflow: auto;
+    display: block;
+}
+
+.table td{
+    background-color: rgba(232, 242, 232, 0);
+    overflow: auto; 
+    padding: 5px;
+}
+
+.table th{
+    background-color: rgba(232, 242, 232, 0);
+    overflow: auto;
+    
+}
+
+.table tr:hover {
+    background-color: #bfc1d8;
+    color: #ff0000; /* 字体颜色变为红色 */
+    cursor: pointer;
+}
+
+/* 可选：点击后的样式 */
+.table tr:active {
+    background-color: #e0e0e0;
+}
+
+.client_search-table {
+    height: auto;
+}
+
+.client_search-table tr:hover {
+    background-color: #bdc5e7e7;
+    cursor: pointer;
+}
+
+.client_search-table tr.selected {
+    background-color: #afd7ad;
+    font-weight: bold;
+}
+
+.edit-toggle {
+    cursor: pointer;
+    font-size: 1.2em;
+    margin-left: 10px;
+  }
+
+/* 自定义透明输入框和选择框样式，仅保留边框 */
+.user-field {
+    background-color: transparent !important;
+    border: none;
+    border-bottom: 1px solid #e0e0e0;
+    box-shadow: none !important; /* 移除任何阴影 */
+    color: blue;
+}
+.user-field:focus {
+    background-color: transparent !important;
+    border-color: #86b7fe !important; /* Bootstrap 聚焦时的边框颜色 */
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important; /* Bootstrap 聚焦时的阴影 */
+}
+/* 确保选择框也应用相同样式 */
+select.user-field {
+    background-image: none !important; /* 移除 Bootstrap 默认的选择框箭头 */
+}
+/* 可选：为选择框添加自定义箭头 */
+select.user-field {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+.required::after {
+    content: '*';
+    color: #dc3545;
+    margin-left: 4px;
+}
+
+.submit-zone {
+    text-align: right;
+}
+
+@media (max-width: 768px) {
+    .affiche {
+        height: auto;
+        max-height: 80vh;
+    }
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    .option_action {
+        flex-direction: column;
+        gap: 5px;
+    }
+}
+
+
+

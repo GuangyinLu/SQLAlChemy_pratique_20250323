@@ -13,6 +13,7 @@ from routes.gestionVente import gestionVente_bp
 from routes.gestionAgenda import gestionAgenda_bp
 from routes.menuNavigateur import menuNavigateur_bp
 from routes.gestionRequest import gestionRequest_bp
+from routes.gestionFile import gestionFile_bp
 from models import User, init_db
 from database import SessionLocal
 
@@ -39,6 +40,7 @@ app.register_blueprint(gestionVente_bp, url_prefix="/gestionVente")
 app.register_blueprint(gestionAgenda_bp, url_prefix="/gestionAgenda")
 app.register_blueprint(menuNavigateur_bp, url_prefix="/menuNavigateur")
 app.register_blueprint(gestionRequest_bp, url_prefix="/gestionRequest")
+app.register_blueprint(gestionFile_bp, url_prefix="/gestionFile")
 
 @login_manager.user_loader
 def load_user(user_id):
