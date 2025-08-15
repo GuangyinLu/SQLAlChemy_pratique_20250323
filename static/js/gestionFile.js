@@ -31,7 +31,8 @@ function init() {
         { id: 'return_gestionFile', event: 'click', handler: resetInterface },
         { selector: 'input[name="optradio_file"]', event: 'change', handler: handleModeChange, multiple: true },
         { selector: '.edit-toggle', event: 'click', handler: handleEditToggleClick, multiple: true },
-        { id: 'download_file_form', event: 'submit', handler: handleDownloadSubmit }
+        { id: 'modal_download_button', event: 'click', handler: handleDownloadClick },
+        { id: 'original_filename_link', event: 'click', handler: handleFilePreviewLinkClick }
     ];
 
     let retryCount = 0;
@@ -112,7 +113,8 @@ function cleanup() {
         { id: 'return_gestionFile', event: 'click', handler: resetInterface },
         { selector: 'input[name="optradio_file"]', event: 'change', handler: handleModeChange, multiple: true },
         { selector: '.edit-toggle', event: 'click', handler: handleEditToggleClick, multiple: true },
-        { id: 'download_file_form', event: 'submit', handler: handleDownloadSubmit }
+        { id: 'download_file_form', event: 'submit', handler: handleDownloadClick },
+        { id: 'original_filename_link', event: 'click', handler: handleFilePreviewLinkClick }
     ];
 
     elements.forEach(({ id, selector, event, handler, multiple }) => {
@@ -141,6 +143,22 @@ function cleanup() {
     if (fileListPagination) {
         fileListPagination.innerHTML = '';
     }
+
+        // 清理模态框和 original_filename_link
+        const previewIframe = document.getElementById("modal_file_preview");
+        if (previewIframe) {
+            previewIframe.src = "";
+        }
+        const downloadButton = document.getElementById("modal_download_button");
+        if (downloadButton) {
+            downloadButton.href = "#";
+        }
+        const filenameLink = document.getElementById("original_filename_link");
+        if (filenameLink) {
+            filenameLink.dataset.fileId = "";
+            filenameLink.dataset.filename = "";
+            filenameLink.textContent = "点击预览";
+        }
 
     console.log('完成清理 gestionFile.js');
 }
@@ -334,6 +352,10 @@ function handleModeChange() {
     const submitConfirm = document.querySelector('.submit_confirm');
     const rowFileId = document.getElementById('row_file_id');
     const submitButton = document.getElementById("submit_confirm");
+    const filenameLink = document.getElementById("original_filename_link");
+    const filenameInput = document.getElementById("original_filename");
+    const fieldOriginalName = document.getElementById('field_original_name');
+    const fieldDownload = document.getElementById("field_download");
 
     if (!searchUser || !submitConfirm || !rowFileId || !submitButton) {
         console.error("缺少必要元素:", {
@@ -345,6 +367,9 @@ function handleModeChange() {
         return;
     }
 
+
+    fieldOriginalName.style.display = isAddMode ? 'none' : 'block';
+    fieldDownload.style.display = isAddMode ? 'block' : 'none';
     searchUser.style.display = isAddMode ? 'none' : 'block';
     submitConfirm.style.display = isViewMode ? 'none' : 'block';
     rowFileId.classList.toggle('d-none', isAddMode);
@@ -354,6 +379,18 @@ function handleModeChange() {
         el.disabled = isViewMode || mode === 'supprimer';
         if (mode === 'ajouter') el.disabled = false;
     });
+
+    // 在 modifier 模式下，original_filename 切换为输入框(暂时不需要)
+    /*
+    if (mode === 'modifier') {
+        filenameLink.classList.add('d-none');
+        filenameInput.type = 'text';
+        filenameInput.classList.remove('d-none');
+    } else {
+        filenameLink.classList.remove('d-none');
+        filenameInput.type = 'hidden';
+        filenameInput.classList.add('d-none');
+    }*/
 
     document.querySelectorAll('.edit-toggle').forEach(span => {
         span.classList.toggle('d-none', mode !== 'modifier');
@@ -502,7 +539,7 @@ function selectCustomer(row, customerId, customerName) {
                 <tr data-id="${item.id}">
                     <td>${item.id}</td>
                     <td>${item.file_type}</td>
-                    <td>${item.original_filename}</td>
+                    <td><a href="#" class="file-preview-link" data-file-id="${item.id}" data-filename="${item.original_filename}">${item.original_filename}</a></td>
                     <td>${item.upload_time}</td>
                     <td>${item.uploaded_by}</td>
                     <td>${item.status}</td>
@@ -563,26 +600,31 @@ function updatefileListPagination() {
 function changeFileListPage(page) {
     if (page < 1 || page > state.fileListTotalPages || !state.selectedCustomerId) return;
     state.fileListCurrentPage = page;
-    axios.get("/gestionFile/customer_files", { params: { query: state.selectedCustomerId, page: state.fileListCurrentPage } })
+    axios.get("/gestionFile/customer_file_list", { params: { query: state.selectedCustomerId, page: state.fileListCurrentPage } })
         .then(response => {
             const rows = response.data.data.map(item => `
                 <tr data-id="${item.id}">
                     <td>${item.id}</td>
-                    <td>${item.asset_name}</td>
                     <td>${item.file_type}</td>
-                    <td>${item.total_coverage}</td>
-                    <td>${item.policy_owner_id}</td>
-                    <td>${item.insured_person_id}</td>
+                    <td><a href="#" class="file-preview-link" data-file-id="${item.id}" data-filename="${item.original_filename}">${item.original_filename}</a></td>
+                    <td>${item.upload_time}</td>
+                    <td>${item.uploaded_by}</td>
+                    <td>${item.status}</td>
                 </tr>`).join('');
             document.getElementById("search_file_results").innerHTML = rows;
             document.getElementById("search_file_results_title").innerHTML = `
                 <tr>
-                    <th>ID</th><th>Nom de l'actif</th><th>Type de produit</th><th>Couverture totale</th><th>ID titulaire</th><th>ID assuré</th>
+                    <th>ID</th>
+                    <th>file_type</th>
+                    <th>original_filename</th>
+                    <th>upload_time</th>
+                    <th>uploaded_by</th>
+                    <th>status</th>
                 </tr>`;
             state.fileListTotalPages = response.data.total_pages;
             updatefileListPagination();
         })
-        .catch(error => showError("搜索保单出错: " + (error.response?.data?.error || error)));
+        .catch(error => showError("搜索文件出错: " + (error.response?.data?.error || error)));
 }
 
 function handleFileRowClick(e) {
@@ -592,64 +634,130 @@ function handleFileRowClick(e) {
         return;
     }
 
-    const id = row.dataset.id;
+    const fileId = row.dataset.id;
+    const link = e.target.closest('.file-preview-link');
+
+    if (link) {
+        e.preventDefault();
+        const filename = link.dataset.filename || '未知文件名';
+        showFilePreview(fileId, filename);
+        return;
+    }
+
+    // 点击 tr 其他部分，显示表单
     const afficheSelect = document.querySelector('.affiche_select');
     const afficheAction = document.querySelector('.affiche_action');
     if (afficheSelect && afficheAction) {
         afficheSelect.classList.add('d-none');
         afficheAction.classList.remove('d-none');
+    } else {
+        console.error("缺少显示元素:", {
+            afficheSelect: !afficheSelect,
+            afficheAction: !afficheAction
+        });
     }
 
-    axios.get("/gestionFile/file_per_info", { params: { query: id } })
+    axios.get("/gestionFile/file_per_info", { params: { query: fileId } })
         .then(response => {
             const item = response.data.file;
             Object.entries(item).forEach(([key, value]) => {
                 const element = document.getElementById(key);
                 if (element) {
                     if (element.type === 'file') {
-                        // 如果是文件类型，清空文件输入框的值，或者隐藏元素
-                        element.value = ''; // 清空文件输入框
-                        element.style.display = 'none'; // 如果想隐藏，可以取消注释这行
+                        element.value = '';
+                        element.style.display = 'none';
                     } else if (element.tagName === 'SELECT') {
                         Array.from(element.options).forEach(option => {
-                            option.selected = option.value == value;
+                            option.selected = option.value === value;
                         });
                     } else {
                         element.value = value || '';
                     }
+                } else {
+                    //console.warn(`未找到 ID 为 ${key} 的元素，跳过设置`);
                 }
             });
+            // 设置 original_filename_link
+            const filenameLink = document.getElementById("original_filename_link");
+            if (filenameLink) {
+                filenameLink.textContent = item.original_filename || '点击预览';
+                filenameLink.dataset.fileId = fileId;
+                filenameLink.dataset.filename = item.original_filename || 'file.pdf';
+            }
+            // 设置隐藏的 original_filename 输入框
+            const filenameInput = document.getElementById("original_filename");
+            if (filenameInput) {
+                filenameInput.value = item.original_filename || '';
+            }
+
+            // 设置编辑预览 iframe
+            document.getElementById("modal_file_preview").src = `/gestionFile/get_file?id=${fileId}`;
+            document.getElementById("original_filename").value = item.original_filename;
+            document.getElementById("file_type").value = item.file_type;
+
             handleModeChange();
         })
-        .catch(error => showError("加载保单详情出错: " + (error.response?.data?.error || error)));
+        .catch(error => showError("加载文件详情出错: " + (error.response?.data?.error || error)));
 
-    document.querySelectorAll('#search_results tr').forEach(r => r.classList.remove('selected'));
+    document.querySelectorAll('#search_file_results tr').forEach(r => r.classList.remove('selected'));
     row.classList.add('selected');
 }
-/*
-function toggleEditable(el) {
-    const input = el.previousElementSibling;
-    input.disabled = !input.disabled;
-    if (!input.disabled) input.focus();
-}*/
+
+
+function handleFilePreviewLinkClick(e) {
+    e.preventDefault();
+    const link = e.target.closest('.file-preview-link');
+    if (!link) return;
+    const fileId = link.dataset.fileId;
+    const filename = link.dataset.filename || '未知文件名';
+    showFilePreview(fileId, filename);
+}
+
+function showFilePreview(fileId, filename) {
+    const modalTitle = document.getElementById("filePreviewModalLabel");
+    const previewIframe = document.getElementById("modal_file_preview");
+    const downloadButton = document.getElementById("modal_download_button");
+
+    if (modalTitle && previewIframe && downloadButton) {
+        modalTitle.textContent = `File PreView: ${filename}`;
+        previewIframe.src = `/gestionFile/get_file?id=${fileId}`;
+        downloadButton.href = `/gestionFile/download_file?id=${fileId}`;
+        downloadButton.setAttribute('download', filename);
+
+        const modal = new bootstrap.Modal(document.getElementById('filePreviewModal'));
+        modal.show();
+    } else {
+        showError("无法加载预览模态框，请检查页面元素");
+    }
+}
+
+function handleDownloadClick(e) {
+    e.preventDefault();
+    const downloadButton = e.target;
+    const href = downloadButton.href;
+    if (!href || href === '#') {
+        showError("请先选择一个文件进行下载");
+        return;
+    }
+    window.location.href = href; // 触发下载
+}
+
 
 function handleEditToggleClick(e) {
     const span = e.target.closest('.edit-toggle');
-    if (span) {
-        const input = span.previousElementSibling;
+    if (!span) return;
+    const input = span.previousElementSibling;
+    if (input.id === 'original_filename_link') {
+        const hiddenInput = document.getElementById('original_filename');
+        hiddenInput.type = 'text';
+        hiddenInput.classList.remove('d-none');
+        input.classList.add('d-none');
+        hiddenInput.focus();
+    } else {
         input.disabled = !input.disabled;
         if (!input.disabled) input.focus();
     }
 }
-/*
-document.addEventListener('click', (e) => {
-    if (!e.target.classList.contains('edit-toggle') && !e.target.classList.contains('user-field')) {
-        const mode = document.querySelector('input[name="optradio_file"]:checked')?.value;
-        if (mode === 'modifier') {
-            document.querySelectorAll('.user-field').forEach(input => input.disabled = true);
-        }
-    }
-});*/
 
 function handleFormSubmit(event) {
     event.preventDefault();
@@ -661,6 +769,10 @@ function handleFormSubmit(event) {
 
     document.querySelectorAll('.user-field').forEach(element => {
         const key = element.name || element.id; // 关键：优先取 name
+
+        if (element.id === 'original_filename_link') {
+            return; // 跳过链接元素，使用隐藏的 input
+        }
 
         if (element.type === 'file') {
             if (element.files.length > 0) {
@@ -785,8 +897,10 @@ export {
     updatefileListPagination, 
     changeFileListPage, 
     handleFileRowClick, 
+    handleDownloadClick,
     handleEditToggleClick, 
-    showError 
+    showError,
+    handleFilePreviewLinkClick 
 };
 
 

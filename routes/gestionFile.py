@@ -147,7 +147,7 @@ def search_associated_event():
             for item_agenda, item_customer in items:
                 file_data = {}
                 file_data['associated_id'] = item_agenda.log_agenda_id
-                file_data['associated_name'] = item_agenda.description
+                file_data['associated_name'] = item_agenda.title
                 file_data['associated_date'] = item_agenda.issue_meeting_date.strftime("%Y-%m-%d")
                 file_data["customer_name"] = f"{item_customer.name_first} {item_customer.name_middle or ''} {item_customer.name_last}".strip()
                 results.append(file_data)
@@ -184,6 +184,16 @@ def file_per_info():
                 value = value.value
             file_data[column.name] = value
 
+        if file_data['file_type'] == 'contract' :
+            result = db.query(InsuranceProduct.asset_name) \
+                                    .filter(InsuranceProduct.policy_id == file_data['associated_event_id']).first()
+            associated_event_name = result[0] if result else None
+        elif file_data['file_type'] == 'visit_record' :
+            result = db.query(LogAgendaClient.title) \
+                                    .filter(LogAgendaClient.log_agenda_id == file_data['associated_event_id']).first()
+            associated_event_name = result[0] if result else None
+
+        file_data['associated_event_name'] = associated_event_name
         file_data["customer_name"] = f'{item_customer.name_first} {item_customer.name_middle} {item_customer.name_last}'
         return jsonify({"file": file_data})
     finally:
@@ -233,13 +243,14 @@ def upload_file():
         db.close()
 
 # 浏览文件（预览）
-@gestionFile_bp.route('/get_file', methods=['POST'])
+@gestionFile_bp.route('/get_file', methods=['GET', 'POST'])
 @login_required
 def get_file():
     db = SessionLocal()
     try:
-        data = request.form
-        file_id = data.get('file_id')
+        file_id = request.args.get('id') if request.method == 'GET' else request.form.get('id')
+        if not file_id:
+            return jsonify({'error': 'No file_id provided'}), 400
         file = db.query(CustomerFile).filter(
             CustomerFile.id == file_id,
             CustomerFile.status == CustomerFileStatus.Active
@@ -254,13 +265,14 @@ def get_file():
         db.close()
 
 # 下载文件
-@gestionFile_bp.route('/download_file', methods=['POST'])
+@gestionFile_bp.route('/download_file', methods=['GET', 'POST'])
 @login_required
 def download_file():
     db = SessionLocal()
     try:
-        data = request.form
-        file_id = data.get('file_id')
+        file_id = request.args.get('id') if request.method == 'GET' else request.form.get('id')
+        if not file_id:
+            return jsonify({'error': 'No file_id provided'}), 400
         file = db.query(CustomerFile).filter(
             CustomerFile.id == file_id,
             CustomerFile.status == CustomerFileStatus.Active
@@ -305,7 +317,7 @@ def update_file():
     try:
         data = request.form
         file_id = data.get('id')
-
+        
         file = db.query(CustomerFile).filter(
             CustomerFile.id == file_id,
             CustomerFile.status == CustomerFileStatus.Active
@@ -314,10 +326,12 @@ def update_file():
             return jsonify({'error': 'File not found or deleted'}), 404
         file_name = data.get('original_filename')
         file_type = data.get('file_type')
+        associated_event_id = data.get('associated_event_id')
         if not file_name or file_type not in [e.value for e in CustomerFileType]:
             return jsonify({'error': 'Invalid file name or type'}), 400
         file.original_filename = file_name
         file.file_type = CustomerFileType(file_type)
+        file.associated_event_id = associated_event_id
         db.commit()
         return jsonify({'message': 'File updated successfully'}), 200
     except Exception as e:

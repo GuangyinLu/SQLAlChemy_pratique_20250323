@@ -77,7 +77,6 @@
                 <label for="customer_id" class="form-label">customer_id</label>
                 <div class="d-flex">
                     <input type="number" class="form-control user-field transparent-input d-flex" id="customer_id" readonly disabled>
-                    <span class="edit-toggle d-none" >✏️</span>
                 </div>
             </div>
         </div>
@@ -113,22 +112,10 @@
                 </div>
             </div>
 
-            <!--
-            <div class="col-md-3">
-                <label for="associated_event_name" class="form-label">Associated Event Name *</label>
-                <div class="d-flex">
-                    <select class="form-control user-field transparent-select search_suggestions d-flex" id="associated_event_name" required>
-                        <option value="">Choisir Event</option>
-                    </select>
-                    <span class="edit-toggle d-none" >✏️</span>
-                </div>
-            </div>-->
-
             <div class="col-md-3">
                 <label for="associated_event_id" class="form-label">Associated Event id</label>
                 <div class="d-flex">
                     <input type="number" class="form-control user-field transparent-input d-flex" id="associated_event_id" readonly disabled>
-                    <span class="edit-toggle d-none" >✏️</span>
                 </div>
             </div>
 
@@ -166,16 +153,25 @@
         </div>
 
         <hr>
-
+        <!--
         <div class="mb-3">
             <label for="original_filename" class="form-label">original_filename</label>
             <div class="d-flex">
                 <input type="text" class="form-control user-field transparent-input" id="original_filename" name="original_filename" readonly disabled>
-                <!-- <span class="edit-toggle d-none" >✏️</span> -->
+                <span class="edit-toggle d-none" >✏️</span> 
+            </div>
+        </div>
+        -->
+        <div class="mb-3" id="field_original_name">
+            <label for="original_filename" class="form-label">Original Filename</label>
+            <div class="d-flex">
+                <a href="#" class="form-control user-field file-preview-link" id="original_filename_link" 
+                    data-file_id="" data-filename="" style="text-decoration: none; color: #007bff;" disabled readonly> Click Preview </a>
+                <input type="hidden" class="user-field" id="original_filename" name="original_filename" disabled readonly>
             </div>
         </div>
 
-        <div class="mb-3">
+        <div class="mb-3" id="field_download">
             <label for="fileInput" class="form-label">choisir le file:</label>
             <input type="file" class="form-control user-field" id="fileInput" name="file" accept=".pdf,.jpg,.png">
         </div>
@@ -186,59 +182,38 @@
         <div class="col-12 submit_confirm">
             <button type="submit" class="btn btn-primary" id="submit_confirm">Soumettre</button>
         </div>
+
+
     </form>
 </div>
 
 
-
-<!-- 文件预览模态框 -->
-<div class="modal fade" id="filePreviewModal" tabindex="-1" aria-labelledby="filePreviewModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="filePreviewModalLabel">File View</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <iframe id="filePreviewFrame" style="width: 100%; height: 500px; border: none;"></iframe>
-            </div>
-
-            <form id="download_file_form" method="POST" action="/gestionFile/download_file">
-                <input type="hidden" id="download_file_id" name="file_id">
-                <button type="submit" class="btn btn-primary mt-3" id="download_button"> DownLoad </button>
-            </form>
-
+        <div class="col-md-12">
+            <iframe id="file_edit_preview" class="d-none" style="width: 100%; height: 500px;"></iframe>
         </div>
-    </div>
-</div>
 
-<!-- 文件编辑模态框 -->
-<div class="modal fade" id="fileEditModal" tabindex="-1" aria-labelledby="fileEditModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="fileEditModalLabel">编辑文件</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="fileEditForm" class="ajax-form" action="/api/files">
-                    <input type="hidden" id="editFileId" name="file_id">
-                    <div class="mb-3">
-                        <label for="editFileName" class="form-label">文件名称</label>
-                        <input type="text" class="form-control" id="editFileName" name="file_name">
+        <!-- 文件预览模态框 -->
+        <div class="modal fade" id="filePreviewModal" tabindex="-1" aria-labelledby="filePreviewModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="filePreviewModalLabel">File View</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="mb-3">
-                        <label for="editFileCategory" class="form-label">文件类别</label>
-                        <select class="form-select" id="editFileCategory" name="file_category">
-                            <option value="contracts">保险合同</option>
-                            <option value="visit_records">回访纪要</option>
-                            <option value="applications">申请表格</option>
-                            <option value="documents">证件复印件</option>
-                        </select>
+
+                    <div class="modal-body">
+                        <div class="embed-responsive embed-responsive-16by9" style="height: 500px;">
+                            <iframe class="embed-responsive-item" id="modal_file_preview" style="width: 100%; height: 100%;"></iframe>
+                        </div>
                     </div>
-                    <button type="submit" class="btn btn-primary">保存</button>
-                </form>
+                    <div class="modal-footer">
+                        <a href="#" class="btn btn-primary" id="modal_download_button" download> DownLoad </a>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"> Close </button>
+                    </div>
+
+                </div>
             </div>
         </div>
-    </div>
-</div>
+
+
+

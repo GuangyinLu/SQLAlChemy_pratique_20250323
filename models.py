@@ -290,6 +290,7 @@ class CustomerRelationship(Base):
     customer2 = relationship("Customer", foreign_keys=[customer_id2], backref="related_customers2")
 
 # ------------------ 10. 保单附件表 PolicyAttachments ------------------
+
 class PolicyAttachment(Base):
     __tablename__ = 'policy_attachments'
     __table_args__ = {'mysql_engine': 'InnoDB'}
@@ -309,6 +310,7 @@ class LogAgendaClient(Base):
     customer_id = Column(Integer, ForeignKey('customers.customer_id'), nullable=False)
     agent_id = Column(Integer, ForeignKey('agents.agent_id'), nullable=False)
     meeting_date = Column(DateTime, nullable=False)
+    title = Column(String(200), nullable=False)
     description = Column(String(500))
     created_at = Column(DateTime, default=lambda:datetime.now(timezone.utc))
 
