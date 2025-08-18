@@ -144,21 +144,21 @@ function cleanup() {
         fileListPagination.innerHTML = '';
     }
 
-        // 清理模态框和 original_filename_link
-        const previewIframe = document.getElementById("modal_file_preview");
-        if (previewIframe) {
-            previewIframe.src = "";
-        }
-        const downloadButton = document.getElementById("modal_download_button");
-        if (downloadButton) {
-            downloadButton.href = "#";
-        }
-        const filenameLink = document.getElementById("original_filename_link");
-        if (filenameLink) {
-            filenameLink.dataset.fileId = "";
-            filenameLink.dataset.filename = "";
-            filenameLink.textContent = "点击预览";
-        }
+    // 清理模态框和 original_filename_link
+    const previewIframe = document.getElementById("modal_file_preview");
+    if (previewIframe) {
+        previewIframe.src = "";
+    }
+    const downloadButton = document.getElementById("modal_download_button");
+    if (downloadButton) {
+        downloadButton.href = "#";
+    }
+    const filenameLink = document.getElementById("original_filename_link");
+    if (filenameLink) {
+        filenameLink.dataset.fileId = "";
+        filenameLink.dataset.filename = "";
+        filenameLink.textContent = "点击预览";
+    }
 
     console.log('完成清理 gestionFile.js');
 }
@@ -352,10 +352,10 @@ function handleModeChange() {
     const submitConfirm = document.querySelector('.submit_confirm');
     const rowFileId = document.getElementById('row_file_id');
     const submitButton = document.getElementById("submit_confirm");
-    const filenameLink = document.getElementById("original_filename_link");
-    const filenameInput = document.getElementById("original_filename");
+    //const filenameLink = document.getElementById("original_filename_link");
+    //const filenameInput = document.getElementById("original_filename");
     const fieldOriginalName = document.getElementById('field_original_name');
-    const fieldDownload = document.getElementById("field_download");
+    const fieldUpload = document.getElementById("field_upload");
 
     if (!searchUser || !submitConfirm || !rowFileId || !submitButton) {
         console.error("缺少必要元素:", {
@@ -369,7 +369,7 @@ function handleModeChange() {
 
 
     fieldOriginalName.style.display = isAddMode ? 'none' : 'block';
-    fieldDownload.style.display = isAddMode ? 'block' : 'none';
+    fieldUpload.style.display = isAddMode ? 'block' : 'none';
     searchUser.style.display = isAddMode ? 'none' : 'block';
     submitConfirm.style.display = isViewMode ? 'none' : 'block';
     rowFileId.classList.toggle('d-none', isAddMode);
@@ -685,14 +685,15 @@ function handleFileRowClick(e) {
                 filenameLink.dataset.filename = item.original_filename || 'file.pdf';
             }
             // 设置隐藏的 original_filename 输入框
+            /*
             const filenameInput = document.getElementById("original_filename");
             if (filenameInput) {
                 filenameInput.value = item.original_filename || '';
-            }
+            }*/
 
             // 设置编辑预览 iframe
             document.getElementById("modal_file_preview").src = `/gestionFile/get_file?id=${fileId}`;
-            document.getElementById("original_filename").value = item.original_filename;
+            //document.getElementById("original_filename").value = item.original_filename;
             document.getElementById("file_type").value = item.file_type;
 
             handleModeChange();
@@ -806,7 +807,7 @@ function handleFormSubmit(event) {
         headers: { 'Content-Type': 'multipart/form-data' }
     })
     .then(response => {
-        showError(response.data.message || "操作成功", true);
+        showError(response.data.message || "Succes Operation", true);
         document.querySelector(`input[name="optradio_file"][value="vue"]`).checked = true;
         handleModeChange();
         resetInterface();

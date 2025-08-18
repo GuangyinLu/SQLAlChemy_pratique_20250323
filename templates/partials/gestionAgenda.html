@@ -1,112 +1,184 @@
 
-<div class="main">
-    <h2>Gestion de Agenda!</h2>            
-    
-    <div class="row">
-        <div class="col-md-4 border p-3 affiche">
-  
-            <div class="option_action">
-                <div class="form-check">
-                    <input type="radio" class="form-check-input" id="radio1" name="optradio" value="vue" checked>
-                    <label class="form-check-label" for="radio1">Vue</label>
-                </div>
-                <div class="form-check">
-                    <input type="radio" class="form-check-input" id="radio2" name="optradio" value="modifier">
-                    <label class="form-check-label" for="radio2">Modifier</label>
-                </div>
-                <div class="form-check">
-                    <input type="radio" class="form-check-input" id="radio3" name="optradio" value="ajouter">
-                    <label class="form-check-label" for="radio3">Ajouter</label>
-                </div>
-                <div class="form-check">
-                    <input type="radio" class="form-check-input" id="radio4" name="optradio" value="supprimer">
-                    <label class="form-check-label" for="radio4">Supprimer</label>
-                </div>
-            </div>
 
-            <div class="search_user search_menu">
-                <label>(Name,Phone,Email...) </label>
-                <input type="text" id="searchBox" onkeyup="searchCustomers()" placeholder="Recherche...">
-            </div>
-                                
-            <table class="table table-bordered table-striped search_menu_sub" id="agenda_user_list" data-type="user_list">
-                <thead>
-                    <tr id="search_results_title"></tr>
-                </thead>
-                <tbody class="client_search-table" id="search_results">
-                    <!-- AJAX 动态填充 -->
-                </tbody>
-            </table>
+<h2>Gestion Agenda!</h2>            
 
+<div class="border p-3 affiche_search" id="affiche_search">
+
+    <div class="option_action">
+        <div class="form-check">
+            <input type="radio" class="form-check-input" id="radio1" name="agenda_optradio" value="vue" checked>
+            <label class="form-check-label" for="radio1">Vue</label>
         </div>
-
-        <div class="col-md-8 border p-3 affiche">
-            
-            <div class="border table-responsive-md agenda_list">
-                <table class="table table-bordered table-striped agenda_list " id="agenda_list" data-type="agenda_list">
-                    <thead>
-                        <tr id="search_agenda_results_title"></tr>
-                    </thead>
-                    <tbody class="client_search-table" id="search_agenda_results">
-                        <!-- AJAX 动态填充 -->
-                    </tbody>
-                </table>
-            </div>
-
-            <form id="agent-form" class="form-horizontal">
-                <div class="form-group-user border agenda_per_info row">
-                    <div class="form-group row">
-                        <label for="log_agenda_id" class="col-md-2 control-label">ID</label>
-                        <div class="col-md-2">
-                            <input type="number" class="form-control" name="log_agenda_id" id="log_agenda_id" disabled>
-                        </div>
-                        <label for="meeting_date" class="col-md-1 offset-md-3 control-label">Date</label>
-                        <div class="col-md-4">
-                            <input type="date" class="form-control" name="meeting_date" id="meeting_date">
-                        </div>
-                    </div>
-
-                    <div class="form-group row">
-                        <label for="customer_id" class="col-md-2 control-label">Customer_id</label>
-                        <div class="col-md-2">
-                            <input type="number" class="form-control" name="customer_id" id="customer_id">
-                        </div>
-                        <label for="customer_name" class="col-md-2 offset-md-2 control-label">Customer_name</label>
-                        <div class="col-md-4">
-                            <input type="text" class="form-control" list="suggestion_user" name="customer_name" id="customer_name">
-                            <datalist id="suggestion_user"></datalist>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="agent_id" class="col-md-2 control-label">Agent_id</label>
-                        <div class="col-md-2">
-                            <input type="tel" class="form-control" name="agent_id" id="agent_id">
-                        </div>
-                        <label for="agent_name" class="col-md-2 offset-md-2 control-label">Agent_name</label>
-                        <div class="col-md-4">
-                            <input type="email" class="form-control" list="suggestion_agent" name="agent_name" id="agent_name">
-                            <datalist id="suggestion_agent"></datalist>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="description" class="col-md-2 control-label">description</label>
-                        <div class="col-md-9">
-                            <textarea id="description" rows="15" cols="62" ></textarea>    
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-md-offset-2 col-md-10 btn-user">
-                            <button type="submit" class="btn btn-default btn-danger border btn-user-conf">Confirmation</button>
-                        </div>
-                    </div>
-                </div>
-
-            </form>
-
+        <div class="form-check">
+            <input type="radio" class="form-check-input" id="radio2" name="agenda_optradio" value="modifier">
+            <label class="form-check-label" for="radio2">Modifier</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" id="radio3" name="agenda_optradio" value="ajouter">
+            <label class="form-check-label" for="radio3">Ajouter</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" id="radio4" name="agenda_optradio" value="supprimer">
+            <label class="form-check-label" for="radio4">Supprimer</label>
         </div>
     </div>
 
+    <div class="search_agenda">
+        <label>Recherche (Nom,Phone,Agenda...) </label>
+        <input type="text" id="searchBox_agengda" placeholder="Recherche...">
+    </div>
+                        
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr id="search_agenda_results_title"></tr>
+        </thead>
+        <tbody class="agenda_search-table" id="agenda_search_results">
+            <!-- AJAX 动态填充 -->
+        </tbody>
+    </table>
 
 </div>
 
+<form id="agenda-form" class="form-horizontal agenda_info d-none row ms-2 border p-3 affiche_agenda">
 
+    <div class="col-12 mb-3">
+        <button type="button" class="btn btn-primary float-end" id="return_gestionAgenda">↩ Retour</button>
+    </div>
+
+    <div class="row">
+        <div class="form-group col-md-6 row">
+            <label for="log_agenda_id" class="col-md-4 control-label">log_agenda_id</label>
+            <div class="col-md-6">
+                <input type="number" class="form-control" name="log_agenda_id" id="log_agenda_id" disabled>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="row">
+        <div class="form-group col-md-6 row">
+            <label for="customer_name" class="col-md-4 control-label">Customer_name</label>
+            <div class="col-md-8 position-relative">
+                <input type="text" class="form-control search_suggestions" name="customer_name" 
+                    id="customer_name" autocomplete="off" 
+                    data-param1='customer_name' data-param2='suggestions_customer' data-param3='customer_id' data-param4='/gestionAgenda/search_customer' >
+                <div id="suggestions_customer" class="list-group position-absolute w-100 shadow d-none" ></div>
+            </div>
+        
+        </div>
+        <div class="form-group col-md-6 row">
+            <label for="customer_id" class="col-md-3 control-label offset-md-1">Customer_id</label>
+            <div class="col-md-6">
+                <input type="number" class="form-control" name="customer_id" id="customer_id" disabled>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="row">
+        <div class="form-group col-md-12 row">
+            <label for="title" class="col-md-2 control-label">Title</label>
+            <div class="col-md-8">
+                <input type="text" class="form-control w-100" name="title" id="title">
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="row">
+        <div class="form-group col-md-12 row">
+            <label for="description" class="col-md-2 control-label">description</label>
+            <div class="col-md-8">
+                <textarea id="description" class="form-control w-100" rows="5" cols="62" ></textarea>    
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="row">
+        <div class="form-group col-md-6 row">
+            <label for="agent_name" class="col-md-4 control-label">Agent Name</label>
+            <div class="col-md-8 position-relative">
+                <input type="text" class="form-control search_suggestions" name="agent_name" 
+                id="agent_name" autocomplete="off" 
+                data-param1='agent_name' data-param2='suggestions_agent' data-param3='agent_id' data-param4='/gestionAgenda/search_agent' >
+                <div id="suggestions_agent" class="list-group position-absolute w-100 shadow d-none" ></div>
+            </div>
+        </div>
+        <div class="form-group col-md-6 row">
+            <label for="agent_id" class="col-md-3 offset-md-1 control-label">Agent_id</label>
+            <div class="col-md-6">
+                <input type="number" class="form-control" name="agent_id" id="agent_id" disabled>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="form-group row">
+        <label for="meeting_date" class="col-md-2 control-label">meeting_date</label>
+        <div class="col-md-8 position-relative">
+            <input type="date" class="form-control" id="meeting_date" >
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="mb-3 form-group" id="field_original_name">
+        <label for="original_filename" class="control-label">Original Filename</label>
+        <div class="d-flex">
+            <a href="#" class="form-control user-field file-preview-link" id="original_filename_link" 
+                data-file_id="" data-filename="" style="text-decoration: none; color: #007bff;" disabled readonly> Click Preview </a>
+            <input type="hidden" class="form-control user-field" id="original_filename" name="original_filename" disabled readonly>
+        </div>
+        <div id="fileListContainer"></div>
+    </div>
+
+    <div class="mb-3 form-group" id="field_upload">
+        <label for="fileInput" class="control-label">choisir le file:</label>
+        <input type="file" class="form-control user-field" id="fileInput" name="file" accept=".pdf">
+    </div>
+    <input type="hidden" id="clientId" name="client_id">
+    
+
+    <hr>
+
+    <div class="form-group submit_confirmation d-none">
+        <div class="col-md-offset-2 col-md-10 btn-user">
+            <button type="submit" class="btn btn-default btn-danger border btn-user-conf" id="formagendaConfirmation">Confirmation</button>
+        </div>
+    </div>
+
+</form>
+
+
+<div class="col-md-12">
+    <iframe id="file_edit_preview" class="d-none" style="width: 100%; height: 500px;"></iframe>
+</div>
+
+<!-- 文件预览模态框 -->
+<div class="modal fade" id="filePreviewModal" tabindex="-1" aria-labelledby="filePreviewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="filePreviewModalLabel">File View</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <div class="embed-responsive embed-responsive-16by9" style="height: 500px;">
+                    <iframe class="embed-responsive-item" id="modal_file_preview" style="width: 100%; height: 100%;"></iframe>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="btn btn-primary" id="modal_download_button" download> DownLoad </a>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"> Close </button>
+            </div>
+
+        </div>
+    </div>
+</div>

@@ -167,13 +167,13 @@
             <div class="d-flex">
                 <a href="#" class="form-control user-field file-preview-link" id="original_filename_link" 
                     data-file_id="" data-filename="" style="text-decoration: none; color: #007bff;" disabled readonly> Click Preview </a>
-                <input type="hidden" class="user-field" id="original_filename" name="original_filename" disabled readonly>
+                <!--<input type="hidden" class="user-field" id="original_filename" name="original_filename" disabled readonly>-->
             </div>
         </div>
 
-        <div class="mb-3" id="field_download">
+        <div class="mb-3" id="field_upload">
             <label for="fileInput" class="form-label">choisir le file:</label>
-            <input type="file" class="form-control user-field" id="fileInput" name="file" accept=".pdf,.jpg,.png">
+            <input type="file" class="form-control user-field" id="fileInput" name="file" accept=".pdf">
         </div>
         <input type="hidden" id="clientId" name="client_id">
 
@@ -188,32 +188,32 @@
 </div>
 
 
-        <div class="col-md-12">
-            <iframe id="file_edit_preview" class="d-none" style="width: 100%; height: 500px;"></iframe>
-        </div>
+<div class="col-md-12">
+    <iframe id="file_edit_preview" class="d-none" style="width: 100%; height: 500px;"></iframe>
+</div>
 
-        <!-- 文件预览模态框 -->
-        <div class="modal fade" id="filePreviewModal" tabindex="-1" aria-labelledby="filePreviewModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="filePreviewModalLabel">File View</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
+<!-- 文件预览模态框 -->
+<div class="modal fade" id="filePreviewModal" tabindex="-1" aria-labelledby="filePreviewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="filePreviewModalLabel">File View</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
 
-                    <div class="modal-body">
-                        <div class="embed-responsive embed-responsive-16by9" style="height: 500px;">
-                            <iframe class="embed-responsive-item" id="modal_file_preview" style="width: 100%; height: 100%;"></iframe>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <a href="#" class="btn btn-primary" id="modal_download_button" download> DownLoad </a>
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"> Close </button>
-                    </div>
-
+            <div class="modal-body">
+                <div class="embed-responsive embed-responsive-16by9" style="height: 500px;">
+                    <iframe class="embed-responsive-item" id="modal_file_preview" style="width: 100%; height: 100%;"></iframe>
                 </div>
             </div>
+            <div class="modal-footer">
+                <a href="#" class="btn btn-primary" id="modal_download_button" download> DownLoad </a>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"> Close </button>
+            </div>
+
         </div>
+    </div>
+</div>
 
 
 

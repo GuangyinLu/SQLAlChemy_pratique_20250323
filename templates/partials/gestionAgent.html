@@ -37,61 +37,77 @@
                     <button type="button" class="btn btn-primary float-end" id="return_gestionAgent">↩ Retour</button>
                 </div>
 
-                <div class="form-group row" id="row_agent_id">
-                    <label for="agent_id" class="col-sm-3 col-form-label">Agent ID</label>
-                    <div class="col-sm-9">
-                        <input type="text" class="form-control user-field" id="agent_id" disabled>
+                <div class="row">
+                    
+                    <div class="form-group col-md-3" id="row_agent_id">
+                        <label for="agent_id" class="col-form-label">Agent ID</label>
+                        <div class="d-flex">
+                            <input type="text" class="form-control user-field" id="agent_id" disabled>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label for="name_first" class="col-form-label">First Name</label>
+                        <div class="d-flex">
+                            <input type="text" class="form-control user-field" id="name_first" required>
+                            <span class="edit-toggle d-none">✏️</span>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label for="name_middle" class="col-form-label">Middle Name</label>
+                        <div class="d-flex">
+                            <input type="text" class="form-control user-field" id="name_middle">
+                            <span class="edit-toggle d-none">✏️</span>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label for="name_last" class="col-form-label">Last Name</label>
+                        <div class="d-flex">
+                            <input type="text" class="form-control user-field" id="name_last" required>
+                            <span class="edit-toggle d-none">✏️</span>
+                        </div>
                     </div>
                 </div>
-                <div class="form-group row">
-                    <label for="name_first" class="col-sm-3 col-form-label">First Name</label>
-                    <div class="col-sm-9">
-                        <input type="text" class="form-control user-field" id="name_first" required>
-                        <span class="edit-toggle d-none">✏️</span>
+
+                <hr>
+
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <label for="phone" class="col-form-label">Phone</label>
+                        <div class="d-flex">
+                            <input type="text" class="form-control user-field" id="phone" required>
+                            <span class="edit-toggle d-none">✏️</span>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="email" class="col-form-label">Email</label>
+                        <div class="d-flex">
+                            <input type="email" class="form-control user-field" id="email" required>
+                            <span class="edit-toggle d-none">✏️</span>
+                        </div>
                     </div>
                 </div>
+
+                <hr>
+
                 <div class="form-group row">
-                    <label for="name_middle" class="col-sm-3 col-form-label">Middle Name</label>
-                    <div class="col-sm-9">
-                        <input type="text" class="form-control user-field" id="name_middle">
-                        <span class="edit-toggle d-none">✏️</span>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="name_last" class="col-sm-3 col-form-label">Last Name</label>
-                    <div class="col-sm-9">
-                        <input type="text" class="form-control user-field" id="name_last" required>
-                        <span class="edit-toggle d-none">✏️</span>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="phone" class="col-sm-3 col-form-label">Phone</label>
-                    <div class="col-sm-9">
-                        <input type="text" class="form-control user-field" id="phone" required>
-                        <span class="edit-toggle d-none">✏️</span>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="email" class="col-sm-3 col-form-label">Email</label>
-                    <div class="col-sm-9">
-                        <input type="email" class="form-control user-field" id="email" required>
-                        <span class="edit-toggle d-none">✏️</span>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="address" class="col-sm-3 col-form-label">Address</label>
-                    <div class="col-sm-9">
+                    <label for="address" class="col-sm-2 col-form-label">Address</label>
+                    <div class="col-sm-9 d-flex">
                         <input type="text" class="form-control user-field" id="address">
                         <span class="edit-toggle d-none">✏️</span>
                     </div>
                 </div>
+
+                <hr>
+
                 <div class="form-group row">
-                    <label for="commission_rate" class="col-sm-3 col-form-label">Commission Rate</label>
-                    <div class="col-sm-9">
+                    <label for="commission_rate" class="col-sm-4 col-form-label">Commission Rate</label>
+                    <div class="col-sm-2 d-flex">
                         <input type="text" class="form-control user-field" id="commission_rate">
                         <span class="edit-toggle d-none">✏️</span>
                     </div>
                 </div>
+
+                <hr>
 
                 <div class="submit_confirm">
                     <button type="submit" class="btn btn-primary btn-user" id="submit_confirm">Confirmation</button>

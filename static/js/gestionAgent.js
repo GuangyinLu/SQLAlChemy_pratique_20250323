@@ -162,7 +162,7 @@ function handleModeChange() {
 
     searchUser.style.display = isAddMode ? 'none' : 'block';
     submitConfirm.style.display = isViewMode ? 'none' : 'block';
-    rowAgentId.style.display = isAddMode ? 'none' : 'flex';
+    rowAgentId.style.display = isAddMode ? 'none' : 'block';
     submitButton.innerHTML = mode === 'vue' ? 'Voir' : mode === 'ajouter' ? 'Ajouter' : mode === 'modifier' ? 'Modifier' : 'Supprimer';
     // console.log("search",searchUser.style.display);
     // console.log("submit=",submitConfirm.style.display);
