@@ -133,6 +133,16 @@ function cleanup() {
         policyPagination.innerHTML = '';
     }
 
+    // 清理模态框
+    const previewIframe = document.getElementById("modal_file_preview");
+    if (previewIframe) {
+        previewIframe.src = "";
+    }
+    const downloadButton = document.getElementById("modal_download_button");
+    if (downloadButton) {
+        downloadButton.href = "#";
+    }
+
     console.log('完成清理 gestionProduct.js');
 }
 
@@ -171,19 +181,9 @@ function loadDropdownOptions() {
 }
 
 function handleModeChange() {
-    const checkedRadio = document.querySelector('input[name="optradio_product"]:checked');
-    if (!checkedRadio) {
-        console.warn("未选中任何 'optradio_product' 单选按钮，尝试重新初始化");
-        const radio = document.querySelector(`input[name="optradio_product"][value="vue"]`);
-        if (radio) {
-            radio.checked = true;
-            console.log('重新设置单选框为 vue');
-        } else {
-            console.error('未找到任何 optradio_product 单选按钮');
-            return;
-        }
-    }
+    state.selectedCustomerId = null;
 
+    const checkedRadio = document.querySelector('input[name="optradio_product"]:checked');
     const mode = checkedRadio.value;
     const isViewMode = mode === 'vue';
     const isAddMode = mode === 'ajouter';
@@ -226,12 +226,17 @@ function handleModeChange() {
         if (productForm) {
             productForm.reset();
         }
+        const affiche_upload = document.getElementById("field_upload");
+        if (affiche_upload) {
+            affiche_upload.classList.remove('d-none');
+        }
         const policyIdInput = document.getElementById("policy_id");
         if (policyIdInput) policyIdInput.value = "";
         const policyOwnerSelect = document.getElementById("policy_owner_id");
         if (policyOwnerSelect && state.selectedCustomerId) {
             policyOwnerSelect.value = state.selectedCustomerId;
         }
+        
     }
 }
 
@@ -459,10 +464,24 @@ function handleProductRowClick(e) {
         afficheAction.classList.remove('d-none');
     }
 
+    const checkedRadio = document.querySelector('input[name="optradio_product"]:checked');
+    const mode = checkedRadio.value || 'vue';
+    const isViewMode = mode === 'vue';
+    const isAddMode = mode === 'ajouter';
+    const isModMode = mode === 'modifier';
+    const isDelMode = mode === 'supprimer';
+
+    const affiche_upload = document.getElementById("field_upload");
+    if (isModMode) {
+        affiche_upload.classList.remove('d-none');
+    }
+
     axios.get("/gestionProduct/product_per_info", { params: { query: id } })
         .then(response => {
             const item = response.data.product;
             Object.entries(item).forEach(([key, value]) => {
+                if (key === 'files') return; // 跳过文件字段
+
                 const element = document.getElementById(key);
                 if (element) {
                     if (element.tagName === 'SELECT') {
@@ -474,6 +493,110 @@ function handleProductRowClick(e) {
                     }
                 }
             });
+
+            // 附件文件列表处理
+            const files = item.files || [];
+            const container = document.getElementById("fileListContainer");
+            container.innerHTML = "";
+
+            if (files.length > 0) {
+                // 创建表格
+                const table = document.createElement("table");
+                table.className = "table table-bordered table-sm mt-3";
+
+                // 表头
+                const thead = document.createElement("thead");
+                thead.innerHTML = `
+                    <tr>
+                        <th>#</th>
+                        <th>FileName</th>
+                        <th>Operation</th>
+                    </tr>
+                `;
+                table.appendChild(thead);
+
+                // 表体
+                const tbody = document.createElement("tbody");
+
+                files.forEach((file, index) => {
+                    const tr = document.createElement("tr");
+
+                    // 序号
+                    const tdIndex = document.createElement("td");
+                    tdIndex.textContent = index + 1;
+
+                    // 文件名
+                    const tdName = document.createElement("td");
+                    tdName.textContent = file.original_filename || "未命名文件";
+
+                    // 操作
+                    const tdAction = document.createElement("td");
+
+                    //（PDF图标+链接）
+                    
+                    const previewIcon = document.createElement("i");
+                    previewIcon.className = "bi bi-file-earmark-pdf";
+                    previewIcon.style.color = "red";
+                    previewIcon.style.fontSize = "1.2rem";
+                    previewIcon.style.cursor = "pointer";
+                    previewIcon.style.marginRight = "8px";
+
+                    /* 点击图标 → 打开模态框预览
+                    previewIcon.addEventListener("click", () => {
+                        const fileUrl = `/gestionFile/get_file?id=${file.id}`;
+                        const modalIframe = document.getElementById("modal_file_preview");
+                        const downloadButton = document.getElementById("modal_download_button");
+
+                        modalIframe.src = fileUrl; // PDF 加载到 iframe
+                        downloadButton.href = fileUrl; // 下载按钮
+                        const modal = new bootstrap.Modal(document.getElementById("filePreviewModal"));
+                        modal.show();
+                    });*/
+
+                    // 点击图标 → 在新窗口打开
+                    previewIcon.addEventListener("click", () => {
+                        const fileUrl = `/gestionFile/get_file?id=${file.id}`;
+                        window.open(fileUrl, "_blank");
+                    });
+
+                    /* View/Download 链接
+                    const link = document.createElement("a");
+                    link.href = `/gestionFile/get_file?id=${file.id}`;
+                    link.target = "_blank";
+                    link.textContent = "View/Download";*/
+
+                    // View/Download 链接 → 打开模态框预览
+                    const link = document.createElement("a");
+                    link.href = "#";  // 避免直接跳转
+                    link.textContent = "View/Download";
+                    link.style.cursor = "pointer";
+
+                    link.addEventListener("click", (e) => {
+                        e.preventDefault();
+                        const fileUrl = `/gestionFile/get_file?id=${file.id}`;
+                        const modalIframe = document.getElementById("modal_file_preview");
+                        const downloadButton = document.getElementById("modal_download_button");
+
+                        modalIframe.src = fileUrl; // PDF 加载到 iframe
+                        downloadButton.href = fileUrl; // 下载按钮
+                        const modal = new bootstrap.Modal(document.getElementById("filePreviewModal"));
+                        modal.show();
+                    });
+
+                    // 组合
+                    tdAction.appendChild(link);
+                    tdAction.appendChild(previewIcon);
+
+                    tr.appendChild(tdIndex);
+                    tr.appendChild(tdName);
+                    tr.appendChild(tdAction);
+                    tbody.appendChild(tr);
+                });
+
+                table.appendChild(tbody);
+                container.appendChild(table);
+            }
+
             handleModeChange();
         })
         .catch(error => showError("加载保单详情出错: " + (error.response?.data?.error || error)));
@@ -482,11 +605,6 @@ function handleProductRowClick(e) {
     row.classList.add('selected');
 }
 
-function toggleEditable(el) {
-    const input = el.previousElementSibling;
-    input.disabled = !input.disabled;
-    if (!input.disabled) input.focus();
-}
 
 function handleEditToggleClick(e) {
     const span = e.target.closest('.edit-toggle');
@@ -507,36 +625,56 @@ document.addEventListener('click', (e) => {
 });
 
 function handleFormSubmit(event) {
+        const form = event.target.closest('#product-form');
+    if (!form) return;
     event.preventDefault();
     const mode = document.querySelector("input[name='optradio_product']:checked")?.value;
     if (!mode || mode === 'vue') return;
 
-    const formData = {};
+    const formData = new FormData;
     const requiredFields = ['asset_name', 'total_coverage', 'total_premium', 'policy_owner_id', 'insured_person_id', 'agent_id'];
+
     document.querySelectorAll('.user-field').forEach(element => {
-        const key = element.id;
-        if (element.tagName === 'SELECT') {
-            formData[key] = element.value;
+        const key = element.name || element.id; // 关键：优先取 name
+
+        if (element.id === 'original_filename_link') {
+            return; // 跳过链接元素，使用隐藏的 input
+        }
+
+        if (element.type === 'file') {
+            if (element.files.length > 0) {
+                formData.append(key, element.files[0]); // 文件对象
+
+            } else if (requiredFields.includes(key)) {
+                showError(`字段 ${element.previousElementSibling?.textContent || key} 为必填项。`);
+                throw new Error(`字段 ${key} 为必填项。`);
+            }
+        } else if (element.tagName === 'SELECT') {
+            formData.append(key, element.value);
         } else if (element.type === 'checkbox' || element.type === 'radio') {
-            formData[key] = element.checked;
+            formData.append(key, element.checked);
         } else {
-            formData[key] = element.value;
+            if (requiredFields.includes(key) && !element.value) {
+                showError(`字段 ${element.previousElementSibling?.textContent || key} 为必填项。`);
+                throw new Error(`字段 ${key} 为必填项。`);
+            }
+            formData.append(key, element.value);
         }
-        if (requiredFields.includes(key) && !formData[key]) {
-            showError(`字段 ${element.previousElementSibling?.textContent || key} 为必填项。`);
-            throw new Error(`字段 ${key} 为必填项。`);
-        }
+
     });
-    formData.policy_id = document.getElementById("policy_id")?.value || null;
+
+    formData.append('policy_id',document.getElementById("policy_id")?.value || null);
 
     const url = mode === 'supprimer' ? '/gestionProduct/supprimer_product' : '/gestionProduct/save_product';
 
-    axios.post(url, formData)
+    axios.post(url, formData,{ withCredentials: true })
         .then(response => {
             showError(response.data.message || "操作成功", true);
             document.querySelector(`input[name="optradio_product"][value="vue"]`).checked = true;
             handleModeChange();
+            form.reset();
             resetInterface();
+            searchCustomers();
             if (state.selectedCustomerId && state.selectedCustomerName) {
                 selectCustomer({ classList: { add: () => {}, remove: () => {} } }, state.selectedCustomerId, state.selectedCustomerName);
             }
@@ -570,12 +708,30 @@ function resetInterface() {
         policyIdInput.value = "";
     }
 
+    const container = document.getElementById("fileListContainer");
+    container.innerHTML = "";
+
+    const affiche_upload = document.getElementById("field_upload");
+    if (affiche_upload) {
+        affiche_upload.classList.add('d-none');
+    }
+
     const vueRadio = document.querySelector(`input[name="optradio_product"][value="vue"]`);
     if (vueRadio) {
         vueRadio.checked = true;
     } else {
         console.error("未找到查看单选按钮");
     }
+    state.selectedCustomerId = null;
+
+    document.getElementById("customer_search_results").innerHTML = "";
+    document.getElementById("customer_search_results_title").innerHTML = "";
+	document.getElementById("search_product_results").innerHTML = "";
+    document.getElementById("search_product_results_title").innerHTML = "";
+	document.getElementById("selected_customer_info").innerHTML = "";
+	document.getElementById("policies_title").classList.add('d-none');
+    document.getElementById("policies_table").classList.add('d-none');
+    document.getElementById("policy_pagination").innerHTML = "";
 
     document.getElementById("customerSearchBoxProduct").value = "";
     loadDropdownOptions();

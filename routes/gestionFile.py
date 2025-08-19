@@ -148,7 +148,7 @@ def search_associated_event():
                 file_data = {}
                 file_data['associated_id'] = item_agenda.log_agenda_id
                 file_data['associated_name'] = item_agenda.title
-                file_data['associated_date'] = item_agenda.issue_meeting_date.strftime("%Y-%m-%d")
+                file_data['associated_date'] = item_agenda.meeting_date.strftime("%Y-%m-%d")
                 file_data["customer_name"] = f"{item_customer.name_first} {item_customer.name_middle or ''} {item_customer.name_last}".strip()
                 results.append(file_data)
 
@@ -210,6 +210,7 @@ def upload_file():
         file = request.files['file']
         customer_id = request.form.get('customer_id')
         file_type = request.form.get('file_type')
+        associated_event_id = request.form.get('associated_event_id')
         uploaded_by = current_user.username
 
         if not customer_id or file_type not in [e.value for e in CustomerFileType]:
@@ -225,9 +226,10 @@ def upload_file():
         file.save(file_path)
 
         new_file = CustomerFile(
-            customer_id=customer_id,
+            customer_id=int(customer_id),
             file_type=CustomerFileType(file_type),
             original_filename=file_name,
+            associated_event_id=int(associated_event_id) if associated_event_id else None, 
             stored_path=file_path,
             upload_time=datetime.now(timezone.utc),
             uploaded_by=uploaded_by,
@@ -295,13 +297,21 @@ def delete_file():
         data = request.form
         file_id = data.get('id')
         file = db.query(CustomerFile).filter(
-            CustomerFile.id == file_id,
-            CustomerFile.status == CustomerFileStatus.Active
+            CustomerFile.id == file_id
         ).first()
         if not file:
             return jsonify({'error': 'File not found or deleted'}), 404
-        file.status = CustomerFileStatus.Desactive
+
+        # 可选：删除文件实际存储路径上的文件
+        try:
+            if file.stored_path and os.path.exists(file.stored_path):
+                os.remove(file.stored_path)
+        except Exception as file_err:
+            print(f"删除文件 {file.stored_path} 出错: {file_err}")
+
+        db.delete(file)
         db.commit()
+
         return jsonify({'message': 'File deleted successfully'}), 200
     except Exception as e:
         logging.error(f"文件删除错误: {str(e)}")
@@ -316,22 +326,24 @@ def update_file():
     db = SessionLocal()
     try:
         data = request.form
-        file_id = data.get('id')
-        
+        file_id = data.get('file_id')
+          
         file = db.query(CustomerFile).filter(
             CustomerFile.id == file_id,
             CustomerFile.status == CustomerFileStatus.Active
         ).first()
         if not file:
             return jsonify({'error': 'File not found or deleted'}), 404
-        file_name = data.get('original_filename')
+
         file_type = data.get('file_type')
         associated_event_id = data.get('associated_event_id')
-        if not file_name or file_type not in [e.value for e in CustomerFileType]:
+        #print(associated_event_id,'lgy=',file_type,data)
+        if file_type not in [e.value for e in CustomerFileType]:
             return jsonify({'error': 'Invalid file name or type'}), 400
-        file.original_filename = file_name
+
         file.file_type = CustomerFileType(file_type)
-        file.associated_event_id = associated_event_id
+        if associated_event_id :
+            file.associated_event_id = associated_event_id
         db.commit()
         return jsonify({'message': 'File updated successfully'}), 200
     except Exception as e:

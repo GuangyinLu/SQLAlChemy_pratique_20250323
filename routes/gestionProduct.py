@@ -3,11 +3,17 @@ from flask import Blueprint, request, render_template, jsonify
 from flask_login import login_required, current_user
 from sqlalchemy.exc import SQLAlchemyError
 from database import SessionLocal
-from models import InsuranceProduct, Customer, Agent, ChangeLog, logOperation
+from models import *
 import logging
 from sqlalchemy.orm import aliased
+from werkzeug.exceptions import BadRequest
+from werkzeug.utils import secure_filename
+import os, uuid
 
 gestionProduct_bp = Blueprint('gestionProduct', __name__)
+
+# 本地存储配置
+BASE_UPLOAD_DIR = 'files'
 
 # 通用日志记录函数
 def log_change(db, table_name, record_id, field_name, old_value, new_value, operation, ip_address=None, session_id=None):
@@ -159,28 +165,53 @@ def customer_products():
 @gestionProduct_bp.route('/product_per_info', methods=['GET'])
 @login_required
 def product_per_info():
-    db = SessionLocal()
-    try:
-        policy_id = request.args.get('query', '')
-        product = db.query(InsuranceProduct).filter(InsuranceProduct.policy_id == policy_id).first()
-        if not product:
-            return jsonify({"error": "Product not found"}), 404
-        
-        product_data = {}
-        for column in InsuranceProduct.__table__.columns:
-            value = getattr(product, column.name)
-            if column.name in ('issue_date', 'policy_date') and value:
-                value = value.strftime("%Y-%m-%d")
-            elif column.name in ('total_coverage', 'total_premium', 'commission_rate', 'adjusted_cost_basis') and value:
-                value = float(value)
-            elif column.name in ('premium_frequency', 'policy_status') and value:
-                value = value.value
-            elif column.name in ('created_at', 'updated_at') and value:
-                value = value.isoformat()
-            product_data[column.name] = value
-        return jsonify({"product": product_data})
-    finally:
-        db.close()
+
+    query_policy_id = request.args.get('query', type=int)
+    if not query_policy_id:
+        return jsonify({'error': '参数 policy_id 缺失或无效'}), 400
+
+    with SessionLocal() as db:
+        try:
+            # 主表 
+            product = db.query(InsuranceProduct).filter(InsuranceProduct.policy_id == query_policy_id).first()
+
+            if not product:
+                return jsonify({'error': 'Product not found'}), 404
+
+            # ---- 构造 Agenda_data ----
+            product_data = {}
+            for column in InsuranceProduct.__table__.columns:
+                value = getattr(product, column.name)
+                if column.name in ('issue_date', 'policy_date') and value:
+                    value = value.strftime("%Y-%m-%d")
+                elif column.name in ('total_coverage', 'total_premium', 'commission_rate', 'adjusted_cost_basis') and value:
+                    value = float(value)
+                elif column.name in ('premium_frequency', 'policy_status') and value:
+                    value = value.value
+                elif column.name in ('created_at', 'updated_at') and value:
+                    value = value.isoformat()
+                product_data[column.name] = value
+
+
+            # ---- 附件文件 ----
+            files_base = db.query(CustomerFile).filter(CustomerFile.associated_event_id == query_policy_id, CustomerFile.file_type == 'contract').all()
+
+            product_data["files"] = [
+                {
+                    "id": f.id,
+                    "original_filename": f.original_filename,
+                    "stored_path": f.stored_path,
+                    "file_type": f.file_type.value if hasattr(f.file_type, "value") else str(f.file_type),
+                    "upload_time": f.upload_time.strftime("%Y-%m-%d %H:%M:%S") if f.upload_time else None
+                }
+                for f in files_base
+            ]
+
+            return jsonify({"product": product_data})
+
+        except Exception as e:
+            return jsonify({'error': f'服务器内部错误: {str(e)}'}), 500
+
 
 # 添加或修改保单
 @gestionProduct_bp.route('/save_product', methods=['POST'])
@@ -188,57 +219,57 @@ def product_per_info():
 def save_product():
     db = SessionLocal()
     try:
-        data = request.get_json()
+        data = request.form  # ✅ 改为 form + files, 支持文件上传
         policy_id = data.get('policy_id')
         ip_address = request.remote_addr
         session_id = request.cookies.get('session')
-        
+
+        # ---- 数据预处理 ----
         product_data = {}
         required_fields = ['asset_name', 'total_coverage', 'total_premium', 'policy_owner_id', 'insured_person_id', 'agent_id']
+
         for key, value in data.items():
-            if key == 'policy_id' or key in ('created_at', 'updated_at'):
+            if key in ('policy_id', 'created_at', 'updated_at'):
                 continue
             if value is not None and value != '':
-                if key in ('issue_date', 'policy_date') and value:
+                if key in ('issue_date', 'policy_date'):
                     product_data[key] = datetime.strptime(value, "%Y-%m-%d").date()
-                elif key in ('premium_frequency', 'policy_status'):
-                    product_data[key] = value
                 elif key in ('total_coverage', 'total_premium', 'commission_rate', 'adjusted_cost_basis'):
                     product_data[key] = float(value)
                 else:
-                    product_data[key] = value
+                    product_data[key] = value.strip() if isinstance(value, str) else value
 
+        # ---- 校验必填字段 ----
         for field in required_fields:
             if field not in product_data or not product_data[field]:
                 return jsonify({"error": f"{field} is required"}), 400
 
-        if 'policy_owner_id' in product_data:
-            customer = db.query(Customer).filter(Customer.customer_id == product_data['policy_owner_id']).first()
-            if not customer:
+        # ---- 外键验证 ----
+        if product_data.get('policy_owner_id'):
+            if not db.query(Customer).filter(Customer.customer_id == int(product_data['policy_owner_id'])).first():
                 return jsonify({"error": "Policy owner ID not found"}), 400
-        if 'insured_person_id' in product_data:
-            customer = db.query(Customer).filter(Customer.customer_id == product_data['insured_person_id']).first()
-            if not customer:
+        if product_data.get('insured_person_id'):
+            if not db.query(Customer).filter(Customer.customer_id == int(product_data['insured_person_id'])).first():
                 return jsonify({"error": "Insured person ID not found"}), 400
-        if 'agent_id' in product_data:
-            agent = db.query(Agent).filter(Agent.agent_id == product_data['agent_id']).first()
-            if not agent:
+        if product_data.get('agent_id'):
+            if not db.query(Agent).filter(Agent.agent_id == int(product_data['agent_id'])).first():
                 return jsonify({"error": "Agent ID not found"}), 400
 
-        if policy_id:
+        file = request.files.get('file')  # ✅ 文件（仅 contract）
+
+        # --------事务处理------------
+        
+        if policy_id:  # 修改模式
             product = db.query(InsuranceProduct).filter(InsuranceProduct.policy_id == policy_id).first()
             if not product:
                 return jsonify({"error": "Product not found"}), 404
-            
+
             for key, new_value in product_data.items():
                 if hasattr(product, key):
                     old_value = getattr(product, key)
                     if old_value != new_value:
-                        old_value_str = old_value.strftime("%Y-%m-%d") if key in ('issue_date', 'policy_date') and old_value else str(old_value)
-                        new_value_str = new_value.strftime("%Y-%m-%d") if key in ('issue_date', 'policy_date') and new_value else str(new_value)
-                        if key in ('premium_frequency', 'policy_status'):
-                            old_value_str = old_value.value if old_value else str(old_value)
-                            new_value_str = new_value
+                        old_value_str = _format_value(key, old_value)
+                        new_value_str = _format_value(key, new_value)
                         log_change(
                             db=db,
                             table_name='insurance_products',
@@ -251,15 +282,16 @@ def save_product():
                             session_id=session_id
                         )
                     setattr(product, key, new_value)
-        else:
+            message = "Product 已更新"
+
+        else:  # 新增模式
             product = InsuranceProduct(**product_data)
             db.add(product)
-            db.flush()
+            db.flush()  # ✅ 获取 policy_id
+
             for key, value in product_data.items():
                 if hasattr(product, key):
-                    value_str = value.strftime("%Y-%m-%d") if key in ('issue_date', 'policy_date') and value else str(value)
-                    if key in ('premium_frequency', 'policy_status'):
-                        value_str = value
+                    value_str = _format_value(key, value)
                     log_change(
                         db=db,
                         table_name='insurance_products',
@@ -271,26 +303,102 @@ def save_product():
                         ip_address=ip_address,
                         session_id=session_id
                     )
-        
-        db.commit()
-        return jsonify({"message": f"Product {'updated' if policy_id else 'added'} successfully"})
-    except SQLAlchemyError as e:
+            message = "Product 已新增"
+
+        # ---- 文件处理 (仅 contract) ----
+        if file:
+            _handle_product_file_upload(db, product.policy_id, product_data['policy_owner_id'], file)
+
+        db.commit() 
+
+        return jsonify({"success": True, "message": message})
+
+    except BadRequest as e:
         db.rollback()
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"success": False, "error": str(e)}), 400
+    except Exception as e:
+        db.rollback()
+        return jsonify({"success": False, "error": str(e)}), 500
     finally:
         db.close()
 
-# 删除保单
+
+# ---------------- 工具函数 ----------------
+
+def _format_value(key, value):
+    """格式化日志记录的值"""
+    if value is None:
+        return None
+    if key in ('issue_date', 'policy_date') and isinstance(value, (datetime, date)):
+        return value.strftime("%Y-%m-%d")
+    if key in ('premium_frequency', 'policy_status'):
+        return value.value if hasattr(value, "value") else str(value)
+    return str(value)
+
+
+def _handle_product_file_upload(db, policy_id, customer_id, file):
+    """处理产品相关文件 (仅 contract 类型)"""
+    if not file.filename.lower().endswith('.pdf'):
+        raise BadRequest("Only PDF files are allowed")
+
+    file_id = str(uuid.uuid4())
+    file_name = file.filename
+    file_path = os.path.join(
+        BASE_UPLOAD_DIR, 'assursolution', 'customer',
+        str(customer_id), 'contract', f'{file_id}_{file_name}'
+    )
+
+    os.makedirs(os.path.dirname(file_path), exist_ok=True)
+    file.save(file_path)
+
+    new_file = CustomerFile(
+        customer_id=int(customer_id),
+        file_type=CustomerFileType.contract,
+        original_filename=file_name,
+        associated_event_id=policy_id,   # ✅ 绑定产品ID
+        stored_path=file_path,
+        upload_time=datetime.now(timezone.utc),
+        uploaded_by=current_user.username,
+        status=CustomerFileStatus.Active
+    )
+    db.add(new_file)
+
+
+# 删除保单 (InsuranceProduct)
 @gestionProduct_bp.route('/supprimer_product', methods=['POST'])
 @login_required
 def supprimer_product():
     db = SessionLocal()
     try:
-        policy_id = request.get_json().get('policy_id', '')
+        # 从 FormData 获取 policy_id
+        policy_id = request.form.get('policy_id')
+        if not policy_id:
+            return jsonify({'error': '缺少 policy_id 参数'}), 400
+
+        try:
+            policy_id = int(policy_id)
+        except ValueError:
+            return jsonify({'error': 'policy_id 必须是整数'}), 400
+
+        # 查询保单
         product = db.query(InsuranceProduct).filter(InsuranceProduct.policy_id == policy_id).first()
         if not product:
-            return jsonify({"error": "Product not found"}), 404
-        
+            return jsonify({"error": "未找到该保单，删除失败！"}), 404
+
+        # 查询关联文件
+        files = db.query(CustomerFile).filter(CustomerFile.associated_event_id == policy_id).all()
+
+        # 删除所有关联文件
+        for f in files:
+            try:
+                if f.stored_path and os.path.exists(f.stored_path):
+                    os.remove(f.stored_path)  # 删除物理文件
+            except Exception as file_err:
+                print(f"删除文件 {f.stored_path} 出错: {file_err}")
+
+            db.delete(f)
+
+        # 写入日志（删除操作）
         log_change(
             db=db,
             table_name='insurance_products',
@@ -302,12 +410,17 @@ def supprimer_product():
             ip_address=request.remote_addr,
             session_id=request.cookies.get('session')
         )
-        
+
+        # 删除保单记录
         db.delete(product)
         db.commit()
-        return jsonify({"message": "Product deleted successfully"})
-    except SQLAlchemyError as e:
+
+        return jsonify({"message": "保单及关联文件已删除！"})
+
+    except Exception as e:
         db.rollback()
-        return jsonify({"error": str(e)}), 500
+        print("删除失败:", e)
+        return jsonify({"error": "删除过程中出错: " + str(e)}), 500
+
     finally:
         db.close()

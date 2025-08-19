@@ -795,7 +795,7 @@ function handleFormSubmit(event) {
         }
     });
 
-    formData.append("file_id", document.getElementById("file_id")?.value || "");
+    formData.append("file_id", document.getElementById("id")?.value || "");
 
     const url = mode === 'supprimer'
         ? '/gestionFile/supprimer_file'

@@ -245,6 +245,17 @@
 
         <hr>
 
+        <div class="mb-3" id="field_liste_file">
+            <div class='row' id="fileListContainer"></div>
+        </div>
+
+        <div class="mb-3 d-none" id="field_upload">
+            <label for="fileInput" class="control-label">choisir le file:</label>
+            <input type="file" class="form-control user-field" id="fileInput" name="file" accept=".pdf">
+        </div>
+
+        <hr>
+
         <div class="col-12 submit_confirm">
             <button type="submit" class="btn btn-primary" id="submit_confirm">Soumettre</button>
         </div>
@@ -252,4 +263,29 @@
 </div>
 
 
+<div class="col-md-12">
+    <iframe id="file_edit_preview" class="d-none" style="width: 100%; height: 500px;"></iframe>
+</div>
 
+<!-- 文件预览模态框 -->
+<div class="modal fade" id="filePreviewModal" tabindex="-1" aria-labelledby="filePreviewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="filePreviewModalLabel">File View</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <div class="embed-responsive embed-responsive-16by9" style="height: 500px;">
+                    <iframe class="embed-responsive-item" id="modal_file_preview" style="width: 100%; height: 100%;"></iframe>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="btn btn-primary" id="modal_download_button" download> DownLoad </a>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"> Close </button>
+            </div>
+
+        </div>
+    </div>
+</div>

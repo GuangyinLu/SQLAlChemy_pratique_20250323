@@ -445,17 +445,77 @@ function showClientAllDetail(customer_id) {
             }
 
             if (response.data.agenda_data && response.data.agenda_data.length > 0) {
-                let customer_agenda_info ="";   
-                response.data.agenda_data.forEach(item =>{                    
+                let customer_agenda_info = `
+                    <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>Date</th>
+                            <th>Agent</th>
+                            <th>Topic</th>
+                            <th>Description</th>
+                            <th>File</th>
+                        </tr>	
+                    </thead>
+                    <tbody class="agenda_table" id="agenda_detail">
+                `;   
+    
+                response.data.agenda_data.forEach((item, index) => {
+                    // 假设 item.files 是文件数组，每个元素包含 {name, url}
+                    let fileLinks = "";
+                    if (item.files && item.files.length > 0) {
+                        fileLinks = item.files.map(file => `
+                            <div>
+                                <a href="#" class="file_agenda-link" 
+                                data-url="/gestionFile/get_file?id=${file.file_id}" 
+                                data-name="${file.original_filename}">
+                                ${file.original_filename}
+                                </a>
+                            </div>
+                        `).join("");
+                        //console.log(fileLinks,'==lgy');
+                    } else {
+                        fileLinks = "No file";
+                    }
+
                     customer_agenda_info += `
-                        <p>Date: ${item.Date}</p>
-                        <p>Agent: ${item.Agent}</p>
-                        <p>Description: ${item.Description}</p>
-                        <p>File: ${item.File}</p>
-                        `;                            
-                    });
+                        <tr data-id="${item.request_id}">
+                            <td>${index+1}</td>
+                            <td>${item.meeting_date}</td>
+                            <td>${item.Agent}</td>
+                            <td>${item.title}</td>
+                            <td>${item.Description}</td>
+                            <td>${fileLinks}</td>
+                        </tr>
+                    `;
+                });
+
+                customer_agenda_info += `</tbody></table>`;
                 document.getElementById("agenda_client").innerHTML = customer_agenda_info;
-            }   
+
+                // 绑定点击事件
+                document.querySelectorAll(".file_agenda-link").forEach(link => {
+                    link.addEventListener("click", function(e) {
+                        e.preventDefault();
+                        const fileUrl = this.getAttribute("data-url");
+                        const fileName = this.getAttribute("data-name");
+                        console.log(fileUrl);
+                        // 设置 iframe 预览
+                        document.getElementById("modal_file_preview").src = fileUrl;
+
+                        // 设置下载按钮
+                        const downloadBtn = document.getElementById("modal_download_button");
+                        downloadBtn.href = fileUrl;
+                        downloadBtn.setAttribute("download", fileName);
+
+                        // 打开模态框
+                        const modal = new bootstrap.Modal(document.getElementById("filePreviewModal"));
+                        modal.show();
+                    });
+                });
+
+            }
+
 
         })
         .catch(error => {
@@ -506,7 +566,23 @@ function handleProductRowClick(e) {
                 if (response.data.policies_data && response.data.policies_data.length > 0) {
                     let customer_policies_info = ` `;
                     let name_agent = ` `;
-                    response.data.policies_data.forEach((item,index) =>{                    
+                    response.data.policies_data.forEach((item,index) =>{  
+                        let fileLinks = "";
+                        if (item.files && item.files.length > 0) {
+                            fileLinks = item.files.map(file => `
+                                <div>
+                                    <a href="#" class="file_contract-link" 
+                                    data-url="/gestionFile/get_file?id=${file.id}" 
+                                    data-name="${file.original_filename}">
+                                    ${file.original_filename}
+                                    </a>
+                                </div>
+                            `).join("");
+                            
+                        } else {
+                            fileLinks = "No file";
+                        }
+                                        
                         customer_policies_info += `
                             <h5>Product Information</h5>
                                 <div class="row">
@@ -630,6 +706,8 @@ function handleProductRowClick(e) {
                                     </p>
                                 </div>
                             </div>
+                            <hr>
+                            <div> ${fileLinks} </div>
                             `;
                             name_agent += `<p>
                                         <strong>Agent:</strong><br>
@@ -644,6 +722,27 @@ function handleProductRowClick(e) {
 
                     document.getElementById("detail_product_sub").innerHTML = customer_policies_info; 
                     document.getElementById("name_agent").innerHTML = name_agent;
+
+                    // 绑定点击事件
+                    document.querySelectorAll(".file_contract-link").forEach(link => {
+                        link.addEventListener("click", function(e) {
+                            e.preventDefault();
+                            const fileUrl = this.getAttribute("data-url");
+                            const fileName = this.getAttribute("data-name");
+                            console.log(fileUrl);
+                            // 设置 iframe 预览
+                            document.getElementById("modal_file_preview").src = fileUrl;
+
+                            // 设置下载按钮
+                            const downloadBtn = document.getElementById("modal_download_button");
+                            downloadBtn.href = fileUrl;
+                            downloadBtn.setAttribute("download", fileName);
+
+                            // 打开模态框
+                            const modal = new bootstrap.Modal(document.getElementById("filePreviewModal"));
+                            modal.show();
+                        });
+                    });
                 }
 
             })

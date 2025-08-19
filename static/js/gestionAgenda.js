@@ -128,6 +128,16 @@ function cleanup() {
         if (el) el.innerHTML = '';
     });
 
+    // 清理模态框
+    const previewIframe = document.getElementById("modal_file_preview");
+    if (previewIframe) {
+        previewIframe.src = "";
+    }
+    const downloadButton = document.getElementById("modal_download_button");
+    if (downloadButton) {
+        downloadButton.href = "#";
+    }
+
     console.log('完成清理 gestionAgenda.js');
 }
 
@@ -222,7 +232,7 @@ function handleRowClick(row) {
     const isModMode = mode === 'modifier';
     const isDelMode = mode === 'supprimer';
 
-    const fieldOriginalName = document.getElementById('field_original_name');
+    //const fieldOriginalName = document.getElementById('field_original_name');
     const fieldUpload = document.getElementById("field_upload");
 
     const agendaInfo = document.querySelector('.agenda_info');
@@ -231,8 +241,8 @@ function handleRowClick(row) {
     if (agendaInfo) agendaInfo.classList.add('d-none');
     if (submitConfirm) submitConfirm.classList.add('d-none');
 
-    fieldOriginalName.style.display = isAddMode ? 'none' : 'block';
-    fieldUpload.style.display = isAddMode ? 'block' : 'none';
+    //fieldOriginalName.style.display = isAddMode ? 'none' : 'block';
+    fieldUpload.style.display = isModMode ? 'block' : 'none';
 
     document.getElementById('formagendaConfirmation').textContent = mode;
 
@@ -277,8 +287,8 @@ function handleRowClick(row) {
                 thead.innerHTML = `
                     <tr>
                         <th>#</th>
-                        <th>文件名</th>
-                        <th>操作</th>
+                        <th>FileName</th>
+                        <th>Operation</th>
                     </tr>
                 `;
                 table.appendChild(thead);
@@ -297,21 +307,63 @@ function handleRowClick(row) {
                     const tdName = document.createElement("td");
                     tdName.textContent = file.original_filename || "未命名文件";
 
-                    // 操作（PDF图标+链接）
+                    // 操作
                     const tdAction = document.createElement("td");
+
+                    //（PDF图标+链接）
+                    
+                    const previewIcon = document.createElement("i");
+                    previewIcon.className = "bi bi-file-earmark-pdf";
+                    previewIcon.style.color = "red";
+                    previewIcon.style.fontSize = "1.2rem";
+                    previewIcon.style.cursor = "pointer";
+                    previewIcon.style.marginRight = "8px";
+
+                    /* 点击图标 → 打开模态框预览
+                    previewIcon.addEventListener("click", () => {
+                        const fileUrl = `/gestionFile/get_file?id=${file.id}`;
+                        const modalIframe = document.getElementById("modal_file_preview");
+                        const downloadButton = document.getElementById("modal_download_button");
+
+                        modalIframe.src = fileUrl; // PDF 加载到 iframe
+                        downloadButton.href = fileUrl; // 下载按钮
+                        const modal = new bootstrap.Modal(document.getElementById("filePreviewModal"));
+                        modal.show();
+                    });*/
+
+                    // 点击图标 → 在新窗口打开
+                    previewIcon.addEventListener("click", () => {
+                        const fileUrl = `/gestionFile/get_file?id=${file.id}`;
+                        window.open(fileUrl, "_blank");
+                    });
+
+                    /* View/Download 链接
                     const link = document.createElement("a");
                     link.href = `/gestionFile/get_file?id=${file.id}`;
                     link.target = "_blank";
+                    link.textContent = "View/Download";*/
 
-                    const icon = document.createElement("i");
-                    icon.className = "bi bi-file-earmark-pdf"; // Bootstrap PDF 图标
-                    icon.style.color = "red";
-                    icon.style.fontSize = "1.2rem";
-                    icon.style.marginRight = "6px";
+                    // View/Download 链接 → 打开模态框预览
+                    const link = document.createElement("a");
+                    link.href = "#";  // 避免直接跳转
+                    link.textContent = "View/Download";
+                    link.style.cursor = "pointer";
 
-                    link.appendChild(icon);
-                    link.appendChild(document.createTextNode("View/Download"));
+                    link.addEventListener("click", (e) => {
+                        e.preventDefault();
+                        const fileUrl = `/gestionFile/get_file?id=${file.id}`;
+                        const modalIframe = document.getElementById("modal_file_preview");
+                        const downloadButton = document.getElementById("modal_download_button");
+
+                        modalIframe.src = fileUrl; // PDF 加载到 iframe
+                        downloadButton.href = fileUrl; // 下载按钮
+                        const modal = new bootstrap.Modal(document.getElementById("filePreviewModal"));
+                        modal.show();
+                    });
+
+                    // 组合
                     tdAction.appendChild(link);
+                    tdAction.appendChild(previewIcon);
 
                     tr.appendChild(tdIndex);
                     tr.appendChild(tdName);
@@ -348,23 +400,36 @@ function handleFormSubmit(e) {
     const action = document.querySelector('input[name="agenda_optradio"]:checked')?.value;
     if (!action || action === 'vue') return;
 
-    const para_json = {};
-    if (action === 'modifier') {
-        para_json.log_agenda_id = document.getElementById('log_agenda_id')?.textContent.trim() || '';
-        para_json.customer_id = document.getElementById('customer_id')?.value || '';
-        para_json.agent_id = document.getElementById('agent_id')?.value || '';
-        para_json.title = document.getElementById('title')?.value || '';
-        para_json.description = document.getElementById('description')?.value || '';
-        para_json.meeting_date = document.getElementById('meeting_date')?.value || '';
-    } else if (action === 'ajouter') {
-        para_json.customer_id = document.getElementById('customer_id')?.value || '';
-        para_json.agent_id = document.getElementById('agent_id')?.value || '';
-        para_json.title = document.getElementById('title')?.value || '';
-        para_json.description = document.getElementById('description')?.value || '';
-        para_json.meeting_date = document.getElementById('meeting_date')?.value || '';
-    } else if (action === 'supprimer') {
-        para_json.query = document.getElementById('log_agenda_id')?.textContent.trim() || '';
-    }
+    const para_json = new FormData;
+    const requiredFields = [];
+
+    document.querySelectorAll('.agenda_field').forEach(element => {
+        const key = element.name || element.id; // 关键：优先取 name
+
+        if (element.id === 'original_filename_link') {
+            return; // 跳过链接元素，使用隐藏的 input
+        }
+
+        if (element.type === 'file') {
+            if (element.files.length > 0) {
+                para_json.append(key, element.files[0]); // 文件对象
+
+            } else if (requiredFields.includes(key)) {
+                showError(`字段 ${element.previousElementSibling?.textContent || key} 为必填项。`);
+                throw new Error(`字段 ${key} 为必填项。`);
+            }
+        } else if (element.tagName === 'SELECT') {
+            para_json.append(key, element.value);
+        } else if (element.type === 'checkbox' || element.type === 'radio') {
+            para_json.append(key, element.checked);
+        } else {
+            if (requiredFields.includes(key) && !element.value) {
+                showError(`字段 ${element.previousElementSibling?.textContent || key} 为必填项。`);
+                throw new Error(`字段 ${key} 为必填项。`);
+            }
+            para_json.append(key, element.value);
+        }
+    });
 
     const url = action === 'supprimer' ? '/gestionAgenda/supprimer_Agenda' : 
                 action === 'modifier' ? '/gestionAgenda/save_Agenda' : 
@@ -403,15 +468,11 @@ function handleRadioChange() {
     const isAddMode = mode === 'ajouter';
     const isModMode = mode === 'modifier';
     const isDelMode = mode === 'supprimer';
-    //console.log(mode,'lgy==')
 
-    const fieldOriginalName = document.getElementById('field_original_name');
     const fieldUpload = document.getElementById("field_upload");
 
-    //if (agendaInfo) agendaInfo.classList.add('d-none');
     if (submitConfirm) submitConfirm.classList.add('d-none');
 
-    fieldOriginalName.style.display = isAddMode ? 'none' : 'block';
     fieldUpload.style.display = isAddMode ? 'block' : 'none';
 
     document.getElementById('formagendaConfirmation').textContent = mode;
@@ -419,6 +480,7 @@ function handleRadioChange() {
     if (isAddMode) {
         if (agendaInfo) agendaInfo.classList.remove('d-none');
         if (submitConfirm) submitConfirm.classList.remove('d-none');
+        document.getElementById("fileListContainer").innerHTML = "";
         document.getElementById('affiche_search').classList.add('d-none');
     } 
     
@@ -539,6 +601,7 @@ function resetInterface() {
     }
 
     document.getElementById("searchBox_agengda").value = "";
+    document.getElementById("fileListContainer").innerHTML = "";
     handleRadioChange();
 }
 
