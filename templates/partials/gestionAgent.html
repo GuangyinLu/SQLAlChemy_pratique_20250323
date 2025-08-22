@@ -1,119 +1,124 @@
-<div class="main">
-    <h1>Gestion de Agent</h1>
-    
-        <div class="border-top p-1 affiche_select affiche">
-            <div class="option_action mb-3">
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="optradio" id="vue" value="vue">
-                    <label class="form-check-label" for="vue">Vue</label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="optradio" id="modifier" value="modifier">
-                    <label class="form-check-label" for="modifier">Modifier</label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="optradio" id="ajouter" value="ajouter">
-                    <label class="form-check-label" for="ajouter">Ajouter</label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="optradio" id="supprimer" value="supprimer">
-                    <label class="form-check-label" for="supprimer">Supprimer</label>
-                </div>
-            </div>
 
-            <div class="search_user">
-                <input type="text" class="form-control" id="searchBox_agent" placeholder="Recherche (Name, Phone, Email...)">
-                <table class="table agent_search-table">
-                    <thead id="search_agent_results_title"></thead>
-                    <tbody id="search_agent_results"></tbody>
-                </table>
-            </div>
+<h3>Gestion de Agent!</h3>
+
+<div class="border-top p-1 affiche_select affiche">
+    <div class="option_action row mb-3">
+        <div class="form-check col-md-1">
+            <input class="form-check-input" type="radio" name="optradio" id="vue" value="vue">
+            <label class="form-check-label" for="vue">Vue</label>
         </div>
-
-        <div class="border-top p-1 agent_info affiche_action d-none">
-            <form id="agent-form" class="row g-3">
-                
-                <div class="col-12 mb-3">
-                    <button type="button" class="btn btn-primary float-end" id="return_gestionAgent">↩ Retour</button>
-                </div>
-
-                <div class="row">
-                    
-                    <div class="form-group col-md-3" id="row_agent_id">
-                        <label for="agent_id" class="col-form-label">Agent ID</label>
-                        <div class="d-flex">
-                            <input type="text" class="form-control user-field" id="agent_id" disabled>
-                        </div>
-                    </div>
-                    <div class="form-group col-md-3">
-                        <label for="name_first" class="col-form-label">First Name</label>
-                        <div class="d-flex">
-                            <input type="text" class="form-control user-field" id="name_first" required>
-                            <span class="edit-toggle d-none">✏️</span>
-                        </div>
-                    </div>
-                    <div class="form-group col-md-3">
-                        <label for="name_middle" class="col-form-label">Middle Name</label>
-                        <div class="d-flex">
-                            <input type="text" class="form-control user-field" id="name_middle">
-                            <span class="edit-toggle d-none">✏️</span>
-                        </div>
-                    </div>
-                    <div class="form-group col-md-3">
-                        <label for="name_last" class="col-form-label">Last Name</label>
-                        <div class="d-flex">
-                            <input type="text" class="form-control user-field" id="name_last" required>
-                            <span class="edit-toggle d-none">✏️</span>
-                        </div>
-                    </div>
-                </div>
-
-                <hr>
-
-                <div class="row">
-                    <div class="form-group col-md-6">
-                        <label for="phone" class="col-form-label">Phone</label>
-                        <div class="d-flex">
-                            <input type="text" class="form-control user-field" id="phone" required>
-                            <span class="edit-toggle d-none">✏️</span>
-                        </div>
-                    </div>
-                    <div class="form-group col-md-6">
-                        <label for="email" class="col-form-label">Email</label>
-                        <div class="d-flex">
-                            <input type="email" class="form-control user-field" id="email" required>
-                            <span class="edit-toggle d-none">✏️</span>
-                        </div>
-                    </div>
-                </div>
-
-                <hr>
-
-                <div class="form-group row">
-                    <label for="address" class="col-sm-2 col-form-label">Address</label>
-                    <div class="col-sm-9 d-flex">
-                        <input type="text" class="form-control user-field" id="address">
-                        <span class="edit-toggle d-none">✏️</span>
-                    </div>
-                </div>
-
-                <hr>
-
-                <div class="form-group row">
-                    <label for="commission_rate" class="col-sm-4 col-form-label">Commission Rate</label>
-                    <div class="col-sm-2 d-flex">
-                        <input type="text" class="form-control user-field" id="commission_rate">
-                        <span class="edit-toggle d-none">✏️</span>
-                    </div>
-                </div>
-
-                <hr>
-
-                <div class="submit_confirm">
-                    <button type="submit" class="btn btn-primary btn-user" id="submit_confirm">Confirmation</button>
-                </div>
-            </form>
+        <div class="form-check col-md-1">
+            <input class="form-check-input" type="radio" name="optradio" id="modifier" value="modifier">
+            <label class="form-check-label" for="modifier">Modifier</label>
         </div>
+        <div class="form-check col-md-1">
+            <input class="form-check-input" type="radio" name="optradio" id="ajouter" value="ajouter">
+            <label class="form-check-label" for="ajouter">Ajouter</label>
+        </div>
+        <div class="form-check col-md-1">
+            <input class="form-check-input" type="radio" name="optradio" id="supprimer" value="supprimer">
+            <label class="form-check-label" for="supprimer">Supprimer</label>
+        </div>
+    </div>
 
-    
+    <div class="search_user">
+        <input type="text" class="form-control" id="searchBox_agent" placeholder="Recherche (Name, Phone, Email...)">
+        <table class="table table-hover agent_search-table">
+            <thead id="search_agent_results_title"></thead>
+            <tbody id="search_agent_results"></tbody>
+        </table>
+    </div>
 </div>
+
+<div class="border-top p-1 agent_info affiche_action d-none">
+    <form id="agent-form" class="row g-3">
+        
+        <div class="col-12 mb-3">
+            <button type="button" class="btn btn-primary float-end" id="return_gestionAgent">↩ Retour</button>
+        </div>
+
+        <div class="row">
+            <!--
+            <div class="mb3 col-md-3" id="row_agent_id">
+                <label for="agent_id" class="col-form-label">Agent ID</label>
+                <div class="d-flex">
+                    <input type="text" class="form-control user-field" id="agent_id" disabled readonly>
+                </div>
+            </div>
+            -->
+            <div class="mb3">
+                <input type="hidden" class="form-control user-field" id="agent_id" disabled readonly>
+            </div>
+
+
+            <div class="mb3 col-md-3">
+                <label for="name_first" class="col-form-label">First Name</label>
+                <div class="d-flex">
+                    <input type="text" class="form-control user-field" id="name_first" required>
+                    <span class="edit-toggle d-none">✏️</span>
+                </div>
+            </div>
+            <div class="mb3 col-md-3">
+                <label for="name_middle" class="col-form-label">Middle Name</label>
+                <div class="d-flex">
+                    <input type="text" class="form-control user-field" id="name_middle">
+                    <span class="edit-toggle d-none">✏️</span>
+                </div>
+            </div>
+            <div class="mb3 col-md-3">
+                <label for="name_last" class="col-form-label">Last Name</label>
+                <div class="d-flex">
+                    <input type="text" class="form-control user-field" id="name_last" required>
+                    <span class="edit-toggle d-none">✏️</span>
+                </div>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="row">
+            <div class="mb3 col-md-6">
+                <label for="phone" class="col-form-label">Phone</label>
+                <div class="d-flex">
+                    <input type="text" class="form-control user-field" id="phone" required>
+                    <span class="edit-toggle d-none">✏️</span>
+                </div>
+            </div>
+            <div class="mb3 col-md-6">
+                <label for="email" class="col-form-label">Email</label>
+                <div class="d-flex">
+                    <input type="email" class="form-control user-field" id="email" required>
+                    <span class="edit-toggle d-none">✏️</span>
+                </div>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="mb3 row">
+            <label for="address" class="col-sm-2 col-form-label">Address</label>
+            <div class="col-sm-9 d-flex">
+                <input type="text" class="form-control user-field" id="address">
+                <span class="edit-toggle d-none">✏️</span>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="mb3 row">
+            <label for="commission_rate" class="col-sm-4 col-form-label">Commission Rate</label>
+            <div class="col-sm-2 d-flex">
+                <input type="text" class="form-control user-field" id="commission_rate">
+                <span class="edit-toggle d-none">✏️</span>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="submit_confirm">
+            <button type="submit" class="btn btn-primary btn-user" id="submit_confirm">Confirmation</button>
+        </div>
+    </form>
+</div>
+
+

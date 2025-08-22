@@ -1,16 +1,36 @@
+.user-field {
+border: none;
+border-bottom: 1px solid #ced4da; /* 边框颜色可以根据需要调整 */
+border-radius: 0; /* 移除圆角，使下边框更平直 */
+}
+
+/* 悬停和聚焦时的样式，使其更具交互性 */
+.user-field:hover,
+.user-field:focus {
+border-bottom-color: #0d6efd; /* 悬停和聚焦时变为蓝色 */
+box-shadow: none; /* 移除默认的蓝色阴影 */
+}
+
+/* 专门针对被禁用的 .user-field 元素 */
+.user-field:disabled {
+/* 覆盖掉浏览器和 Bootstrap 的默认样式 */
+background-color: transparent; /* 或者你想要的背景颜色 */
+opacity: 1; /* 恢复完全不透明 */
+
+/* 应用你想要的下边框样式 */
+border-bottom: 1px solid #ced4da;
+}
+
+
+/*
 .main {
     height: 92%;
 }
 
 .affiche_search, .affiche_agenda {
-    /*height: 80%;*/
     height: 70vh;
     display: block;
     overflow: auto;
-    /*justify-content: center;
-    align-items: center;
-    text-align: center;
-    justify-items: center;*/
 }
 
 .form-check {
@@ -47,11 +67,11 @@
 
 .table tr:hover {
     background-color: #bfc1d8;
-    color: #ff0000; /* 字体颜色变为红色 */
+    color: #ff0000; 
     cursor: pointer;
 }
 
-/* 可选：点击后的样式 */
+
 .table tr:active {
     background-color: #e0e0e0;
 }

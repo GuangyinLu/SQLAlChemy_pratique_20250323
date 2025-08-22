@@ -88,7 +88,7 @@ class MenuItem(Base):
     js_name = Column(String(100))
     icon_class  = Column(String(50))
     display_order  = Column(Integer, default=0)
-    is_active  = Column(Boolean, default=True)
+    is_active  = Column(Boolean, default=True, nullable=False)
     menu_niveau  = Column(Integer, default=1)
 
 
@@ -96,11 +96,11 @@ class MenuItem(Base):
 class User(Base, UserMixin):
     __tablename__ = 'users'
     __table_args__ = {'mysql_engine': 'InnoDB'}
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     username = Column(String(80), unique=True, nullable=False)
     password_hash = Column(String(200), nullable=False)
-    #role = Column(Enum('user', 'agent','admin',  name="role_enum"), nullable=False)
     role = Column(SQLAEnum(RoleEnum,  name="role_enum"), nullable=False)
+    agent_id = Column(Integer)
     last_active_time = Column(DateTime, default=lambda:datetime.now(timezone.utc))
     
     @property

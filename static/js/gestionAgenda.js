@@ -280,7 +280,7 @@ function handleRowClick(row) {
             if (files.length > 0) {
                 // 创建表格
                 const table = document.createElement("table");
-                table.className = "table table-bordered table-sm mt-3";
+                table.className = "table table-hover table-sm mt-3";
 
                 // 表头
                 const thead = document.createElement("thead");
@@ -403,7 +403,7 @@ function handleFormSubmit(e) {
     const para_json = new FormData;
     const requiredFields = [];
 
-    document.querySelectorAll('.agenda_field').forEach(element => {
+    document.querySelectorAll('.user-field').forEach(element => {
         const key = element.name || element.id; // 关键：优先取 name
 
         if (element.id === 'original_filename_link') {
@@ -470,10 +470,14 @@ function handleRadioChange() {
     const isDelMode = mode === 'supprimer';
 
     const fieldUpload = document.getElementById("field_upload");
+    fieldUpload.style.display = isAddMode ? 'block' : 'none';
 
     if (submitConfirm) submitConfirm.classList.add('d-none');
 
-    fieldUpload.style.display = isAddMode ? 'block' : 'none';
+    document.querySelectorAll('.user-field').forEach(el => {
+        el.disabled = isViewMode || mode === 'supprimer';
+        if (mode === 'ajouter') el.disabled = false;
+    });
 
     document.getElementById('formagendaConfirmation').textContent = mode;
 

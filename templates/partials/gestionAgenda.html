@@ -1,34 +1,34 @@
 
 
-<h2>Gestion Agenda!</h2>            
+<h3>Gestion Agenda!</h3>            
 
-<div class="border p-3 affiche_search" id="affiche_search">
+<div class="border-top p-1 affiche_search" id="affiche_search">
 
-    <div class="option_action">
-        <div class="form-check">
+    <div class="option_action row mb-3">
+        <div class="form-check col-md-1">
             <input type="radio" class="form-check-input" id="radio1" name="agenda_optradio" value="vue" checked>
             <label class="form-check-label" for="radio1">Vue</label>
         </div>
-        <div class="form-check">
+        <div class="form-check col-md-1">
             <input type="radio" class="form-check-input" id="radio2" name="agenda_optradio" value="modifier">
             <label class="form-check-label" for="radio2">Modifier</label>
         </div>
-        <div class="form-check">
+        <div class="form-check col-md-1">
             <input type="radio" class="form-check-input" id="radio3" name="agenda_optradio" value="ajouter">
             <label class="form-check-label" for="radio3">Ajouter</label>
         </div>
-        <div class="form-check">
+        <div class="form-check col-md-1">
             <input type="radio" class="form-check-input" id="radio4" name="agenda_optradio" value="supprimer">
             <label class="form-check-label" for="radio4">Supprimer</label>
         </div>
     </div>
 
     <div class="search_agenda">
-        <label>Recherche (Nom,Phone,Agenda...) </label>
-        <input type="text" id="searchBox_agengda" placeholder="Recherche...">
+        <label for="searchBox_agengda">Recherche (Nom,Phone,Agenda...) </label>
+        <input type="text" id="searchBox_agengda" class="form-control" placeholder="Recherche...">
     </div>
                         
-    <table class="table table-bordered table-striped">
+    <table class="table table-hover">
         <thead>
             <tr id="search_agenda_results_title"></tr>
         </thead>
@@ -39,116 +39,129 @@
 
 </div>
 
-<form id="agenda-form" class="form-horizontal agenda_info d-none row ms-2 border p-3 affiche_agenda">
+<form id="agenda-form" class="agenda_info d-none row border-top p-1 affiche_agenda g-3 mt-3">
 
     <div class="col-12 mb-3">
         <button type="button" class="btn btn-primary float-end" id="return_gestionAgenda">↩ Retour</button>
     </div>
 
     <div class="row">
-        <div class="form-group col-md-6 row">
+        <!--
+        <div class="mb3 col-md-6 row">
             <label for="log_agenda_id" class="col-md-4 control-label">log_agenda_id</label>
             <div class="col-md-6">
-                <input type="number" class="form-control agenda_field" name="log_agenda_id" id="log_agenda_id" disabled>
+                <input type="number" class="form-control user-field" name="log_agenda_id" id="log_agenda_id" disabled>
             </div>
+        </div>
+        -->
+        <div class="mb3">
+                <input type="hidden" class="form-control user-field" name="log_agenda_id" id="log_agenda_id" disabled readonly>
         </div>
     </div>
 
-    <hr>
-
-    <div class="row">
-        <div class="form-group col-md-6 row">
+     <div class="row">
+        <div class="mb3 col-md-6 row">
             <label for="customer_name" class="col-md-4 control-label">Customer_name</label>
             <div class="col-md-8 position-relative">
-                <input type="text" class="form-control search_suggestions agenda_field" name="customer_name" 
+                <input type="text" class="form-control search_suggestions user-field" name="customer_name" 
                     id="customer_name" autocomplete="off" 
                     data-param1='customer_name' data-param2='suggestions_customer' data-param3='customer_id' data-param4='/gestionAgenda/search_customer' >
                 <div id="suggestions_customer" class="list-group position-absolute w-100 shadow d-none" ></div>
             </div>
         
         </div>
-        <div class="form-group col-md-6 row">
+        <!--
+        <div class="mb3 col-md-6 row">
             <label for="customer_id" class="col-md-3 control-label offset-md-1">Customer_id</label>
             <div class="col-md-6">
-                <input type="number" class="form-control agenda_field" name="customer_id" id="customer_id" disabled>
+                <input type="number" class="form-control user-field" name="customer_id" id="customer_id" disabled>
             </div>
+        </div>
+        -->
+        <div class="mb3">
+            <input type="hidden" class="form-control user-field" name="customer_id" id="customer_id" disabled readonly>
         </div>
     </div>
 
-    <hr>
+    
 
     <div class="row">
-        <div class="form-group col-md-12 row">
+        <div class="mb3 col-md-12 row">
             <label for="title" class="col-md-2 control-label">Title</label>
             <div class="col-md-8">
-                <input type="text" class="form-control agenda_field w-100" name="title" id="title">
+                <input type="text" class="form-control user-field w-100" name="title" id="title">
             </div>
         </div>
     </div>
 
-    <hr>
+    
 
     <div class="row">
-        <div class="form-group col-md-12 row">
+        <div class="mb3 col-md-12 row">
             <label for="description" class="col-md-2 control-label">description</label>
             <div class="col-md-8">
-                <textarea id="description" class="form-control agenda_field w-100" rows="5" cols="62" ></textarea>    
+                <textarea id="description" class="form-control user-field w-100" rows="5" cols="62" ></textarea>    
             </div>
         </div>
     </div>
 
-    <hr>
+    
 
     <div class="row">
-        <div class="form-group col-md-6 row">
+        <div class="mb3 col-md-6 row">
             <label for="agent_name" class="col-md-4 control-label">Agent Name</label>
             <div class="col-md-8 position-relative">
-                <input type="text" class="form-control search_suggestions agenda_field" name="agent_name" 
+                <input type="text" class="form-control search_suggestions user-field" name="agent_name" 
                 id="agent_name" autocomplete="off" 
                 data-param1='agent_name' data-param2='suggestions_agent' data-param3='agent_id' data-param4='/gestionAgenda/search_agent' >
                 <div id="suggestions_agent" class="list-group position-absolute w-100 shadow d-none" ></div>
             </div>
         </div>
-        <div class="form-group col-md-6 row">
+        <!--
+        <div class="mb3 col-md-6 row">
             <label for="agent_id" class="col-md-3 offset-md-1 control-label">Agent_id</label>
             <div class="col-md-6">
-                <input type="number" class="form-control agenda_field" name="agent_id" id="agent_id" disabled>
+                <input type="number" class="form-control user-field" name="agent_id" id="agent_id" disabled>
             </div>
         </div>
-    </div>
-
-    <hr>
-
-    <div class="form-group row">
-        <label for="meeting_date" class="col-md-2 control-label">meeting_date</label>
-        <div class="col-md-8 position-relative">
-            <input type="date" class="form-control agenda_field" id="meeting_date" >
+        -->
+        <div class="mb3">
+            <input type="hidden" class="form-control user-field" name="agent_id" id="agent_id" disabled readonly>
         </div>
     </div>
 
-    <hr>
+    
 
-    <div class="mb-3 form-group" id="field_original_name">
+    <div class="mb3 row">
+        <label for="meeting_date" class="col-md-2 control-label">meeting_date</label>
+        <div class="col-md-8 position-relative">
+            <input type="date" class="form-control user-field" id="meeting_date" >
+        </div>
+    </div>
+
+    
+
+    <div class="mb-3 mb3" id="field_original_name">
         <!--
         <label for="original_filename" class="control-label">Original Filename</label>
         <div class="d-flex">
-            <a href="#" class="form-control file-preview-link agenda_field" id="original_filename_link" 
+            <a href="#" class="form-control file-preview-link user-field" id="original_filename_link" 
                 data-file_id="" data-filename="" style="text-decoration: none; color: #007bff;" disabled readonly> Click Preview </a>
-            <input type="hidden" class="form-control agenda_field" id="original_filename" name="original_filename" disabled readonly>
+            <input type="hidden" class="form-control user-field" id="original_filename" name="original_filename" disabled readonly>
         </div>-->
         <div class='row' id="fileListContainer"></div>
     </div>
 
-    <div class="mb-3 form-group" id="field_upload">
+    <div class="mb-3 mb3" id="field_upload">
         <label for="fileInput" class="control-label">choisir le file:</label>
-        <input type="file" class="form-control agenda_field" id="fileInput" name="file" accept=".pdf">
+        <input type="file" class="form-control user-field" id="fileInput" name="file" accept=".pdf">
     </div>
     <input type="hidden" id="clientId" name="client_id">
     
 
-    <hr>
+    
 
-    <div class="form-group submit_confirmation d-none">
+    <div class="mb3 submit_confirmation d-none">
         <div class="col-md-offset-2 col-md-10 btn-user">
             <button type="submit" class="btn btn-default btn-danger border btn-user-conf" id="formagendaConfirmation">Confirmation</button>
         </div>

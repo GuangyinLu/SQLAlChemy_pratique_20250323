@@ -31,11 +31,12 @@
 
 .table tr:hover {
     background-color: #bfc1d8;
-    color: #ff0000; /* 字体颜色变为红色 */
+    color: #ff0000; 
     cursor: pointer;
 }
 
 /* 可选：点击后的样式 */
+
 .table tr:active {
     background-color: #e0e0e0;
 }

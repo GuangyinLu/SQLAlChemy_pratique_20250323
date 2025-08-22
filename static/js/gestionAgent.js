@@ -144,25 +144,19 @@ function handleModeChange() {
 
     const searchUser = document.querySelector('.affiche_select');
     const submitConfirm = document.querySelector('.submit_confirm');
-    const rowAgentId = document.getElementById('row_agent_id');
     const submitButton = document.getElementById('submit_confirm');
 
-    if (!searchUser || !submitConfirm || !rowAgentId || !submitButton) {
+    if (!searchUser || !submitConfirm || !submitButton) {
         console.error("缺少必要元素:", {
             searchUser: !searchUser,
             submitConfirm: !submitConfirm,
-            rowAgentId: !rowAgentId,
             submitButton: !submitButton
         });
         return;
     }
 
-    // console.log("mode=",mode);
-    // console.log("mode=",mode);
-
     searchUser.style.display = isAddMode ? 'none' : 'block';
     submitConfirm.style.display = isViewMode ? 'none' : 'block';
-    rowAgentId.style.display = isAddMode ? 'none' : 'block';
     submitButton.innerHTML = mode === 'vue' ? 'Voir' : mode === 'ajouter' ? 'Ajouter' : mode === 'modifier' ? 'Modifier' : 'Supprimer';
     // console.log("search",searchUser.style.display);
     // console.log("submit=",submitConfirm.style.display);

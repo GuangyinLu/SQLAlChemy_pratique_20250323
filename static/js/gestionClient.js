@@ -112,7 +112,7 @@ function handleModeChange() {
   // 控制显示
   document.querySelector('.search_user').style.display = isAddMode ? 'none' : 'block';
   document.querySelector('.submit_confirm').style.display = isViewMode ? 'none' : 'block';
-  document.getElementById('row_customer_id').style.display = isAddMode ? 'none' : 'flex';
+  //document.getElementById('row_customer_id').style.display = isAddMode ? 'none' : 'flex'; //hidden customer_id
   document.getElementById("submit_confirm").innerHTML = mode;
 
   // 控制输入框状态

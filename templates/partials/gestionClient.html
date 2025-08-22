@@ -1,23 +1,23 @@
-<div class="main">
+
     
-    <h2>Gestion de Clients!</h2>
+    <h3>Gestion de Clients</h3>
     
         <!-- Left: 操作 + 搜索 + 结果 -->
         <div class="border-top p-1 affiche affiche_select">
-          <div class="option_action mb-3">
-            <div class="form-check">
+          <div class="option_action mb-3 row">
+            <div class="form-check col-md-1">
               <input type="radio" class="form-check-input" id="radio1" name="optradio_client" value="vue" checked>
               <label class="form-check-label" for="radio1">Vue</label>
             </div>
-            <div class="form-check">
+            <div class="form-check col-md-1">
               <input type="radio" class="form-check-input" id="radio2" name="optradio_client" value="modifier">
               <label class="form-check-label" for="radio2">Modifier</label>
             </div>
-            <div class="form-check">
+            <div class="form-check col-md-1">
               <input type="radio" class="form-check-input" id="radio3" name="optradio_client" value="ajouter">
               <label class="form-check-label" for="radio3">Ajouter</label>
             </div>
-            <div class="form-check">
+            <div class="form-check col-md-1">
               <input type="radio" class="form-check-input" id="radio4" name="optradio_client" value="supprimer">
               <label class="form-check-label" for="radio4">Supprimer</label>
             </div>
@@ -28,12 +28,14 @@
             <input type="text" id="searchBox" class="form-control" placeholder="Recherche...">
           </div>
   
-          <table class="table table-bordered table-striped client_search-table">
+          <table class="table table-hover client_search-table">
             <thead id="search_results_title"></thead>
             <tbody id="search_results"></tbody>
             <!-- AJAX 动态填充 -->
           </table>
         </div>
+
+        
   
         <!-- Right: 表单 -->
         <div class="border-top p-1 affiche affiche_action d-none">
@@ -44,23 +46,29 @@
 
             <!-- 每个字段都添加 user-field 类和 ✏️按钮 -->
             <div class="row">
-                <div class="form-group col-md-3" id="row_customer_id">
+                <!--
+                <div class="mb3 col-md-3" id="row_customer_id">
                     <label for="customer_id" class="control-label">Customer_ID</label>
                     <div class="d-flex">
                         <input type="number" class="form-control user-field" id="customer_id" disabled>
                     </div>
                 </div>
+                -->
+                <div class="mb3">
+                    <input type="hidden" class="form-control user-field" id="customer_id" disabled>
+                </div>
                 
                 <!-- 示例：带编辑按钮 -->
-                <div class="form-group col-md-3 row ">
+                <div class="mb3 col-md-3 row ">
                     <label for="name_first" class="control-label">Name_first *</label>
                     <div class="d-flex">
                         <input type="text" class="form-control user-field" id="name_first" disabled>
                         <span class="edit-toggle d-none" >✏️</span>
                     </div>
                 </div>
+
             
-                <div class="form-group col-md-3 row">
+                <div class="mb3 col-md-3 row">
                     <label for="name_middle" class="control-label">Name_middle</label>
                     <div class="d-flex">
                         <input type="text" class="form-control user-field" id="name_middle" disabled>
@@ -68,7 +76,7 @@
                     </div>
                 </div>
             
-                <div class="form-group col-md-3 row">
+                <div class="mb3 col-md-3 row">
                     <label for="name_last" class="control-label">Name_last *</label>
                     <div class="d-flex">
                         <input type="text" class="form-control user-field" id="name_last" disabled>
@@ -80,7 +88,7 @@
             <hr>
 
             <div class="row">
-                <div class="form-group col-md-3 row">
+                <div class="mb3 col-md-3 row">
                 <label for="goes_by" class="control-label">goes_by</label>
                 <div class="d-flex">
                     <input type="text" class="form-control user-field" id="goes_by" disabled>
@@ -89,7 +97,7 @@
                 </div>
                 
                 
-                <div class="form-group col-md-3 row">
+                <div class="mb3 col-md-3 row">
                 <label for="gender" class="control-label">Gendre *</label>
                 <div class="d-flex">
                     <select class="form-control user-field" id="gender" disabled>
@@ -101,7 +109,7 @@
                 </div>
                 </div>
                 
-                <div class="form-group col-md-3 row">
+                <div class="mb3 col-md-3 row">
                 <label for="date_of_birth" class="control-label">Birth_Day *</label>
                 <div class=" d-flex">
                     <input type="date" class="form-control user-field" id="date_of_birth" disabled>
@@ -109,7 +117,7 @@
                 </div>
                 </div>
                 
-                <div class="form-group col-md-3 row">
+                <div class="mb3 col-md-3 row">
                 <label for="language" class="control-label">language</label>
                 <div class=" d-flex">
                     <input type="tel" class="form-control user-field" id="language" disabled>
@@ -121,7 +129,7 @@
             <hr>
 
             <div class="row">
-                <div class="form-group col-md-3 row">
+                <div class="mb3 col-md-3 row">
                 <label for="marital_status" class="control-label">marital_status</label>
                 <div class=" d-flex">
                     <input type="text" class="form-control user-field" id="marital_status" disabled>
@@ -129,7 +137,7 @@
                 </div>
                 </div>
                 
-                <div class="form-group col-md-3 row">
+                <div class="mb3 col-md-3 row">
                 <label for="smoking_status" class="control-label">smoking_status</label>
                 <div class=" d-flex">
                     <input type="text" class="form-control user-field" id="smoking_status" disabled>
@@ -137,7 +145,7 @@
                 </div>
                 </div>
                 
-                <div class="form-group col-md-3 row">
+                <div class="mb3 col-md-3 row">
                 <label for="province_of_tax" class="control-label">province_of_tax</label>
                 <div class=" d-flex">
                     <input type="text" class="form-control user-field" id="province_of_tax" disabled>
@@ -145,7 +153,7 @@
                 </div>
                 </div>
                 
-                <div class="form-group col-md-3 row">
+                <div class="mb3 col-md-3 row">
                 <label for="power_of_attorney" class="control-label">power_of_attorney</label>
                 <div class=" d-flex">
                     <input type="text" class="form-control user-field" id="power_of_attorney" disabled>
@@ -157,7 +165,7 @@
             <hr>
 
             <div class="row">
-                <div class="form-group col-md-4 row">
+                <div class="mb3 col-md-4 row">
                 <label for="phone" class="control-label">Phone *</label>
                 <div class="d-flex">
                     <input type="tel" class="form-control user-field" id="phone" disabled>
@@ -165,7 +173,7 @@
                 </div>
                 </div>
                 
-                <div class="form-group col-md-4 row">
+                <div class="mb3 col-md-4 row">
                 <label for="phone_work" class="control-label">phone_work</label>
                 <div class="d-flex">
                     <input type="tel" class="form-control user-field" id="phone_work" disabled>
@@ -173,7 +181,7 @@
                 </div>
                 </div>
                 
-                <div class="form-group col-md-4 row">
+                <div class="mb3 col-md-4 row">
                 <label for="phone_home" class="control-label">phone_home</label>
                 <div class="d-flex">
                     <input type="tel" class="form-control user-field" id="phone_home" disabled>
@@ -185,7 +193,7 @@
             <hr>
 
             <div class="row">
-                <div class="form-group col-md-4 row">
+                <div class="mb3 col-md-4 row">
                 <label for="id_card_number" class="control-label">Number_Card_ID *</label>
                 <div class="d-flex">
                     <input type="text" class="form-control user-field" id="id_card_number" disabled>
@@ -193,7 +201,7 @@
                 </div>
                 </div>
 
-                <div class="form-group col-md-4 row">
+                <div class="mb3 col-md-4 row">
                 <label for="email" class="control-label">Email</label>
                 <div class="d-flex">
                     <input type="email" class="form-control user-field" id="email" disabled>
@@ -201,7 +209,7 @@
                 </div>
                 </div>
                 
-                <div class="form-group col-md-4 row">
+                <div class="mb3 col-md-4 row">
                 <label for="email_secondary" class="control-label">email_secondary</label>
                 <div class="d-flex">
                     <input type="email" class="form-control user-field" id="email_secondary" disabled>
@@ -213,7 +221,7 @@
             <hr>
 
             <div class="row">
-                <div class="form-group col-md-5 row">
+                <div class="mb3 col-md-5 row">
                 <label for="address" class="control-label">Address</label>
                 <div class="d-flex">
                     <input type="text" class="form-control user-field" id="address" disabled>
@@ -221,7 +229,7 @@
                 </div>
                 </div>
                 
-                <div class="form-group col-md-5 row">
+                <div class="mb3 col-md-5 row">
                 <label for="address_on_file" class="control-label">address_on_file</label>
                 <div class="d-flex">
                     <input type="text" class="form-control user-field" id="address_on_file" disabled>
@@ -229,7 +237,7 @@
                 </div>
                 </div>
 
-                <div class="form-group col-md-2 row">
+                <div class="mb3 col-md-2 row">
                     <label for="status" class="control-label">status</label>
                     <div class=" d-flex">
                         <input type="text" class="form-control user-field" id="status" disabled>
@@ -241,7 +249,7 @@
             <hr>
 
             <div class="row">
-                <div class="form-group col-md-4 row">
+                <div class="mb3 col-md-4 row">
                     <label for="aum_Assets_and_Income" class="control-label">aum_Assets_and_Income</label>
                     <div class=" d-flex">
                         <input type="number" class="form-control user-field" id="aum_Assets_and_Income" disabled>
@@ -249,7 +257,7 @@
                     </div>
                 </div>
                 
-                <div class="form-group col-md-4 row">
+                <div class="mb3 col-md-4 row">
                     <label for="netWorth_Assets_and_Income" class="control-label">netWorth_Assets_and_Income</label>
                     <div class="d-flex">
                         <input type="number" class="form-control user-field" id="netWorth_Assets_and_Income" disabled>
@@ -257,7 +265,7 @@
                     </div>
                 </div>
                 
-                <div class="form-group col-md-4 row">
+                <div class="mb3 col-md-4 row">
                     <label for="AnnualIncome_Assets_and_Income" class="control-label">AnnualIncome_Assets_and_Income</label>
                     <div class=" d-flex">
                         <input type="number" class="form-control user-field" id="AnnualIncome_Assets_and_Income" disabled>
@@ -269,7 +277,7 @@
             <hr>
             
             <div class="row">
-                <div class="form-group col-md-3 row">
+                <div class="mb3 col-md-3 row">
                 <label for="employer_Employment" class="control-label">employer_Employment</label>
                 <div class=" d-flex">
                     <input type="text" class="form-control user-field" id="employer_Employment" disabled>
@@ -277,7 +285,7 @@
                 </div>
                 </div>
                 
-                <div class="form-group col-md-3 row">
+                <div class="mb3 col-md-3 row">
                 <label for="title_Employment" class="control-label">title_Employment</label>
                 <div class=" d-flex">
                     <input type="text" class="form-control user-field" id="title_Employment" disabled>
@@ -285,7 +293,7 @@
                 </div>
                 </div>
                 
-                <div class="form-group col-md-3 row">
+                <div class="mb3 col-md-3 row">
                 <label for="client_cluster" class="control-label">client_cluster</label>
                 <div class=" d-flex">
                     <input type="text" class="form-control user-field" id="client_cluster" disabled>
@@ -293,7 +301,7 @@
                 </div>
                 </div>
                 
-                <div class="form-group col-md-3 row">
+                <div class="mb3 col-md-3 row">
                 <label for="client_segment_unassigned" class="control-label">client_segment_unassigned</label>
                 <div class=" d-flex">
                     <input type="text" class="form-control user-field" id="client_segment_unassigned" disabled>
@@ -305,7 +313,7 @@
             <hr>
 
             <div class="row">
-                <div class="form-group col-md-3 row">
+                <div class="mb3 col-md-3 row">
                 <label for="cluster_qualifier" class="control-label">cluster_qualifier</label>
                 <div class=" d-flex">
                     <input type="text" class="form-control user-field" id="cluster_qualifier" disabled>
@@ -313,7 +321,7 @@
                 </div>
                 </div>
                 
-                <div class="form-group col-md-3 row">
+                <div class="mb3 col-md-3 row">
                 <label for="additional_flag" class="control-label">additional_flag</label>
                 <div class=" d-flex">
                     <input type="text" class="form-control user-field" id="additional_flag" disabled>
@@ -321,7 +329,7 @@
                 </div>
                 </div>
                 
-                <div class="form-group col-md-3 row">
+                <div class="mb3 col-md-3 row">
                 <label for="custom_segment_1" class="control-label">custom_segment_1</label>
                 <div class=" d-flex">
                     <input type="text" class="form-control user-field" id="custom_segment_1" disabled>
@@ -329,7 +337,7 @@
                 </div>
                 </div>
                 
-                <div class="form-group col-md-3 row">
+                <div class="mb3 col-md-3 row">
                 <label for="custom_segment_2" class="control-label">custom_segment_2</label>
                 <div class=" d-flex">
                     <input type="text" class="form-control user-field" id="custom_segment_2" disabled>
@@ -341,7 +349,7 @@
             <hr>
 
             <div class="row">
-                <div class="form-group row">
+                <div class="mb3 row">
                     <label for="account_source" class="control-label">account_source</label>
                     <div class="d-flex">
                         <input type="text" class="form-control user-field" id="account_source" disabled>
@@ -360,5 +368,5 @@
         </div>
     
     
-</div>
+
   

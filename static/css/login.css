@@ -1,3 +1,4 @@
+
 body {    
     margin: 0; 
     width: 100%;
@@ -10,14 +11,7 @@ body {
 }
 
 .affiche {
-    /*height: 60%;
-    height: 80vh;
-    display: block;
-    overflow: auto;
-    justify-content: center;
-    align-items: center;
-    text-align: center;  
-    padding: 60px;*/  
+ 
     justify-items: center;
     font-family:"Times New Roman", Times, serif;
 }

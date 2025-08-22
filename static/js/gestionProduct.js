@@ -190,14 +190,12 @@ function handleModeChange() {
 
     const searchUser = document.querySelector('.affiche_select');
     const submitConfirm = document.querySelector('.submit_confirm');
-    const rowPolicyId = document.getElementById('row_policy_id');
     const submitButton = document.getElementById("submit_confirm");
 
-    if (!searchUser || !submitConfirm || !rowPolicyId || !submitButton) {
+    if (!searchUser || !submitConfirm || !submitButton) {
         console.error("缺少必要元素:", {
             searchUser: !searchUser,
             submitConfirm: !submitConfirm,
-            rowPolicyId: !rowPolicyId,
             submitButton: !submitButton
         });
         return;
@@ -205,7 +203,6 @@ function handleModeChange() {
 
     searchUser.style.display = isAddMode ? 'none' : 'block';
     submitConfirm.style.display = isViewMode ? 'none' : 'block';
-    rowPolicyId.classList.toggle('d-none', isAddMode);
     submitButton.innerHTML = mode === 'vue' ? 'Voir' : mode === 'ajouter' ? 'Ajouter' : mode === 'modifier' ? 'Modifier' : 'Supprimer';
 
     document.querySelectorAll('.user-field').forEach(el => {
@@ -502,7 +499,7 @@ function handleProductRowClick(e) {
             if (files.length > 0) {
                 // 创建表格
                 const table = document.createElement("table");
-                table.className = "table table-bordered table-sm mt-3";
+                table.className = "table table-hover table-sm mt-3";
 
                 // 表头
                 const thead = document.createElement("thead");

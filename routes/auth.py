@@ -7,6 +7,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from database import SessionLocal
 from models import User, MenuItem
+import logging
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -44,7 +45,10 @@ def login():
         if user and user.check_password(data["password"]):
             login_user(user)
             session.permanent = False
-            menus = db.query(MenuItem).order_by(MenuItem.display_order.asc()).all()
+            
+            # 只查询 is_active=True 的菜单项
+            menus = db.query(MenuItem).filter(MenuItem.is_active == True).order_by(MenuItem.display_order.asc()).all()
+            db.close()
             #return jsonify({"message": "登录成功"}), 200
             #return redirect(url_for('dashboard.get_policy_html', menus=menus))
             return render_template('base.html', menus=menus)
@@ -53,18 +57,24 @@ def login():
     #return jsonify({"error": "用户名或密码错误"}), 401
     return render_template('/login.html')
 
-@auth_bp.route('/logout')
+
+# ---------- 退出登录 ----------
+@auth_bp.route("/logout", methods=["POST"])
 @login_required
 def logout():
-    logout_user()
-    session.clear()
-    #return jsonify({"message": "已登出"}), 200
-    #return render_template('/login.html')
-    #print(current_user.username)
-    #print('pooop')
-    return redirect(url_for('auth.login'))
+    try:
+        user_id = current_user.id
+        username = current_user.username  # 在 logout_user() 前获取
+        logout_user()  # 清除 session
+        log_user_action('logout', user_id, f'User {username} logged out')
+        #return redirect(url_for('auth.login'))
+        return jsonify({"message": "Succes Logout", "redirect": "/auth/login"})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
-
-
+def log_user_action(action, user_id, details=''):
+    """记录用户管理操作"""
+    username = current_user.username if current_user.is_authenticated else "Anonymous"
+    logging.info(f'User action: {action}, User ID: {user_id}, By: {username}, Details: {details}')
 
     

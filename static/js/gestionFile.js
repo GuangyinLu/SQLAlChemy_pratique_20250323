@@ -350,18 +350,16 @@ function handleModeChange() {
 
     const searchUser = document.querySelector('.affiche_select');
     const submitConfirm = document.querySelector('.submit_confirm');
-    const rowFileId = document.getElementById('row_file_id');
     const submitButton = document.getElementById("submit_confirm");
     //const filenameLink = document.getElementById("original_filename_link");
     //const filenameInput = document.getElementById("original_filename");
     const fieldOriginalName = document.getElementById('field_original_name');
     const fieldUpload = document.getElementById("field_upload");
 
-    if (!searchUser || !submitConfirm || !rowFileId || !submitButton) {
+    if (!searchUser || !submitConfirm || !submitButton) {
         console.error("缺少必要元素:", {
             searchUser: !searchUser,
             submitConfirm: !submitConfirm,
-            rowFileId: !rowFileId,
             submitButton: !submitButton
         });
         return;
@@ -372,7 +370,6 @@ function handleModeChange() {
     fieldUpload.style.display = isAddMode ? 'block' : 'none';
     searchUser.style.display = isAddMode ? 'none' : 'block';
     submitConfirm.style.display = isViewMode ? 'none' : 'block';
-    rowFileId.classList.toggle('d-none', isAddMode);
     submitButton.innerHTML = mode === 'vue' ? 'Voir' : mode === 'ajouter' ? 'Ajouter' : mode === 'modifier' ? 'Modifier' : 'Supprimer';
 
     document.querySelectorAll('.user-field').forEach(el => {

@@ -1,96 +1,29 @@
-/*
-@media screen and (min-width: 1280px) { 
-    .container {
-        width: 1280px;
-    }    
-}*/
-
-.link {
-    color: #0d6efd;
-    text-decoration: underline;
-    cursor: pointer;
+/* 让右侧主区域占满整个屏幕高度 */
+main {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 body {    
-    margin: 0; 
-    width: 100%;
-    font-size: 12px;
-    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+  font-size: 12px;
+  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
 }
 
-#nav-menu {
-    margin: 0;
-    padding: 0;
+.vh-5 {
+  flex: 0 0 5vh;  /* 固定 20% */
+  max-height: 5vh;
 }
 
-.navbar-nav li {
-    margin: 5px 0;
-    padding: 5px 5px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: rgb(188, 205, 206);
-    border-bottom: 5px solid #1a9c09e8; 
-    border-radius: 20px;
+.vh-80 {
+  flex: 0 0 80vh;  /* 固定 70% */
+  max-height: 80vh;
+  overflow-y: auto; /* 超出滚动 */
 }
 
-.dropdown-menu li {
-    margin: 5px 0;
-    padding: 5px 5px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: rgb(188, 205, 206);
-    border-bottom: 5px solid #1a9c09e8; 
-    border-radius: 0;
-}
-
-.navbar-nav li a {
-    margin: 0 0;
-    padding: 0 0;
-    height: 24px;
-    text-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-
+.vh-10 {
+  flex: 0 0 10vh;  /* 固定 10% */
+  max-height: 10vh;
 }
 
 
-/* 每个菜单项 */
-.nav-item {
-    flex:none;
-    border-right: 3px solid #6988ee;
-    padding: 5px 5px;
-    
-}
-
-.nav-item:last-child {
-    border-right: none; /* 最后一个菜单项去掉右边的间隔线 */
-}
-
-/* 菜单项 hover 效果 */
-.nav-item:hover {
-    background-color: #c4d110f3; /* 鼠标悬停时的背景色 */
-}
-
-.title_sky {
-    height: 12vh;
-}
-
-.Bienvenu_1 {
-    color: blue;
-    font-size: 18px;
-    font-weight: bold;
-}
-
-.Bienvenu_nom {
-    color: red;
-    font-size: 18px;
-    font-weight: bold;
-}
-
-.sub_page {
-    height: 78vh;
-}

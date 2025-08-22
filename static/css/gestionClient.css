@@ -1,9 +1,33 @@
+
+.user-field {
+border: none;
+border-bottom: 1px solid #ced4da; /* 边框颜色可以根据需要调整 */
+border-radius: 0; /* 移除圆角，使下边框更平直 */
+}
+
+/* 悬停和聚焦时的样式，使其更具交互性 */
+.user-field:hover,
+.user-field:focus {
+border-bottom-color: #0d6efd; /* 悬停和聚焦时变为蓝色 */
+box-shadow: none; /* 移除默认的蓝色阴影 */
+}
+
+/* 专门针对被禁用的 .user-field 元素 */
+.user-field:disabled {
+/* 覆盖掉浏览器和 Bootstrap 的默认样式 */
+background-color: transparent; /* 或者你想要的背景颜色 */
+opacity: 1; /* 恢复完全不透明 */
+
+/* 应用你想要的下边框样式 */
+border-bottom: 1px solid #ced4da;
+}
+
+/*
 .main {
     height: 100%;
 }
 
 .affiche {
-    /*height: 80%;*/
     height: 70vh;
     display: block;
     overflow: auto;
@@ -53,11 +77,11 @@
 
 .table tr:hover {
     background-color: #bfc1d8;
-    color: #ff0000; /* 字体颜色变为红色 */
+    color: #ff0000; 
     cursor: pointer;
 }
 
-/* 可选：点击后的样式 */
+
 .table tr:active {
     background-color: #e0e0e0;
 }
@@ -75,14 +99,6 @@
     background-color: #afd7ad;
     font-weight: bold;
 }
-/*
-.form-group label {
-    font-weight: bold;
-    text-align: left;
-    padding: 0 0 0 15%;
-    display: flex;
-    align-items: center;
-}*/
 
 .edit-toggle {
     cursor: pointer;
@@ -90,25 +106,25 @@
     margin-left: 10px;
   }
 
-/* 自定义透明输入框和选择框样式，仅保留边框 */
+
 .user-field {
     background-color: transparent !important;
     border: none;
     border-bottom: 1px solid #e0e0e0;
-    box-shadow: none !important; /* 移除任何阴影 */
+    box-shadow: none !important; 
     color: blue;
 }
 .user-field:focus {
     background-color: transparent !important;
-    border-color: #86b7fe !important; /* Bootstrap 聚焦时的边框颜色 */
+    border-color: #86b7fe !important; 
     outline: 0;
-    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important; /* Bootstrap 聚焦时的阴影 */
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important; 
 }
-/* 确保选择框也应用相同样式 */
+
 select.user-field {
-    background-image: none !important; /* 移除 Bootstrap 默认的选择框箭头 */
+    background-image: none !important; 
 }
-/* 可选：为选择框添加自定义箭头 */
+
 select.user-field {
     appearance: none;
     -webkit-appearance: none;

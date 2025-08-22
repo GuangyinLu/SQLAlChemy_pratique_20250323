@@ -1,0 +1,184 @@
+
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="m-0">User Management</h3>
+    <div>
+      <button id="btn-open-create" class="btn btn-primary">Add User</button>
+      <button id="btn-open-change-my-password" class="btn btn-outline-secondary">Change My Password</button>
+    </div>
+  </div>
+
+  <div class="row g-2 mb-3">
+    <div class="col-auto">
+      <input id="searchBox" type="text" class="form-control" placeholder="Search username or agent_id">
+    </div>
+    <div class="col-auto">
+      <button id="btn-search" class="btn btn-secondary">Search</button>
+    </div>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-hover align-middle">
+      <thead class="table-light">
+        <tr>
+          <th>ID</th>
+          <th>Username</th>
+          <th>Role</th>
+          <th>Agent ID</th>
+          <th>Last Active</th>
+          <th id="table_user_action">Actions</th>
+        </tr>
+      </thead>
+      <tbody id="users_tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 分页控件 -->
+<nav>
+  <ul class="pagination justify-content-center">
+    <li class="page-item"><a class="page-link" href="#" id="prev-page">prev</a></li>
+    <li class="page-item"><a class="page-link" href="#" id="next-page">next</a></li>
+  </ul>
+</nav>
+
+<!-- Create Modal -->
+<div class="modal fade" id="createModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <form class="modal-content" id="form-create">
+      <div class="modal-header">
+        <h5 class="modal-title">Add User</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-2">
+          <label class="form-label">Username</label>
+          <input name="username" class="form-control" required>
+        </div>
+        <div class="mb-2">
+          <label class="form-label">Password</label>
+          <input name="password" type="password" class="form-control" id="password" minlength="8" required>
+        </div>
+        <div class="mb-2">
+            <label for="confirmPassword" class="form-label">Confirm Password</label>
+            <input type="password" class="form-control" name="confirmPassword" id="confirmPassword" minlength="8">
+        </div>
+        <div class="mb-2">
+          <label class="form-label">Role</label>
+          <select name="role" class="form-select">
+            <option value="User">User</option>
+            <option value="Agent">Agent</option>
+            <option value="Admin">Admin</option>
+          </select>
+        </div>
+        <div class="mb-2">
+          <label class="form-label">Agent ID (optional)</label>
+          <select class="form-select" name="agent_id" id="agent_id">
+            <!-- 选项 -->
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" type="submit">Create</button>
+        <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <form class="modal-content" id="form-edit">
+      <div class="modal-header">
+        <h5 class="modal-title">Edit User</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" name="id">
+        <div class="mb-2">
+          <label class="form-label">Username</label>
+          <input name="username" class="form-control" disabled>
+        </div>
+        <div class="mb-2">
+          <label class="form-label">Role</label>
+          <select name="role" class="form-select">
+            <option value="User">User</option>
+            <option value="Agent">Agent</option>
+            <option value="Admin">Admin</option>
+          </select>
+        </div>
+        <div class="mb-2">
+          <label class="form-label">Agent ID</label>
+          <select class="form-select" name="agent_id" id="edit_agent_id">
+            <!-- 选项 -->
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" type="submit">Save</button>
+        <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Reset Password Modal (admin) -->
+<div class="modal fade" id="resetPwdModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <form class="modal-content" id="form-reset-pwd">
+      <div class="modal-header">
+        <h5 class="modal-title">Reset Password</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" name="id">
+        <div class="mb-2">
+          <label class="form-label">New Password</label>
+          <input name="reset_new_password" id="reset_new_password" type="password" class="form-control" minlength="8" required>
+        </div>
+        <div class="mb-2">  
+            <label for="confirm_new_password" class="form-label">Confirm New Password</label>
+            <input type="password" class="form-control" name="reset_confirm_new_password" id="reset_confirm_new_password" required minlength="8">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-danger" type="submit">Reset</button>
+        <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Change My Password Modal -->
+<div class="modal fade" id="myPwdModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <form class="modal-content" id="form-my-pwd">
+      <div class="modal-header">
+        <h5 class="modal-title">Change My Password</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-2">
+          <label class="form-label">Current Password</label>
+          <input name="old_password" type="password" class="form-control" required>
+        </div>
+        <div class="mb-2">
+          <label class="form-label">New Password</label>
+          <input name="my_new_password" id="my_new_password" type="password" class="form-control" minlength="8" required>
+        </div>
+        <div class="mb-2">  
+            <label for="confirm_new_password" class="form-label">Confirm New Password</label>
+            <input type="password" class="form-control" name="my_confirm_new_password" id="my_confirm_new_password" required minlength="8">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" type="submit">Update</button>
+        <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+

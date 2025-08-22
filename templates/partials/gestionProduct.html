@@ -1,22 +1,26 @@
 <!-- 备注：独立HTML文件，通过scripts.js的loadTabContent动态加载到base.html的#mainContent -->
-<div class="affiche affiche_select">
+<div>
+    <h3>Gestion Policy</h3>
+</div>
 
-    <div class="col-8 row">
-        <div class="col-md-2">
-            <input class="optradio_product-input" type="radio" name="optradio_product" id="vue" value="vue" checked>
-            <label class="optradio_product-label" for="vue">Vue</label>
+<div class="affiche affiche_select border-top p-1">
+
+    <div class="option_action row mb-3">
+        <div class="form-check col-md-1">
+            <input class="form-check-input" type="radio" name="optradio_product" id="vue" value="vue" checked>
+            <label class="form-check-label" for="vue">Vue</label>
         </div>
-        <div class="col-md-2">
-            <input class="optradio_product-input" type="radio" name="optradio_product" id="ajouter" value="ajouter">
-            <label class="optradio_product-label" for="ajouter">Ajouter</label>
+        <div class="form-check col-md-1">
+            <input class="form-check-input" type="radio" name="optradio_product" id="ajouter" value="ajouter">
+            <label class="form-check-label" for="ajouter">Ajouter</label>
         </div>
-        <div class="col-md-2">
-            <input class="optradio_product-input" type="radio" name="optradio_product" id="modifier" value="modifier" >
-            <label class="optradio_product-label" for="modifier">Modifier</label>
+        <div class="form-check col-md-1">
+            <input class="form-check-input" type="radio" name="optradio_product" id="modifier" value="modifier" >
+            <label class="form-check-label" for="modifier">Modifier</label>
         </div>
-        <div class="col-md-2">
-            <input class="optradio_product-input" type="radio" name="optradio_product" id="supprimer" value="supprimer">
-            <label class="optradio_product-label" for="supprimer">Supprimer</label>
+        <div class="form-check col-md-1">
+            <input class="form-check-input" type="radio" name="optradio_product" id="supprimer" value="supprimer">
+            <label class="form-check-label" for="supprimer">Supprimer</label>
         </div>
     </div>
 
@@ -26,7 +30,7 @@
             <!-- 备注：搜索框，触发300ms防抖搜索 -->
             <input type="text" id="customerSearchBoxProduct" class="form-control transparent-input" placeholder="Rechercher par ID client, nom, téléphone ou email...">
             <!-- 备注：客户表格，显示ID、姓名、电话、邮箱 -->
-            <table class="table client_search-table mt-3 d-none" id="client_search_table">
+            <table class="table table-hover client_search-table mt-3 d-none" id="client_search_table">
                 <thead id="customer_search_results_title" class=""></thead>
                 <tbody id="customer_search_results" class=""></tbody>                
             </table>
@@ -35,7 +39,7 @@
             <div id="selected_customer_info" class="mt-3"></div>
             <h3 class="mt-4 d-none" id="policies_title">Polices du client</h3>
             <!-- 备注：保单表格，显示ID、资产名称、产品类型、总保额、投保人ID、被保人ID -->
-            <table class="table product_search-table mt-3 d-none" id="policies_table">
+            <table class="table table-hover product_search-table mt-3 d-none" id="policies_table">
                 <thead id="search_product_results_title"></thead>
                 <tbody id="search_product_results"></tbody>
             </table>
@@ -53,9 +57,14 @@
         </div>
 
         <div class="row">
+            <!--
             <div class="col-md-3" id="row_policy_id">
                 <label for="policy_id" class="form-label">ID de la police</label>
                 <input type="text" class="form-control user-field transparent-input" id="policy_id"  disabled readonly>
+            </div>
+            -->
+            <div class="">
+                <input type="hidden" class="form-control user-field transparent-input" id="policy_id"  disabled readonly>
             </div>
 
             <div class="col-md-3">
