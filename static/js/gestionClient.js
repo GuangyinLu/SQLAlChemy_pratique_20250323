@@ -101,6 +101,9 @@ function cleanup() {
         }
     });
 
+    
+    document.removeEventListener('click', handleEditToggleClick /* 这里放监听器的函数引用，如果是匿名函数需提取为命名函数 */);
+
     // console.log('完成清理 gestionClient.js');
 }
 
@@ -117,7 +120,8 @@ function handleModeChange() {
 
   // 控制输入框状态
   document.querySelectorAll('.user-field').forEach(el => {
-      el.disabled = isViewMode || mode === 'supprimer';
+      //el.disabled = isViewMode || mode === 'supprimer';
+      el.disabled = (mode !== 'ajouter');
   });
 
   // 控制编辑开关
@@ -192,6 +196,15 @@ function handleEditToggleClick(e) {
         input.disabled = !input.disabled;
         if (!input.disabled) input.focus();
     }
+
+    document.addEventListener('click', (e) => {
+    if (!e.target.classList.contains('edit-toggle') && !e.target.classList.contains('user-field')) {
+        const mode = document.querySelector('input[name="optradio_client"]:checked').value;
+        if (mode === 'modifier') {
+            document.querySelectorAll('.user-field').forEach(input => input.disabled = true);
+        }
+    }
+});
 }
 /*
 document.addEventListener('click', (e) => {
@@ -201,8 +214,8 @@ document.addEventListener('click', (e) => {
           document.querySelectorAll('.user-field').forEach(input => input.disabled = true);
       }
   }
-}); */
-
+}); 
+*/
 function handleFormSubmit(event) {
   event.preventDefault();
   const mode = document.querySelector("input[name='optradio_client']:checked")?.value;

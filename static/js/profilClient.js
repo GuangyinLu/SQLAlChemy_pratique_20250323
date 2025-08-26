@@ -345,7 +345,7 @@ function showClientAllDetail(customer_id) {
 
             if (response.data.policies_data && response.data.policies_data.length > 0) {
                 let customer_policies_info =`
-                    <table class="table table-bordered table-striped">
+                    <table class="table table-hover">
                     <thead>
                         <tr>
                             <th></th>
@@ -410,7 +410,7 @@ function showClientAllDetail(customer_id) {
 
             if (response.data.request_data && response.data.request_data.length > 0) {
                 let customer_request_info =`
-                    <table class="table table-bordered table-striped">
+                    <table class="table table-hover">
                     <thead>
                         <tr>
                             <th>No.</th>
@@ -446,7 +446,7 @@ function showClientAllDetail(customer_id) {
 
             if (response.data.agenda_data && response.data.agenda_data.length > 0) {
                 let customer_agenda_info = `
-                    <table class="table table-bordered table-striped">
+                    <table class="table table-hover">
                     <thead>
                         <tr>
                             <th>No.</th>

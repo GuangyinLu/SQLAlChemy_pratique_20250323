@@ -113,6 +113,8 @@ function cleanup() {
     const searchResultsTitle = document.getElementById('search_agent_results_title');
     if (searchResultsTitle) searchResultsTitle.innerHTML = '';
 
+    document.removeEventListener('click', handleEditToggleClick /* 这里放监听器的函数引用，如果是匿名函数需提取为命名函数 */);
+
     // console.log('完成清理 gestionAgent.js');
 }
 
@@ -163,8 +165,9 @@ function handleModeChange() {
     // console.log("mode123=",submitButton.innerHTML);
 
     document.querySelectorAll('.user-field').forEach(el => {
-        el.disabled = isViewMode || mode === 'supprimer';
-        if (mode === 'ajouter') el.disabled = false;
+        //el.disabled = isViewMode || mode === 'supprimer';
+        el.disabled = (mode !== 'ajouter');
+        //if (mode === 'ajouter') el.disabled = false;
     });
 
     document.querySelectorAll('.edit-toggle').forEach(span => {
@@ -269,6 +272,15 @@ function handleEditToggleClick(e) {
         input.disabled = !input.disabled;
         if (!input.disabled) input.focus();
     }
+
+    document.addEventListener('click', (e) => {
+        if (!e.target.classList.contains('edit-toggle') && !e.target.classList.contains('user-field')) {
+            const mode = document.querySelector('input[name="optradio"]:checked').value;
+            if (mode === 'modifier') {
+                document.querySelectorAll('.user-field').forEach(input => input.disabled = true);
+            }
+        }
+        }); 
 }
 
 function handleFormSubmit(event) {

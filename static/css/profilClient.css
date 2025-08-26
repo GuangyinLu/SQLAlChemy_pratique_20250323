@@ -1,3 +1,6 @@
+
+
+/*
 .main {
     height: 92%;
 }
@@ -35,7 +38,7 @@
     cursor: pointer;
 }
 
-/* 可选：点击后的样式 */
+/* 可选：点击后的样式 
 
 .table tr:active {
     background-color: #e0e0e0;
@@ -66,3 +69,4 @@
     display: flex !important;
     flex-wrap: wrap;
 }
+*/

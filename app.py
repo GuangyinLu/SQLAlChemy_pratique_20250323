@@ -100,7 +100,7 @@ def load_user(user_id):
 
 @app.route('/')
 def index():
-    logger.info("访问根路径 /")
+    #logger.info("访问根路径 /")
     return render_template('/login.html')
    
 if __name__ == "__main__":

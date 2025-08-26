@@ -22,6 +22,10 @@ opacity: 1; /* 恢复完全不透明 */
 border-bottom: 1px solid #ced4da;
 }
 
+.edit-toggle {
+    cursor: pointer;
+}
+
 /*
 .main {
     height: 100%;
